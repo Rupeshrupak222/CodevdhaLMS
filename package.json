@@ -1,0 +1,10 @@
+{
+  "name": "codvedha-lms",
+  "private": true,
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "powershell -NoProfile -ExecutionPolicy Bypass -File ./scripts/dev.ps1",
+    "dev:backend": "npm --prefix backend run dev",
+    "dev:frontend": "npm --prefix frontend run dev"
+  }
+}

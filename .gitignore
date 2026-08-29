@@ -1,0 +1,44 @@
+# ─── CodVedha LMS — root gitignore ──────────────────────────────
+
+# Dependencies
+node_modules/
+**/node_modules/
+
+# Environment / secrets
+.env
+.env.*
+!.env.example
+**/.env
+**/.env.local
+**/.env.*.local
+
+# Build output
+dist/
+build/
+.next/
+**/.next/
+*.tsbuildinfo
+next-env.d.ts
+
+# Logs
+*.log
+logs/
+dev-server.err.log
+dev-server.out.log
+
+# Prisma generated client
+**/generated/
+
+# Database backups (may contain sensitive data)
+database_backup_*.json
+*.backup.json
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/*
+!.vscode/extensions.json
+
+# Misc
+*.tgz
+.cache/

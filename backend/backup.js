@@ -1,0 +1,54 @@
+const { PrismaClient } = require("@prisma/client");
+const fs = require("fs");
+const path = require("path");
+const prisma = new PrismaClient();
+const models = [
+  "user",
+  "userSettings",
+  "refreshToken",
+  "passwordReset",
+  "category",
+  "course",
+  "courseTeacher",
+  "enrollment",
+  "lesson",
+  "material",
+  "quiz",
+  "quizQuestion",
+  "quizOption",
+  "quizAttempt",
+  "task",
+  "taskAssignment",
+  "taskSubmission",
+  "attendance",
+  "liveClass",
+  "certificate",
+  "notification",
+  "announcement",
+  "announcementRead",
+  "weeklyScore",
+];
+async function backup() {
+  console.log("Starting full database backup...");
+  const backupData = {};
+  try {
+    for (const model of models) {
+      console.log(`Backing up ${model}...`);
+      if (prisma[model]) {
+        backupData[model] = await prisma[model].findMany();
+        console.log(`  - ${backupData[model].length} records backed up.`);
+      }
+    }
+    const backupDate = new Date().toISOString().replace(/[:.]/g, "-");
+    const filename = `database_backup_${backupDate}.json`;
+    const filepath = path.join(__dirname, filename);
+    fs.writeFileSync(filepath, JSON.stringify(backupData, null, 2));
+    console.log(`\n? Backup completed successfully!`);
+    console.log(`File saved to: ${filepath}`);
+  } catch (error) {
+    console.error(error);
+  } finally {
+    await prisma.$disconnect();
+  }
+}
+backup();

@@ -1,0 +1,200 @@
+@import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+  --color-secondary: var(--secondary);
+  --color-bg-main: var(--bg-main);
+  --color-bg-card: var(--bg-card);
+  --color-text-main: var(--text-main);
+  --color-text-muted: var(--text-muted);
+  --color-border-main: var(--border-main);
+  
+  --font-sans: 'Inter','Inter fallback', system-ui, -apple-system, sans-serif;
+
+  /* Increase all standard text sizes by 2px (0.125rem) for better readability */
+  --text-[16px]: 0.875rem; /* was 0.75rem (12px) -> now 14px */
+  --text-sm: 1rem;     /* was 0.875rem (14px) -> now 16px */
+  --text-base: 1.125rem; /* was 1rem (16px) -> now 18px */
+  --text-lg: 1.25rem;  /* was 1.125rem (18px) -> now 20px */
+  --text-xl: 1.375rem; /* was 1.25rem (20px) -> now 22px */
+  --text-2xl: 1.625rem; /* was 1.5rem (24px) -> now 26px */
+  --text-3xl: 2rem;    /* was 1.875rem (30px) -> now 32px */
+}
+
+:root {
+  --primary: #a855f7;
+  --primary-hover: #7c3aed;
+  --secondary: #F3E8FF;
+  --accent: #f97316;
+  --accent-hover: #ea580c;
+  --bg-main: #F8FAFC;
+  --bg-card: #FFFFFF;
+  --text-main: #0F172A; /* slate-900 */
+  --text-muted: #334155; /* slate-700 (darkened for better visibility in light theme) */
+  --border-main: #E2E8F0;
+  
+  font-family: 'Inter','Inter fallback', system-ui, -apple-system, sans-serif;
+  color-scheme: light;
+}
+
+.dark {
+  --primary: #a855f7;
+  --primary-hover: #c084fc;
+  --accent: #f97316;
+  --accent-hover: #fb923c;
+  --secondary: #334155; /* slate-700 */
+  --bg-main: #020617; /* slate-950 (darker than header/cards) */
+  --bg-card: #1e293b; /* slate-800 */
+  --text-main: #f8fafc; /* slate-50 */
+  --text-muted: #e0e4ea; /* slate-400 */
+  --border-main: #334155; /* slate-700 */
+  
+  color-scheme: dark;
+}
+
+.dark .bg-slate-50,
+.dark .bg-slate-100 {
+  background-color: #020617 !important; /* slate-950 */
+}
+
+.dark .border-slate-200,
+.dark .border-slate-100 {
+  border-color: #334155 !important; /* slate-700 */
+}
+
+/* Base Body Styles */
+body {
+  background-color: var(--bg-main);
+  color: var(--text-main);
+  margin: 0;
+  min-height: 100vh;
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+  overflow-x: hidden;
+}
+
+/* Glassmorphism utility */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.dark .glass-panel {
+  background: rgba(30, 41, 59, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* Custom Scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #CBD5E1;
+  border-radius: 4px;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: #475569;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94A3B8;
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: #64748B;
+}
+
+/* Animations */
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes shimmer {
+  100% { transform: translateX(100%); }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-8px) rotate(2deg);
+  }
+}
+
+.animate-float {
+  animation: float 4s ease-in-out infinite;
+}
+
+/* Simple Skeleton Loading */
+.skeleton {
+  background: linear-gradient(90deg, var(--border-main) 25%, var(--bg-main) 37%, var(--border-main) 63%);
+  background-size: 400% 100%;
+  animation: skeleton-loading 1.4s ease infinite;
+}
+
+@keyframes skeleton-loading {
+  0% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0 50%;
+  }
+}
+
+
+/* For modern browsers */
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* For Firefox */
+.scrollbar-hide {
+  scrollbar-width: none;
+}
+
+/* For IE and Edge */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+}
+
+/* Hide Next.js Error Overlay */
+nextjs-portal {
+  display: none !important;
+}
+
+/* Ensure all interactive elements have cursor pointer */
+button,
+input[type="submit"],
+input[type="button"],
+.cursor-pointer,
+a {
+  cursor: pointer !important;
+}
+
+
+/* Orbit animation for login role circles */
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes counter-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(-360deg); }
+}
