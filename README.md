@@ -1,4 +1,4 @@
-# Adyapan LMS Hub 🎓
+# Codvdha LMS Hub 🎓
 
 Adyapan LMS is a modern, state-of-the-art Learning Management System designed to bridge the gap between students, educators, and administrators. Powered by a Next.js frontend, an Express REST API backend, and a Supabase-managed PostgreSQL database, it enables real-time course scheduling, automated quiz evaluations, task grading, classroom video link management, and verified certificate generation.
 
@@ -41,7 +41,7 @@ Adyapan LMS is a modern, state-of-the-art Learning Management System designed to
 ### 1. Database Setup (Supabase)
 Create a `.env` file in the `backend/` directory and configure the database link:
 ```env
-DATABASE_URL="postgresql://postgres.cdaxanvqshkzhtpbiliz:[password]@aws-1-ap-southeast-1.pooler.supabase.com:5432/postgres?sslmode=require&supa=r"
+DATABASE_URL="url"
 PORT=5000
 JWT_SECRET="your-jwt-secret-key"
 FRONTEND_URL="http://localhost:3000"
@@ -78,15 +78,7 @@ The frontend portal will open at `http://localhost:3000` (or `http://localhost:3
 
 ---
 
-## 🔑 Demo Access Accounts
 
-Use these pre-seeded test accounts to explore the portals:
-
-| Portal Role | Email Address | Password |
-| :--- | :--- | :--- |
-| **Administrator** | `admin@adyapan.com` | `Admin@123` |
-| **Lead Instructor** | `sarah.jenkins@adyapan.com` | `Teacher@123` |
-| **Student Learner** | `rohan.sharma@adyapan.com` | `Student@123` |
 
 ---
 
