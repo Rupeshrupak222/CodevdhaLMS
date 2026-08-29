@@ -190,7 +190,7 @@ export default function BatchesPage() {
         {activeRole === 'admin' && (
           <button
             onClick={() => setShowCreateModal(true)}
-            className="flex items-center justify-center gap-2 bg-[#a855f7] hover:bg-amber-400 text-slate-950 px-5 py-2.5 rounded-xl text-sm font-bold transition shadow-lg shadow-amber-500/10 cursor-pointer"
+            className="flex items-center justify-center gap-2 bg-[#a855f7] hover:bg-purple-400 text-slate-950 px-5 py-2.5 rounded-xl text-sm font-bold transition shadow-lg shadow-purple-500/10 cursor-pointer"
           >
             <Plus className="w-4 h-4" /> Create Batch
           </button>
@@ -204,7 +204,7 @@ export default function BatchesPage() {
             { label: 'Total Batches', value: allBatches.length, icon: <BookOpen className="w-4 h-4" />, color: 'text-indigo-500 bg-indigo-500/10' },
             { label: 'Active Batches', value: allBatches.filter(b => b.isActive).length, icon: <CheckCircle className="w-4 h-4" />, color: 'text-emerald-500 bg-emerald-500/10' },
             { label: 'Total Students', value: allBatches.reduce((a, b) => a + (b._count?.enrollments || 0), 0), icon: <Users className="w-4 h-4" />, color: 'text-blue-500 bg-blue-500/10' },
-            { label: 'Courses with Batches', value: new Set(allBatches.map(b => b.courseId)).size, icon: <BookOpen className="w-4 h-4" />, color: 'text-amber-500 bg-amber-500/10' },
+            { label: 'Courses with Batches', value: new Set(allBatches.map(b => b.courseId)).size, icon: <BookOpen className="w-4 h-4" />, color: 'text-purple-500 bg-purple-500/10' },
           ].map((stat, i) => (
             <div key={i} className="p-4 rounded-2xl bg-white dark:bg-[#1E293B] border border-slate-200/50 dark:border-slate-800/50 shadow-sm flex items-center gap-3">
               <div className={`p-2.5 rounded-xl ${stat.color}`}>{stat.icon}</div>
@@ -326,7 +326,7 @@ export default function BatchesPage() {
                     <>
                       <button
                         onClick={() => handleToggle(batch)}
-                        className={`px-3 py-2 border rounded-xl text-xs transition ${batch.isActive ? 'border-amber-200 text-amber-500 hover:bg-amber-500/10' : 'border-emerald-250 text-emerald-500 hover:bg-emerald-500/10'}`}
+                        className={`px-3 py-2 border rounded-xl text-xs transition ${batch.isActive ? 'border-purple-200 text-purple-500 hover:bg-purple-500/10' : 'border-emerald-250 text-emerald-500 hover:bg-emerald-500/10'}`}
                       >
                         {batch.isActive ? <ToggleRight className="w-4 h-4" /> : <ToggleLeft className="w-4 h-4" />}
                       </button>
@@ -357,7 +357,7 @@ export default function BatchesPage() {
           <button
             disabled={!meta.hasPrevPage}
             onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-            className="px-4 py-2 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-sm font-semibold text-slate-700 dark:text-slate-300 disabled:opacity-40 cursor-pointer hover:border-amber-400 transition"
+            className="px-4 py-2 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-sm font-semibold text-slate-700 dark:text-slate-300 disabled:opacity-40 cursor-pointer hover:border-purple-400 transition"
           >
             Previous
           </button>
@@ -367,7 +367,7 @@ export default function BatchesPage() {
           <button
             disabled={!meta.hasNextPage}
             onClick={() => setCurrentPage(prev => Math.min(prev + 1, meta.totalPages))}
-            className="px-4 py-2 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-sm font-semibold text-slate-700 dark:text-slate-300 disabled:opacity-40 cursor-pointer hover:border-amber-400 transition"
+            className="px-4 py-2 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-sm font-semibold text-slate-700 dark:text-slate-300 disabled:opacity-40 cursor-pointer hover:border-purple-400 transition"
           >
             Next
           </button>
@@ -452,7 +452,7 @@ export default function BatchesPage() {
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="w-full py-2.5 bg-[#a855f7] hover:bg-amber-400 text-slate-955 font-bold rounded-xl transition flex items-center justify-center gap-1.5 cursor-pointer mt-4"
+                  className="w-full py-2.5 bg-[#a855f7] hover:bg-purple-400 text-slate-955 font-bold rounded-xl transition flex items-center justify-center gap-1.5 cursor-pointer mt-4"
                 >
                   {submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Plus className="w-4 h-4" />}
                   Create Batch
@@ -535,7 +535,7 @@ export default function BatchesPage() {
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="w-full py-2.5 bg-[#a855f7] hover:bg-amber-400 text-slate-955 font-bold rounded-xl transition flex items-center justify-center gap-1.5 cursor-pointer mt-4"
+                  className="w-full py-2.5 bg-[#a855f7] hover:bg-purple-400 text-slate-955 font-bold rounded-xl transition flex items-center justify-center gap-1.5 cursor-pointer mt-4"
                 >
                   {submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Pencil className="w-3.5 h-3.5" />}
                   Save Changes

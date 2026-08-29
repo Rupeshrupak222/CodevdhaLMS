@@ -142,8 +142,8 @@ export const Performance = () => {
 
         <div className="bg-white dark:bg-[#1E293B] border border-slate-200/50 dark:border-slate-800/50 rounded-2xl p-12 text-center">
           <div className="flex flex-col items-center gap-4">
-            <div className="w-16 h-16 bg-amber-100 dark:bg-amber-900/30 rounded-full flex items-center justify-center">
-              <AlertCircle className="w-8 h-8 text-amber-500" />
+            <div className="w-16 h-16 bg-purple-100 dark:bg-purple-900/30 rounded-full flex items-center justify-center">
+              <AlertCircle className="w-8 h-8 text-purple-500" />
             </div>
             <div>
               <h3 className="text-lg font-semibold text-slate-900 dark:text-white">No Enrolled Students</h3>
@@ -218,8 +218,8 @@ const totalQuizCompletions = filteredStudents.reduce(
 
         <div className="bg-white dark:bg-[#1E293B] border border-slate-200/50 dark:border-slate-800/50 rounded-2xl p-4">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-amber-100 dark:bg-amber-900/30 rounded-xl flex items-center justify-center">
-              <BookOpen className="w-5 h-5 text-amber-600 dark:text-amber-400" />
+            <div className="w-10 h-10 bg-purple-100 dark:bg-purple-900/30 rounded-xl flex items-center justify-center">
+              <BookOpen className="w-5 h-5 text-purple-600 dark:text-purple-400" />
             </div>
             <div>
               <p className="text-[16px] text-slate-500 dark:text-slate-400 font-semibold">Avg Progress</p>

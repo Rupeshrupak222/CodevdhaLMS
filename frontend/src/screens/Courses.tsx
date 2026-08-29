@@ -379,7 +379,7 @@ export const Courses = () => {
  {activeRole !== 'student' && (
  <button
  onClick={openAddModal}
- className="flex items-center justify-center gap-2 bg-[#a855f7] hover:bg-amber-400 text-slate-950 px-4 py-2 rounded-xl text-[16px] font-semibold transition shadow-lg shadow-amber-500/10 cursor-pointer animate-float-in"
+ className="flex items-center justify-center gap-2 bg-[#a855f7] hover:bg-purple-400 text-slate-950 px-4 py-2 rounded-xl text-[16px] font-semibold transition shadow-lg shadow-purple-500/10 cursor-pointer animate-float-in"
  >
  <Plus className="w-4 h-4" />
  Create New Course
@@ -420,7 +420,7 @@ export const Courses = () => {
           />
           <button
             onClick={() => setActiveSearch(searchInput)}
-            className="px-3.5 py-2 bg-[#a855f7] hover:bg-amber-400 text-slate-950 font-semibold rounded-xl text-[14px] transition shadow-sm"
+            className="px-3.5 py-2 bg-[#a855f7] hover:bg-purple-400 text-slate-950 font-semibold rounded-xl text-[14px] transition shadow-sm"
           >
             Search
           </button>
@@ -508,7 +508,7 @@ export const Courses = () => {
       <div className="px-4 pb-2 bg-slate-50 dark:bg-slate-900/60 border-t border-slate-100 dark:border-slate-800 flex items-center justify-end gap-2.5">
       <button
       onClick={() => triggerPreview(course)}
-      className="flex items-center gap-1 text-[14px] font-semibold py-1 px-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:border-amber-400 rounded-lg transition"
+      className="flex items-center gap-1 text-[14px] font-semibold py-1 px-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:border-purple-400 rounded-lg transition"
       >
       <Eye className="w-3 h-3 text-slate-800" /> Preview
       </button>
@@ -540,7 +540,7 @@ export const Courses = () => {
           <button
             disabled={currentPage === 1}
             onClick={() => setCurrentPage(currentPage - 1)}
-            className="px-4 py-2 rounded-lg bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-sm font-semibold disabled:opacity-50 cursor-pointer hover:border-amber-400 transition"
+            className="px-4 py-2 rounded-lg bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-sm font-semibold disabled:opacity-50 cursor-pointer hover:border-purple-400 transition"
           >
             Previous
           </button>
@@ -548,7 +548,7 @@ export const Courses = () => {
           <button
             disabled={currentPage >= (meta.totalPages || 1)}
             onClick={() => setCurrentPage(currentPage + 1)}
-            className="px-4 py-2 rounded-lg bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-sm font-semibold disabled:opacity-50 cursor-pointer hover:border-amber-400 transition"
+            className="px-4 py-2 rounded-lg bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-sm font-semibold disabled:opacity-50 cursor-pointer hover:border-purple-400 transition"
           >
             Next
           </button>
@@ -587,7 +587,7 @@ export const Courses = () => {
         }
       }}
       disabled={!course.externalUrl}
-      className="flex items-center gap-1.5 text-[14px] font-semibold py-1.5 px-3 bg-[#a855f7] hover:bg-amber-400 text-slate-950 rounded-lg transition disabled:opacity-50 disabled:cursor-not-allowed"
+      className="flex items-center gap-1.5 text-[14px] font-semibold py-1.5 px-3 bg-[#a855f7] hover:bg-purple-400 text-slate-950 rounded-lg transition disabled:opacity-50 disabled:cursor-not-allowed"
       >
       <ExternalLink className="w-3.5 h-3.5" /> Explore Now
       </button>
@@ -602,7 +602,7 @@ export const Courses = () => {
           <button
             disabled={relatedPage === 1}
             onClick={() => setRelatedPage(relatedPage - 1)}
-            className="px-4 py-2 rounded-lg bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-sm font-semibold disabled:opacity-50 cursor-pointer hover:border-amber-400 transition"
+            className="px-4 py-2 rounded-lg bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-sm font-semibold disabled:opacity-50 cursor-pointer hover:border-purple-400 transition"
           >
             Previous
           </button>
@@ -610,7 +610,7 @@ export const Courses = () => {
           <button
             disabled={relatedPage >= totalRelatedPages}
             onClick={() => setRelatedPage(relatedPage + 1)}
-            className="px-4 py-2 rounded-lg bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-sm font-semibold disabled:opacity-50 cursor-pointer hover:border-amber-400 transition"
+            className="px-4 py-2 rounded-lg bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-sm font-semibold disabled:opacity-50 cursor-pointer hover:border-purple-400 transition"
           >
             Next
           </button>
@@ -690,10 +690,10 @@ export const Courses = () => {
   type="file"
   accept="image/*"
   onChange={handleCourseImageChange}
-  className="w-full px-3 py-2 border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 rounded-lg text-slate-900 dark:text-white focus:outline-none file:mr-4 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-amber-50 file:text-amber-700 hover:file:bg-amber-100"
+  className="w-full px-3 py-2 border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 rounded-lg text-slate-900 dark:text-white focus:outline-none file:mr-4 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-purple-50 file:text-purple-700 hover:file:bg-purple-100"
   />
   {uploadingImage && (
-    <div className="flex items-center gap-2 mt-2 text-xs text-amber-500 font-semibold">
+    <div className="flex items-center gap-2 mt-2 text-xs text-purple-500 font-semibold">
       <Loader2 className="w-3.5 h-3.5 animate-spin" /> Uploading to S3...
     </div>
   )}
@@ -737,7 +737,7 @@ export const Courses = () => {
 
   <button
   type="submit"
-  className="w-full py-2.5 bg-[#a855f7] hover:bg-amber-400 text-slate-950 font-semibold rounded-xl transition mt-4"
+  className="w-full py-2.5 bg-[#a855f7] hover:bg-purple-400 text-slate-950 font-semibold rounded-xl transition mt-4"
   >
   Assemble Course
   </button>
@@ -815,10 +815,10 @@ export const Courses = () => {
  type="file"
  accept="image/*"
  onChange={handleCourseImageChange}
- className="w-full px-3 py-2 border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 rounded-lg text-slate-900 dark:text-white focus:outline-none file:mr-4 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-amber-50 file:text-amber-700 hover:file:bg-amber-100"
+ className="w-full px-3 py-2 border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 rounded-lg text-slate-900 dark:text-white focus:outline-none file:mr-4 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-purple-50 file:text-purple-700 hover:file:bg-purple-100"
  />
  {uploadingImage && (
-   <div className="flex items-center gap-2 mt-2 text-xs text-amber-500 font-semibold">
+   <div className="flex items-center gap-2 mt-2 text-xs text-purple-500 font-semibold">
      <Loader2 className="w-3.5 h-3.5 animate-spin" /> Uploading to S3...
    </div>
  )}
@@ -899,7 +899,7 @@ export const Courses = () => {
 
  <button
  type="submit"
- className="w-full py-2.5 bg-[#a855f7] hover:bg-amber-400 text-slate-950 font-semibold rounded-xl transition mt-4"
+ className="w-full py-2.5 bg-[#a855f7] hover:bg-purple-400 text-slate-950 font-semibold rounded-xl transition mt-4"
  >
  Save Course Config
  </button>
@@ -1060,7 +1060,7 @@ export const Courses = () => {
           </button>
           <button 
             onClick={saveLessons}
-            className="px-6 py-2 bg-[#a855f7] hover:bg-amber-400 text-slate-950 font-semibold rounded-xl transition shadow-lg shadow-amber-500/10"
+            className="px-6 py-2 bg-[#a855f7] hover:bg-purple-400 text-slate-950 font-semibold rounded-xl transition shadow-lg shadow-purple-500/10"
           >
             Save Syllabus
           </button>

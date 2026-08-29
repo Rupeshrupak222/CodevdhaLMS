@@ -225,7 +225,7 @@ export default function StudentDetailPage() {
                         <span className="text-[11px] text-[#a855f7] block mt-0.5">{sub.task.course.title}</span>
                       )}
                     </div>
-                    <span className="px-2.5 py-1 bg-amber-100 dark:bg-amber-950/45 text-amber-700 dark:text-amber-400 rounded-lg text-xs font-black">
+                    <span className="px-2.5 py-1 bg-purple-100 dark:bg-purple-950/45 text-purple-700 dark:text-purple-400 rounded-lg text-xs font-black">
                       {sub.grade ? sub.grade.replace('_', ' ') : 'PENDING'}
                     </span>
                   </div>

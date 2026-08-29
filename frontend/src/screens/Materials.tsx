@@ -217,7 +217,7 @@ export const Materials = () => {
   const getThumbnail = (type) => {
     if (type === 'PDF') return 'bg-rose-500/10 border-rose-500/25 text-rose-500';
     if (type === 'Videos') return 'bg-sky-500/10 border-sky-500/25 text-sky-500';
-    if (type === 'Notes') return 'bg-amber-500/10 border-amber-500/25 text-amber-500';
+    if (type === 'Notes') return 'bg-purple-500/10 border-purple-500/25 text-purple-500';
     return 'bg-purple-500/10 border-purple-500/25 text-purple-500';
   };
 
@@ -290,7 +290,7 @@ export const Materials = () => {
  {(activeRole === 'admin' || activeRole === 'faculty') && (
  <button
  onClick={() => setIsUploadOpen(true)}
- className="flex items-center justify-center gap-2 bg-[#a855f7] hover:bg-amber-400 text-slate-950 px-4 py-2 rounded-xl text-[16px] font-semibold transition shadow-lg shadow-amber-500/10 cursor-pointer"
+ className="flex items-center justify-center gap-2 bg-[#a855f7] hover:bg-purple-400 text-slate-950 px-4 py-2 rounded-xl text-[16px] font-semibold transition shadow-lg shadow-purple-500/10 cursor-pointer"
  >
  <Plus className="w-4 h-4" />
  Upload Study Material
@@ -340,12 +340,12 @@ export const Materials = () => {
   {/* Cards Grid */}
   {activeRole === 'student' && rawMaterials.length === 0 ? (
     <div className="flex flex-col items-center justify-center py-20 text-center">
-      <div className="w-16 h-16 rounded-full bg-amber-50 dark:bg-amber-900/20 flex items-center justify-center mb-4">
+      <div className="w-16 h-16 rounded-full bg-purple-50 dark:bg-purple-900/20 flex items-center justify-center mb-4">
         <BookOpen className="w-8 h-8 text-[#a855f7]" />
       </div>
       <h3 className="font-semibold text-slate-900 dark:text-white text-base">No Study Materials Yet</h3>
       <p className="text-[14px] text-slate-500 dark:text-slate-400 mt-1 max-w-xs">Enroll in a course to access study PDFs, videos, and notes uploaded by your teachers.</p>
-      <button onClick={() => router.push(`/${activeRole}/courses`)} className="mt-5 px-5 py-2.5 bg-[#a855f7] hover:bg-amber-400 text-slate-950 font-semibold rounded-xl transition">
+      <button onClick={() => router.push(`/${activeRole}/courses`)} className="mt-5 px-5 py-2.5 bg-[#a855f7] hover:bg-purple-400 text-slate-950 font-semibold rounded-xl transition">
         Go to My Courses
       </button>
     </div>
@@ -538,7 +538,7 @@ export const Materials = () => {
  className="w-full px-3 py-2 border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 rounded-lg text-slate-900 dark:text-white focus:outline-none text-[14px]"
  />
  {uploadingFile && (
-   <div className="flex items-center gap-2 mt-2 text-xs text-amber-500 font-semibold animate-pulse">
+   <div className="flex items-center gap-2 mt-2 text-xs text-purple-500 font-semibold animate-pulse">
      <Loader2 className="w-3.5 h-3.5 animate-spin" /> Uploading file to AWS S3...
    </div>
  )}
@@ -561,7 +561,7 @@ export const Materials = () => {
 
  <button
  type="submit"
- className="w-full py-2.5 bg-[#a855f7] hover:bg-amber-400 text-slate-950 font-semibold rounded-xl transition mt-4"
+ className="w-full py-2.5 bg-[#a855f7] hover:bg-purple-400 text-slate-950 font-semibold rounded-xl transition mt-4"
  >
  Publish Document
  </button>

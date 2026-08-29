@@ -176,7 +176,7 @@ export default function FacultyDetailPage() {
               title={teacher.isActive ? 'Deactivate Faculty' : 'Activate Faculty'}
               className={`flex items-center gap-2 px-4 py-2 border rounded-xl font-semibold text-sm transition cursor-pointer ${
                 teacher.isActive
-                  ? 'border-yellow-300 text-yellow-600 hover:bg-yellow-50 dark:border-yellow-750 dark:text-yellow-400 dark:hover:bg-yellow-950/20'
+                  ? 'border-purple-300 text-purple-600 hover:bg-purple-50 dark:border-purple-750 dark:text-purple-400 dark:hover:bg-purple-950/20'
                   : 'border-emerald-300 text-emerald-600 hover:bg-emerald-50 dark:border-emerald-750 dark:text-emerald-400 dark:hover:bg-emerald-950/20'
               }`}
             >
@@ -413,7 +413,7 @@ export default function FacultyDetailPage() {
 
               <button
                 type="submit"
-                className="w-full py-2.5 bg-[#a855f7] hover:bg-amber-400 text-slate-950 font-semibold rounded-xl transition mt-4"
+                className="w-full py-2.5 bg-[#a855f7] hover:bg-purple-400 text-slate-950 font-semibold rounded-xl transition mt-4"
               >
                 Save Changes
               </button>

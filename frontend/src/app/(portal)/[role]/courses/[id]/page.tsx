@@ -595,7 +595,7 @@ export default function CourseDetailsPage() {
                     href={activeContentUrl}
                     target="_blank"
                     rel="noreferrer"
-                    className="px-4 py-1.5 bg-[#a855f7] hover:bg-amber-400 text-slate-950 font-semibold rounded-lg text-xs transition flex items-center gap-1"
+                    className="px-4 py-1.5 bg-[#a855f7] hover:bg-purple-400 text-slate-950 font-semibold rounded-lg text-xs transition flex items-center gap-1"
                   >
                     <ExternalLink className="w-3.5 h-3.5" /> View
                   </a>
@@ -618,7 +618,7 @@ export default function CourseDetailsPage() {
                 <div className="flex gap-2 flex-wrap justify-center">
                   <button
                     onClick={() => setVideoError(false)}
-                    className="px-4 py-1.5 bg-[#a855f7] hover:bg-amber-400 text-slate-950 font-semibold rounded-lg text-xs transition"
+                    className="px-4 py-1.5 bg-[#a855f7] hover:bg-purple-400 text-slate-950 font-semibold rounded-lg text-xs transition"
                   >
                     Retry
                   </button>
@@ -746,7 +746,7 @@ export default function CourseDetailsPage() {
           <div className="lg:col-span-7 space-y-4">
             {/* Student Study Progress banner */}
             {activeRole === 'student' && (
-              <div className="bg-gradient-to-r from-amber-500/10 to-[#a855f7]/10 border border-[#a855f7]/20 rounded-2xl p-4 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+              <div className="bg-gradient-to-r from-purple-500/10 to-[#a855f7]/10 border border-[#a855f7]/20 rounded-2xl p-4 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
                 <div>
                   <h4 className="font-semibold text-sm text-slate-900 dark:text-white">Your Study Flow Progress</h4>
                   <p className="text-xs text-slate-500 mt-1">
@@ -804,7 +804,7 @@ export default function CourseDetailsPage() {
                 <div className="flex gap-2">
                   <button
                     onClick={() => setIsAddSectionOpen(true)}
-                    className="px-3 py-1.5 border border-slate-200 dark:border-slate-700 hover:border-amber-400 text-xs font-semibold rounded-lg text-slate-600 dark:text-slate-300 transition cursor-pointer"
+                    className="px-3 py-1.5 border border-slate-200 dark:border-slate-700 hover:border-purple-400 text-xs font-semibold rounded-lg text-slate-600 dark:text-slate-300 transition cursor-pointer"
                   >
                     + Add Section
                   </button>
@@ -906,7 +906,7 @@ export default function CourseDetailsPage() {
                           return (
                             <div
                               key={les.id}
-                              className={`p-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 hover:bg-slate-50/50 dark:hover:bg-slate-800/20 transition cursor-pointer ${isCurrentlyPlaying ? 'bg-amber-50/20 dark:bg-amber-500/5' : ''}`}
+                              className={`p-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 hover:bg-slate-50/50 dark:hover:bg-slate-800/20 transition cursor-pointer ${isCurrentlyPlaying ? 'bg-purple-50/20 dark:bg-purple-500/5' : ''}`}
                               onClick={() => handleLessonClick(les)}
                             >
                               <div className="flex items-center gap-3 w-full sm:w-auto">
@@ -934,7 +934,7 @@ export default function CourseDetailsPage() {
                                     }
                                   }}
                                   className={`w-8 h-8 rounded-full flex items-center justify-center transition border flex-shrink-0 ${les.videoUrl
-                                      ? 'bg-amber-50 dark:bg-amber-900/20 border-amber-250 text-[#a855f7] hover:scale-105 cursor-pointer'
+                                      ? 'bg-purple-50 dark:bg-purple-900/20 border-purple-250 text-[#a855f7] hover:scale-105 cursor-pointer'
                                       : 'bg-slate-50 dark:bg-slate-800 border-slate-200/40 text-slate-405 cursor-not-allowed'
                                     }`}
                                 >
@@ -967,7 +967,7 @@ export default function CourseDetailsPage() {
                                         e.stopPropagation();
                                         setEditingLesson(les);
                                       }}
-                                      className="p-1.5 hover:bg-amber-50 dark:hover:bg-amber-950/30 text-slate-405 hover:text-amber-600 rounded-lg transition"
+                                      className="p-1.5 hover:bg-purple-50 dark:hover:bg-purple-950/30 text-slate-405 hover:text-purple-600 rounded-lg transition"
                                       title="Edit Lesson"
                                     >
                                       <Edit3 className="w-4 h-4" />
@@ -985,7 +985,7 @@ export default function CourseDetailsPage() {
                                   </>
                                 )}
                                 {(activeRole === 'admin' || activeRole === 'faculty') && (les.durationDays === 'ALL' && currentDuration !== 'ALL') && (
-                                  <span className="text-[10px] font-bold text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-900/20 px-2 py-0.5 rounded-md">
+                                  <span className="text-[10px] font-bold text-purple-600 dark:text-purple-400 bg-purple-50 dark:bg-purple-900/20 px-2 py-0.5 rounded-md">
                                     All Duration
                                   </span>
                                 )}
@@ -1067,7 +1067,7 @@ export default function CourseDetailsPage() {
                     <tr key={enroll.id} className="border-b border-slate-100 dark:border-slate-800 hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition">
                       <td className="px-4 sm:px-6 py-3.5">
                         <div className="flex items-center gap-3">
-                          <div className="w-8 h-8 rounded-full bg-slate-100 overflow-hidden border border-amber-400/40 flex-shrink-0">
+                          <div className="w-8 h-8 rounded-full bg-slate-100 overflow-hidden border border-purple-400/40 flex-shrink-0">
                             <img src={enroll.student?.avatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&q=80'} alt="" className="w-full h-full object-cover" />
                           </div>
                           <span className="font-semibold text-sm text-slate-900 dark:text-white truncate max-w-[100px] sm:max-w-none">{enroll.student?.name}</span>
@@ -1139,7 +1139,7 @@ export default function CourseDetailsPage() {
                   autoFocus
                 />
               </div>
-              <button type="submit" className="w-full py-2.5 bg-[#a855f7] hover:bg-amber-400 text-slate-950 font-semibold rounded-xl transition cursor-pointer">
+              <button type="submit" className="w-full py-2.5 bg-[#a855f7] hover:bg-purple-400 text-slate-950 font-semibold rounded-xl transition cursor-pointer">
                 Save Changes
               </button>
             </form>
@@ -1168,7 +1168,7 @@ export default function CourseDetailsPage() {
                   className="w-full px-3 py-2 border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 rounded-lg text-slate-900 dark:text-white focus:outline-none"
                 />
               </div>
-              <button type="submit" className="w-full py-2.5 bg-[#a855f7] hover:bg-amber-400 text-slate-950 font-semibold rounded-xl transition cursor-pointer">
+              <button type="submit" className="w-full py-2.5 bg-[#a855f7] hover:bg-purple-400 text-slate-950 font-semibold rounded-xl transition cursor-pointer">
                 Confirm & Create
               </button>
             </form>
@@ -1242,14 +1242,14 @@ export default function CourseDetailsPage() {
                   <button
                     type="button"
                     onClick={() => { setContentInputMode('upload'); setDirectS3Url(''); setResolvedS3Key(null); setS3UrlVerified(false); }}
-                    className={`px-3 py-1 text-xs font-semibold rounded-lg border transition ${contentInputMode === 'upload' ? 'bg-amber-50 text-amber-700 border-amber-300' : 'bg-slate-50 dark:bg-slate-900 text-slate-500 border-slate-200 dark:border-slate-700'}`}
+                    className={`px-3 py-1 text-xs font-semibold rounded-lg border transition ${contentInputMode === 'upload' ? 'bg-purple-50 text-purple-700 border-purple-300' : 'bg-slate-50 dark:bg-slate-900 text-slate-500 border-slate-200 dark:border-slate-700'}`}
                   >
                     Upload File
                   </button>
                   <button
                     type="button"
                     onClick={() => { setContentInputMode('url'); setContentUrl(null); setResolvedS3Key(null); setS3UrlVerified(false); }}
-                    className={`px-3 py-1 text-xs font-semibold rounded-lg border transition ${contentInputMode === 'url' ? 'bg-amber-50 text-amber-700 border-amber-300' : 'bg-slate-50 dark:bg-slate-900 text-slate-500 border-slate-200 dark:border-slate-700'}`}
+                    className={`px-3 py-1 text-xs font-semibold rounded-lg border transition ${contentInputMode === 'url' ? 'bg-purple-50 text-purple-700 border-purple-300' : 'bg-slate-50 dark:bg-slate-900 text-slate-500 border-slate-200 dark:border-slate-700'}`}
                   >
                     Paste S3 URL
                   </button>
@@ -1260,12 +1260,12 @@ export default function CourseDetailsPage() {
                       type="file"
                       accept="video/*,application/pdf,text/*"
                       onChange={handleContentFileChange}
-                      className="w-full px-3 py-2 border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 rounded-lg text-slate-900 dark:text-white focus:outline-none file:mr-4 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-amber-50 file:text-amber-700 hover:file:bg-amber-100"
+                      className="w-full px-3 py-2 border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 rounded-lg text-slate-900 dark:text-white focus:outline-none file:mr-4 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-purple-50 file:text-purple-700 hover:file:bg-purple-100"
                     />
                     {uploadingContent && (
                       <div className="mt-3 space-y-1.5">
                         <div className="flex items-center justify-between text-xs font-semibold">
-                          <span className="text-amber-500 flex items-center gap-1.5">
+                          <span className="text-purple-500 flex items-center gap-1.5">
                             <Loader2 className="w-3.5 h-3.5 animate-spin" />
                             Uploading to S3...
                           </span>
@@ -1277,7 +1277,7 @@ export default function CourseDetailsPage() {
                         </div>
                         <div className="w-full h-2 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
                           <div
-                            className="h-full bg-amber-500 rounded-full transition-all duration-300 ease-out"
+                            className="h-full bg-purple-500 rounded-full transition-all duration-300 ease-out"
                             style={{ width: `${uploadProgress?.percent || 0}%` }}
                           />
                         </div>
@@ -1326,7 +1326,7 @@ export default function CourseDetailsPage() {
                   className="w-full px-3 py-2 border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 rounded-lg text-slate-900 dark:text-white focus:outline-none h-20"
                 />
               </div>
-              <button type="submit" className="w-full py-2.5 bg-[#a855f7] hover:bg-amber-400 text-slate-950 font-semibold rounded-xl transition cursor-pointer">
+              <button type="submit" className="w-full py-2.5 bg-[#a855f7] hover:bg-purple-400 text-slate-950 font-semibold rounded-xl transition cursor-pointer">
                 Save & Upload
               </button>
             </form>
@@ -1456,7 +1456,7 @@ export default function CourseDetailsPage() {
               <button
                 type="submit"
                 disabled={editLessonSaving}
-                className="w-full py-2.5 bg-[#a855f7] hover:bg-amber-400 text-slate-950 font-semibold rounded-xl transition cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                className="w-full py-2.5 bg-[#a855f7] hover:bg-purple-400 text-slate-950 font-semibold rounded-xl transition cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
               >
                 {editLessonSaving && <Loader2 className="w-4 h-4 animate-spin" />}
                 {editLessonSaving ? 'Saving...' : 'Save Changes'}

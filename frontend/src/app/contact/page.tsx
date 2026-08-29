@@ -25,11 +25,11 @@ export default function SupportContact() {
   const router = useRouter();
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-amber-50/30 to-white py-16 px-4 sm:px-6 lg:px-8 font-sans selection:bg-orange-500/30 relative overflow-x-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-purple-50/30 to-white py-16 px-4 sm:px-6 lg:px-8 font-sans selection:bg-orange-500/30 relative overflow-x-hidden">
       
       {/* Premium Background Decorations */}
       <div className="absolute top-0 right-0 w-96 h-96 bg-orange-400/10 rounded-full blur-3xl -z-10" />
-      <div className="absolute bottom-0 left-0 w-96 h-96 bg-amber-400/10 rounded-full blur-3xl -z-10" />
+      <div className="absolute bottom-0 left-0 w-96 h-96 bg-purple-400/10 rounded-full blur-3xl -z-10" />
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-orange-300/5 rounded-full blur-3xl -z-10" />
       
       {/* Subtle Grid Pattern */}
@@ -61,7 +61,7 @@ export default function SupportContact() {
           </div>
           
           <h1 className="text-4xl md:text-5xl font-extrabold text-slate-900 tracking-tight mb-4">
-            LMS <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-amber-500">Support</span>
+            LMS <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-purple-500">Support</span>
           </h1>
           <p className="text-lg text-slate-600 max-w-2xl mx-auto">
             Having trouble logging in or accessing your courses? Our dedicated LMS technical support team is here to help.
@@ -129,7 +129,7 @@ export default function SupportContact() {
             {/* Hours Card */}
             <div className="group bg-white/80 backdrop-blur-xl p-6 rounded-3xl border border-slate-200/60 shadow-lg shadow-slate-200/20 hover:shadow-xl hover:border-orange-200/60 transition-all duration-300 hover:-translate-y-1">
               <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-orange-500 to-amber-500 flex items-center justify-center shadow-lg shadow-orange-500/25 group-hover:shadow-orange-500/40 transition-all flex-shrink-0">
+                <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-orange-500 to-purple-500 flex items-center justify-center shadow-lg shadow-orange-500/25 group-hover:shadow-orange-500/40 transition-all flex-shrink-0">
                   <Clock className="w-6 h-6 text-white" />
                 </div>
                 <div className="flex-1">
@@ -141,7 +141,7 @@ export default function SupportContact() {
             </div>
 
             {/* Quick Help Badge */}
-            <div className="bg-gradient-to-r from-orange-50 to-amber-50 p-4 rounded-2xl border border-orange-200/60">
+            <div className="bg-gradient-to-r from-orange-50 to-purple-50 p-4 rounded-2xl border border-orange-200/60">
               <div className="flex items-center gap-3">
                 <Sparkles className="w-5 h-5 text-orange-500 flex-shrink-0" />
                 <p className="text-xs text-slate-700">
@@ -232,7 +232,7 @@ export default function SupportContact() {
                 </div>
                 <button 
                   type="submit" 
-                  className="w-full sm:w-auto px-8 py-3.5 bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white rounded-xl font-bold flex items-center justify-center gap-2 shadow-lg shadow-orange-500/25 hover:shadow-xl hover:shadow-orange-500/35 transition-all duration-300 hover:-translate-y-0.5 active:scale-95 group"
+                  className="w-full sm:w-auto px-8 py-3.5 bg-gradient-to-r from-orange-500 to-purple-500 hover:from-orange-600 hover:to-purple-600 text-white rounded-xl font-bold flex items-center justify-center gap-2 shadow-lg shadow-orange-500/25 hover:shadow-xl hover:shadow-orange-500/35 transition-all duration-300 hover:-translate-y-0.5 active:scale-95 group"
                 >
                   <Send className="w-4 h-4 group-hover:translate-x-1 transition-transform" /> 
                   Submit Ticket

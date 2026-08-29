@@ -327,7 +327,7 @@ export const Tasks = () => {
   });
 
   const getStatusBadge = (status: string) => {
-    if (status === 'Pending') return 'bg-amber-100 dark:bg-amber-955/20 text-[#a855f7] border border-amber-400/20';
+    if (status === 'Pending') return 'bg-purple-100 dark:bg-purple-955/20 text-[#a855f7] border border-purple-400/20';
     if (status === 'Completed') return 'bg-sky-100 dark:bg-sky-955/20 text-sky-600 dark:text-sky-400 border border-sky-500/20';
     return 'bg-emerald-100 dark:bg-emerald-950/20 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20';
   };
@@ -387,7 +387,7 @@ export const Tasks = () => {
  {(activeRole === 'admin' || activeRole === 'faculty') && (
  <button
  onClick={() => setIsAssignOpen(true)}
- className="flex items-center justify-center gap-2 bg-[#a855f7] hover:bg-amber-400 text-slate-950 px-4 py-2 rounded-xl text-[16px] font-semibold transition shadow-lg shadow-amber-500/10 cursor-pointer"
+ className="flex items-center justify-center gap-2 bg-[#a855f7] hover:bg-purple-400 text-slate-950 px-4 py-2 rounded-xl text-[16px] font-semibold transition shadow-lg shadow-purple-500/10 cursor-pointer"
  >
  <Plus className="w-4 h-4" />
  Assign Project & Assignments
@@ -435,12 +435,12 @@ export const Tasks = () => {
   {/* Tasks List Grid */}
   {activeRole === 'student' && rawTasks.length === 0 ? (
     <div className="flex flex-col items-center justify-center py-20 text-center">
-      <div className="w-16 h-16 rounded-full bg-amber-50 dark:bg-amber-900/20 flex items-center justify-center mb-4">
+      <div className="w-16 h-16 rounded-full bg-purple-50 dark:bg-purple-900/20 flex items-center justify-center mb-4">
         <ClipboardList className="w-8 h-8 text-[#a855f7]" />
       </div>
       <h3 className="font-semibold text-slate-900 dark:text-white text-base">No Assignments Available</h3>
       <p className="text-[14px] text-slate-500 dark:text-slate-400 mt-1 max-w-xs">Enroll in a course to see your assignments and submit your work.</p>
-      <button onClick={() => router.push(`/${activeRole}/courses`)} className="mt-5 px-5 py-2.5 bg-[#a855f7] hover:bg-amber-400 text-slate-950 font-semibold rounded-xl transition">
+      <button onClick={() => router.push(`/${activeRole}/courses`)} className="mt-5 px-5 py-2.5 bg-[#a855f7] hover:bg-purple-400 text-slate-950 font-semibold rounded-xl transition">
         Go to My Courses
       </button>
     </div>
@@ -508,7 +508,7 @@ export const Tasks = () => {
  {task.status === 'Pending' && (
  <button
  onClick={() => triggerSubmitWork(task)}
- className="px-3.5 py-1.5 bg-[#a855f7] hover:bg-amber-400 text-slate-950 rounded-xl text-[14px] font-semibold transition cursor-pointer flex items-center gap-1.5"
+ className="px-3.5 py-1.5 bg-[#a855f7] hover:bg-purple-400 text-slate-950 rounded-xl text-[14px] font-semibold transition cursor-pointer flex items-center gap-1.5"
  >
  <Send className="w-3 h-3" /> Submit Work
  </button>
@@ -520,7 +520,7 @@ export const Tasks = () => {
   <div className="flex gap-2">
     <button
     onClick={() => triggerViewSubmissions(task)}
-    className="px-3.5 py-1.5 bg-[#a855f7] hover:bg-amber-400 text-slate-950 rounded-xl text-[14px] font-semibold transition cursor-pointer flex items-center gap-1.5"
+    className="px-3.5 py-1.5 bg-[#a855f7] hover:bg-purple-400 text-slate-950 rounded-xl text-[14px] font-semibold transition cursor-pointer flex items-center gap-1.5"
     >
     <Eye className="w-3 h-3" /> View Submissions
     </button>
@@ -659,7 +659,7 @@ export const Tasks = () => {
   </span>
   </div>
   {uploadingAssign && (
-    <div className="flex items-center gap-2 mt-2 text-xs text-amber-500 font-semibold animate-pulse">
+    <div className="flex items-center gap-2 mt-2 text-xs text-purple-500 font-semibold animate-pulse">
       <Loader2 className="w-3.5 h-3.5 animate-spin" /> Uploading task resource to AWS S3...
     </div>
   )}
@@ -670,7 +670,7 @@ export const Tasks = () => {
 
   <button
   type="submit"
-  className="w-full py-2.5 bg-[#a855f7] hover:bg-amber-400 text-slate-950 font-semibold rounded-xl transition mt-4"
+  className="w-full py-2.5 bg-[#a855f7] hover:bg-purple-400 text-slate-950 font-semibold rounded-xl transition mt-4"
   >
   Publish Project Task
   </button>
@@ -709,7 +709,7 @@ export const Tasks = () => {
  <span className="text-[10px] text-slate-600 block mt-1">(Supports ZIP, PDF, or MD up to 25MB)</span>
  </div>
  {uploadingSubmit && (
-    <div className="flex items-center gap-2 text-xs text-amber-500 font-semibold animate-pulse justify-center">
+    <div className="flex items-center gap-2 text-xs text-purple-500 font-semibold animate-pulse justify-center">
       <Loader2 className="w-3.5 h-3.5 animate-spin" /> Uploading assignment submission to AWS S3...
     </div>
   )}
@@ -749,7 +749,7 @@ export const Tasks = () => {
 
  <button
  type="submit"
- className="w-full py-2.5 bg-[#a855f7] hover:bg-amber-400 text-slate-950 font-semibold rounded-xl transition"
+ className="w-full py-2.5 bg-[#a855f7] hover:bg-purple-400 text-slate-950 font-semibold rounded-xl transition"
  >
  Send Submission
  </button>
@@ -889,7 +889,7 @@ export const Tasks = () => {
                      </span>
                      <button
                        onClick={() => triggerGradeSubmission(sub)}
-                       className="px-3 py-1 bg-[#a855f7] hover:bg-amber-400 text-slate-950 text-xs font-semibold rounded-lg transition cursor-pointer"
+                       className="px-3 py-1 bg-[#a855f7] hover:bg-purple-400 text-slate-950 text-xs font-semibold rounded-lg transition cursor-pointer"
                      >
                        {sub.status === 'REVIEWED' ? 'Edit Grade' : 'Grade'}
                      </button>
@@ -980,7 +980,7 @@ export const Tasks = () => {
      {detailTask.attachmentUrl && (
        <div>
          <label className="block text-slate-500 dark:text-slate-400 font-semibold mb-1 text-xs uppercase tracking-wide">Attached Resource</label>
-         <div className="p-4 bg-amber-50/50 dark:bg-amber-950/10 rounded-xl border border-amber-200/50 dark:border-amber-800/30 flex items-center justify-between gap-3">
+         <div className="p-4 bg-purple-50/50 dark:bg-purple-950/10 rounded-xl border border-purple-200/50 dark:border-purple-800/30 flex items-center justify-between gap-3">
            <div className="flex items-center gap-2 min-w-0">
              <FileText className="w-5 h-5 text-[#a855f7] flex-shrink-0" />
              <span className="text-slate-700 dark:text-slate-200 font-semibold text-sm truncate">
@@ -996,7 +996,7 @@ export const Tasks = () => {
              {isVideoUrl(detailTask.attachmentUrl) && (
                <button
                  onClick={() => handlePreviewAttachment(detailTask.attachmentUrl, detailTask.title)}
-                 className="px-3 py-1.5 bg-[#a855f7] hover:bg-amber-400 text-slate-950 rounded-lg text-xs font-semibold transition cursor-pointer flex items-center gap-1"
+                 className="px-3 py-1.5 bg-[#a855f7] hover:bg-purple-400 text-slate-950 rounded-lg text-xs font-semibold transition cursor-pointer flex items-center gap-1"
                >
                  <Play className="w-3 h-3" /> Play
                </button>
@@ -1004,7 +1004,7 @@ export const Tasks = () => {
              {isPdfUrl(detailTask.attachmentUrl) && (
                <button
                  onClick={() => handlePreviewAttachment(detailTask.attachmentUrl, detailTask.title)}
-                 className="px-3 py-1.5 bg-[#a855f7] hover:bg-amber-400 text-slate-950 rounded-lg text-xs font-semibold transition cursor-pointer flex items-center gap-1"
+                 className="px-3 py-1.5 bg-[#a855f7] hover:bg-purple-400 text-slate-950 rounded-lg text-xs font-semibold transition cursor-pointer flex items-center gap-1"
                >
                  <Eye className="w-3 h-3" /> Preview
                </button>
@@ -1051,7 +1051,7 @@ export const Tasks = () => {
      {!detailTask.mySubmission && new Date() <= new Date(detailTask.dueDate) && (
        <button
          onClick={() => { setIsDetailOpen(false); setDetailTask(null); triggerSubmitWork(detailTask); }}
-         className="w-full py-2.5 bg-[#a855f7] hover:bg-amber-400 text-slate-950 font-semibold rounded-xl transition flex items-center justify-center gap-2"
+         className="w-full py-2.5 bg-[#a855f7] hover:bg-purple-400 text-slate-950 font-semibold rounded-xl transition flex items-center justify-center gap-2"
        >
          <Send className="w-4 h-4" /> Submit Your Work
        </button>

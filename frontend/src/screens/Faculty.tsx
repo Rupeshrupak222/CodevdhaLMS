@@ -217,7 +217,7 @@ export const Faculty = () => {
  {activeRole === 'admin' && (
  <button
  onClick={() => setIsAssignOpen(true)}
- className="flex items-center justify-center gap-2 bg-[#a855f7] hover:bg-amber-400 text-slate-950 px-4 py-2 rounded-xl text-[16px] font-semibold transition shadow-lg shadow-amber-500/10 cursor-pointer"
+ className="flex items-center justify-center gap-2 bg-[#a855f7] hover:bg-purple-400 text-slate-950 px-4 py-2 rounded-xl text-[16px] font-semibold transition shadow-lg shadow-purple-500/10 cursor-pointer"
  >
  <Plus className="w-4 h-4" />
  Onboard Faculty
@@ -382,7 +382,7 @@ export const Faculty = () => {
           <button
             onClick={() => handleToggleActive(prof)}
             title={prof.isActive ? 'Deactivate Faculty' : 'Activate Faculty'}
-            className={`px-3 rounded-xl border transition ${prof.isActive ? 'border-yellow-300 text-yellow-500 hover:bg-yellow-400 hover:text-white dark:border-yellow-700 dark:text-yellow-400' : 'border-emerald-300 text-emerald-500 hover:bg-emerald-500 hover:text-white dark:border-emerald-700 dark:text-emerald-400'}`}
+            className={`px-3 rounded-xl border transition ${prof.isActive ? 'border-purple-300 text-purple-500 hover:bg-purple-400 hover:text-white dark:border-purple-700 dark:text-purple-400' : 'border-emerald-300 text-emerald-500 hover:bg-emerald-500 hover:text-white dark:border-emerald-700 dark:text-emerald-400'}`}
           >
             {prof.isActive ? <ToggleRight className="w-4 h-4" /> : <ToggleLeft className="w-4 h-4" />}
           </button>
@@ -508,7 +508,7 @@ export const Faculty = () => {
 
  <button
  type="submit"
- className="w-full py-2.5 bg-[#a855f7] hover:bg-amber-400 text-slate-950 font-semibold rounded-xl transition mt-4"
+ className="w-full py-2.5 bg-[#a855f7] hover:bg-purple-400 text-slate-950 font-semibold rounded-xl transition mt-4"
  >
  Onboard Faculty Resource
  </button>
@@ -625,7 +625,7 @@ export const Faculty = () => {
 
  <button
  type="submit"
- className="w-full py-2.5 bg-[#a855f7] hover:bg-amber-400 text-slate-950 font-semibold rounded-xl transition mt-4"
+ className="w-full py-2.5 bg-[#a855f7] hover:bg-purple-400 text-slate-950 font-semibold rounded-xl transition mt-4"
  >
  Save Changes
  </button>

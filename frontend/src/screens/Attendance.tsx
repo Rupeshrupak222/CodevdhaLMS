@@ -412,7 +412,7 @@ export const Attendance = () => {
                   </div>
                   <button
                     onClick={handleMarkNoClassDay}
-                    className="px-3 py-1.5 bg-amber-500/20 hover:bg-amber-500/30 text-amber-650 dark:text-amber-400 border border-amber-500/30 rounded-xl text-[14px] font-semibold transition cursor-pointer h-[38px]"
+                    className="px-3 py-1.5 bg-purple-500/20 hover:bg-purple-500/30 text-purple-650 dark:text-purple-400 border border-purple-500/30 rounded-xl text-[14px] font-semibold transition cursor-pointer h-[38px]"
                   >
                     Mark No Class Day
                   </button>
@@ -426,7 +426,7 @@ export const Attendance = () => {
                       <Check className="w-3 h-3" /> Marked
                     </span>
                   ) : (
-                    <span className="flex items-center gap-1 px-2 py-0.5 rounded border border-amber-200 dark:border-amber-500/30 bg-amber-50 dark:bg-amber-500/10 text-amber-600 dark:text-amber-400 text-[11px] font-bold uppercase tracking-wider">
+                    <span className="flex items-center gap-1 px-2 py-0.5 rounded border border-purple-200 dark:border-purple-500/30 bg-purple-50 dark:bg-purple-500/10 text-purple-600 dark:text-purple-400 text-[11px] font-bold uppercase tracking-wider">
                       <AlertCircle className="w-3 h-3" /> Pending
                     </span>
                   )}
@@ -454,7 +454,7 @@ export const Attendance = () => {
                           <span className="text-[14px] text-slate-655">{stud.email}</span>
                         </td>
                         <td className="px-6 py-3.5">
-                          <span className={`text-[16px]  font-semibold ${calculateAttendanceRate(stud.id) >= 85 ? 'text-emerald-500' : 'text-amber-500'}`}>
+                          <span className={`text-[16px]  font-semibold ${calculateAttendanceRate(stud.id) >= 85 ? 'text-emerald-500' : 'text-purple-500'}`}>
                             {calculateAttendanceRate(stud.id)}%
                           </span>
                         </td>
@@ -488,7 +488,7 @@ export const Attendance = () => {
               <div className="flex justify-end pt-4 border-t border-slate-100 dark:border-slate-800">
                 <button
                   onClick={saveAttendance}
-                  className="flex items-center gap-2 bg-[#a855f7] hover:bg-amber-400 text-slate-950 font-semibold px-5 py-2.5 rounded-xl transition cursor-pointer"
+                  className="flex items-center gap-2 bg-[#a855f7] hover:bg-purple-400 text-slate-950 font-semibold px-5 py-2.5 rounded-xl transition cursor-pointer"
                 >
                   <Save className="w-4 h-4" /> Save Attendance Log
                 </button>
@@ -692,7 +692,7 @@ export const Attendance = () => {
                 let cellClass = "bg-slate-50 dark:bg-slate-900/60 border border-slate-100 dark:border-slate-800/60 text-slate-800 dark:text-slate-350";
                 if (d.status === 'present') cellClass = "bg-emerald-500 text-white font-semibold border border-emerald-500";
                 else if (d.status === 'absent') cellClass = "bg-red-500 text-white font-semibold border border-red-500";
-                else if (d.status === 'noclass') cellClass = "bg-amber-100 dark:bg-amber-950/20 text-amber-600 dark:text-amber-400 border border-amber-250 dark:border-amber-900/40 font-semibold";
+                else if (d.status === 'noclass') cellClass = "bg-purple-100 dark:bg-purple-950/20 text-purple-600 dark:text-purple-400 border border-purple-250 dark:border-purple-900/40 font-semibold";
                 else if (d.status === 'weekend') cellClass = "bg-slate-100/60 dark:bg-slate-950/40 text-slate-400 font-normal border border-transparent";
 
                 return (

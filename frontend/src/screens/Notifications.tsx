@@ -58,7 +58,7 @@ export const Notifications = () => {
   const getIcon = (type: string) => {
     switch (type) {
       case 'SUCCESS': return <CheckCircle2 className="w-5 h-5 text-green-500" />;
-      case 'WARNING': return <AlertCircle className="w-5 h-5 text-amber-500" />;
+      case 'WARNING': return <AlertCircle className="w-5 h-5 text-purple-500" />;
       case 'ERROR': return <AlertCircle className="w-5 h-5 text-red-500" />;
       default: return <Info className="w-5 h-5 text-blue-500" />;
     }
@@ -86,7 +86,7 @@ export const Notifications = () => {
         {activeRole === 'admin' && (
           <button
             onClick={() => setIsCreateOpen(true)}
-            className="flex items-center gap-2 px-4 py-2 bg-[#a855f7] hover:bg-amber-500 text-white font-medium rounded-xl shadow-lg shadow-amber-500/20 transition-all active:scale-95"
+            className="flex items-center gap-2 px-4 py-2 bg-[#a855f7] hover:bg-purple-500 text-white font-medium rounded-xl shadow-lg shadow-purple-500/20 transition-all active:scale-95"
           >
             <Plus className="w-5 h-5" />
             Create Announcement
@@ -106,7 +106,7 @@ export const Notifications = () => {
             {notifications.map((notif: any) => (
               <li 
                 key={notif.id} 
-                className={`p-4 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition flex gap-4 ${!notif.isRead ? 'bg-amber-50/50 dark:bg-slate-800/80' : ''}`}
+                className={`p-4 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition flex gap-4 ${!notif.isRead ? 'bg-purple-50/50 dark:bg-slate-800/80' : ''}`}
               >
                 <div className="flex-shrink-0 mt-1">
                   {getIcon(notif.type)}
@@ -290,7 +290,7 @@ export const Notifications = () => {
                     </button>
                     <button
                       type="submit"
-                      className="px-5 py-2 rounded-xl text-sm font-medium bg-[#a855f7] hover:bg-amber-500 text-white shadow-lg shadow-amber-500/20 transition active:scale-95"
+                      className="px-5 py-2 rounded-xl text-sm font-medium bg-[#a855f7] hover:bg-purple-500 text-white shadow-lg shadow-purple-500/20 transition active:scale-95"
                     >
                       Send Announcement
                     </button>

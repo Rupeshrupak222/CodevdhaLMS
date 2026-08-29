@@ -26,7 +26,7 @@ export default function TermsPage() {
         {/* Header - Premium Style */}
         <div className="mb-12 relative">
           <div className="absolute -top-10 -right-10 w-40 h-40 bg-orange-400/10 rounded-full blur-3xl" />
-          <div className="absolute -top-20 -left-20 w-60 h-60 bg-amber-400/5 rounded-full blur-3xl" />
+          <div className="absolute -top-20 -left-20 w-60 h-60 bg-purple-400/5 rounded-full blur-3xl" />
           
           <Link 
             href="/login"
@@ -37,7 +37,7 @@ export default function TermsPage() {
           
           <div className="relative">
             <div className="flex items-center gap-4 mb-4">
-              <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-orange-500 to-amber-500 shadow-lg shadow-orange-500/25 flex items-center justify-center flex-shrink-0">
+              <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-orange-500 to-purple-500 shadow-lg shadow-orange-500/25 flex items-center justify-center flex-shrink-0">
                 <FileText className="w-7 h-7 text-white" />
               </div>
               <div>
@@ -58,7 +58,7 @@ export default function TermsPage() {
             </div>
           </div>
 
-          <div className="mt-6 p-5 rounded-2xl bg-gradient-to-r from-orange-50 to-amber-50 border border-orange-200/50 shadow-sm">
+          <div className="mt-6 p-5 rounded-2xl bg-gradient-to-r from-orange-50 to-purple-50 border border-orange-200/50 shadow-sm">
             <p className="text-sm text-slate-700 leading-relaxed flex items-start gap-3">
               <span className="text-orange-500 mt-0.5">📋</span>
               <span>
@@ -324,7 +324,7 @@ export default function TermsPage() {
           </div>
 
           {/* 11. Contact */}
-          <div className="group bg-gradient-to-r from-orange-50 to-amber-50 rounded-2xl border border-orange-200/60 shadow-sm hover:shadow-xl transition-all duration-300 p-7">
+          <div className="group bg-gradient-to-r from-orange-50 to-purple-50 rounded-2xl border border-orange-200/60 shadow-sm hover:shadow-xl transition-all duration-300 p-7">
             <div className="flex items-center gap-3 mb-4">
               <div className="p-2 rounded-xl bg-orange-200/60 group-hover:bg-orange-200 transition-colors">
                 <Mail className="w-5 h-5 text-orange-600" />

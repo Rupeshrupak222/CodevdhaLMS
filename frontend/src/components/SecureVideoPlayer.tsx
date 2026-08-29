@@ -446,7 +446,7 @@ export const SecureVideoPlayer: React.FC<SecureVideoPlayerProps> = ({
           <ShieldAlert className="w-12 h-12 text-[#a855f7] mb-4" />
           <h3 className="text-lg font-bold mb-2">Playback Paused</h3>
           <p className="text-sm text-slate-300 max-w-xs mb-4">Video playback is paused while you are away. It will auto-resume when you return.</p>
-          <button onClick={handleResumePlayback} className="px-5 py-2.5 bg-[#a855f7] hover:bg-amber-400 text-slate-950 font-semibold rounded-xl transition text-sm">Resume Now</button>
+          <button onClick={handleResumePlayback} className="px-5 py-2.5 bg-[#a855f7] hover:bg-purple-400 text-slate-950 font-semibold rounded-xl transition text-sm">Resume Now</button>
         </div>
       )}
 

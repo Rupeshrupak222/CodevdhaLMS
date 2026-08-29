@@ -43,7 +43,7 @@ export const CourseAnalyticsExplorer = () => {
       { title: 'Total Courses', value: s.totalCourses, icon: BookOpen, color: 'text-indigo-600 dark:text-indigo-400', bg: 'bg-indigo-100 dark:bg-indigo-500/20', cardBg: 'bg-indigo-50/60 dark:bg-indigo-900/10', border: 'border-indigo-100 dark:border-indigo-800/30' },
       { title: 'Total Enrollments', value: s.totalEnrollments, icon: Users, color: 'text-blue-600 dark:text-blue-400', bg: 'bg-blue-100 dark:bg-blue-500/20', cardBg: 'bg-blue-50/60 dark:bg-blue-900/10', border: 'border-blue-100 dark:border-blue-800/30' },
       { title: 'Classes Conducted', value: s.totalClasses, icon: Calendar, color: 'text-emerald-600 dark:text-emerald-400', bg: 'bg-emerald-100 dark:bg-emerald-500/20', cardBg: 'bg-emerald-50/60 dark:bg-emerald-900/10', border: 'border-emerald-100 dark:border-emerald-800/30' },
-      { title: 'Overall Attendance', value: `${s.overallAttendance}%`, icon: Clock, color: 'text-amber-600 dark:text-amber-400', bg: 'bg-amber-100 dark:bg-amber-500/20', cardBg: 'bg-amber-50/60 dark:bg-amber-900/10', border: 'border-amber-100 dark:border-amber-800/30' },
+      { title: 'Overall Attendance', value: `${s.overallAttendance}%`, icon: Clock, color: 'text-purple-600 dark:text-purple-400', bg: 'bg-purple-100 dark:bg-purple-500/20', cardBg: 'bg-purple-50/60 dark:bg-purple-900/10', border: 'border-purple-100 dark:border-purple-800/30' },
       { title: 'Avg Quiz Score', value: `${s.overallQuizCompletion}%`, icon: Award, color: 'text-purple-600 dark:text-purple-400', bg: 'bg-purple-100 dark:bg-purple-500/20', cardBg: 'bg-purple-50/60 dark:bg-purple-900/10', border: 'border-purple-100 dark:border-purple-800/30' },
       { title: 'Avg Course Progress', value: `${s.overallCourseCompletion}%`, icon: CheckCircle2, color: 'text-rose-600 dark:text-rose-400', bg: 'bg-rose-100 dark:bg-rose-500/20', cardBg: 'bg-rose-50/60 dark:bg-rose-900/10', border: 'border-rose-100 dark:border-rose-800/30' },
     ];
@@ -122,10 +122,10 @@ export const CourseAnalyticsExplorer = () => {
                     </div>
                     <span className="font-bold text-slate-800 dark:text-slate-200 text-sm">{data.overview.totalEnrolled} Students</span>
                   </div>
-                  <div className="p-3 bg-amber-50/60 dark:bg-amber-900/10 rounded-xl border border-amber-100 dark:border-amber-800/30 hover:scale-[1.02] transition-transform cursor-default">
+                  <div className="p-3 bg-purple-50/60 dark:bg-purple-900/10 rounded-xl border border-purple-100 dark:border-purple-800/30 hover:scale-[1.02] transition-transform cursor-default">
                     <div className="flex items-center gap-1.5 mb-1">
-                      <Activity className="w-3.5 h-3.5 text-amber-500" />
-                      <span className="block text-[12px] text-amber-600 dark:text-amber-400 font-semibold">Active</span>
+                      <Activity className="w-3.5 h-3.5 text-purple-500" />
+                      <span className="block text-[12px] text-purple-600 dark:text-purple-400 font-semibold">Active</span>
                     </div>
                     <span className="font-bold text-slate-800 dark:text-slate-200 text-sm">{data.overview.activeStudents} Students</span>
                   </div>
@@ -208,7 +208,7 @@ export const CourseAnalyticsExplorer = () => {
                     return (
                       <div key={item.id} className="flex gap-2 items-start relative">
                         <div className="flex flex-col items-center">
-                          <div className={`w-2 h-2 rounded-full mt-1.5 ${item.isUpcoming ? 'bg-amber-400' : 'bg-emerald-400'}`} />
+                          <div className={`w-2 h-2 rounded-full mt-1.5 ${item.isUpcoming ? 'bg-purple-400' : 'bg-emerald-400'}`} />
                           <div className="w-px h-full bg-slate-200 dark:bg-slate-700 absolute top-4 bottom-[-8px] left-[3.5px] -z-10" />
                         </div>
                         <div className="bg-slate-50 dark:bg-slate-800/50 p-2 rounded-md border border-slate-100 dark:border-slate-700 flex-1">
@@ -241,7 +241,7 @@ export const CourseAnalyticsExplorer = () => {
               Risk: <b className="text-slate-800 dark:text-white truncate max-w-[60px]">{data.insights?.atRiskStudent}</b>
             </span>
             <span className="flex items-center gap-1">
-              <Award className="w-3 h-3 text-amber-500" />
+              <Award className="w-3 h-3 text-purple-500" />
               High: <b className="text-slate-800 dark:text-white">{data.insights?.highestQuizScore}%</b>
             </span>
           </div>
@@ -259,13 +259,13 @@ export const CourseAnalyticsExplorer = () => {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-2 mb-2">
         <h3 className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
-          <BookOpen className="w-4 h-4 text-[#F5C242]" /> 
+          <BookOpen className="w-4 h-4 text-[#a855f7]" /> 
           Course Analytics
         </h3>
         <select
           value={timeRange}
           onChange={(e) => setTimeRange(e.target.value)}
-          className="text-[12px] font-semibold bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 rounded-lg px-2 py-1 focus:outline-none focus:border-[#F5C242]"
+          className="text-[12px] font-semibold bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 rounded-lg px-2 py-1 focus:outline-none focus:border-[#a855f7]"
         >
           <option value="7d">Last 7 Days</option>
           <option value="30d">Last 30 Days</option>
@@ -281,7 +281,7 @@ export const CourseAnalyticsExplorer = () => {
             setSelectedCourseId(e.target.value);
             setActiveTab('overview');
           }}
-          className="w-full text-sm font-semibold bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-white rounded-xl px-3 py-1.5 focus:outline-none focus:border-[#F5C242] transition-colors"
+          className="w-full text-sm font-semibold bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-white rounded-xl px-3 py-1.5 focus:outline-none focus:border-[#a855f7] transition-colors"
         >
           {activeRole === 'admin' && <option value="all">All Courses (Platform Overview)</option>}
           {courses.map((c: any) => (

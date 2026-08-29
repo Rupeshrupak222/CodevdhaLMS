@@ -9,7 +9,7 @@ export default function PrivacyPage() {
         {/* Header - Premium Style */}
         <div className="mb-12 relative">
           <div className="absolute -top-10 -right-10 w-40 h-40 bg-orange-400/10 rounded-full blur-3xl" />
-          <div className="absolute -top-20 -left-20 w-60 h-60 bg-amber-400/5 rounded-full blur-3xl" />
+          <div className="absolute -top-20 -left-20 w-60 h-60 bg-purple-400/5 rounded-full blur-3xl" />
           
           <Link 
             href="/login"
@@ -22,7 +22,7 @@ export default function PrivacyPage() {
           
           <div className="relative">
             <div className="flex items-center gap-4 mb-4">
-              <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-orange-500 to-amber-500 shadow-lg shadow-orange-500/25 flex items-center justify-center flex-shrink-0">
+              <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-orange-500 to-purple-500 shadow-lg shadow-orange-500/25 flex items-center justify-center flex-shrink-0">
                 <Shield className="w-7 h-7 text-white" />
               </div>
               <div>
@@ -43,7 +43,7 @@ export default function PrivacyPage() {
             </div>
           </div>
 
-          <div className="mt-6 p-5 rounded-2xl bg-gradient-to-r from-orange-50 to-amber-50 border border-orange-200/50 shadow-sm">
+          <div className="mt-6 p-5 rounded-2xl bg-gradient-to-r from-orange-50 to-purple-50 border border-orange-200/50 shadow-sm">
             <p className="text-sm text-slate-700 leading-relaxed flex items-start gap-3">
               <span className="text-orange-500 mt-0.5">🔒</span>
               <span>
@@ -224,30 +224,30 @@ export default function PrivacyPage() {
           {/* 6. Cookie Policy */}
           <div className="group bg-white/80 backdrop-blur-sm rounded-2xl border border-slate-200/60 shadow-sm hover:shadow-xl transition-all duration-300 p-7 hover:border-orange-200/60">
             <div className="flex items-center gap-3 mb-4">
-              <div className="p-2 rounded-xl bg-amber-100/60 group-hover:bg-amber-100 transition-colors">
-                <Cookie className="w-5 h-5 text-amber-600" />
+              <div className="p-2 rounded-xl bg-purple-100/60 group-hover:bg-purple-100 transition-colors">
+                <Cookie className="w-5 h-5 text-purple-600" />
               </div>
               <h2 className="text-lg font-semibold text-slate-900">6. Cookie Policy</h2>
             </div>
             <ul className="space-y-3">
               <li className="flex items-start gap-3 text-sm text-slate-600">
-                <span className="w-1.5 h-1.5 rounded-full bg-amber-400 mt-2 flex-shrink-0" />
+                <span className="w-1.5 h-1.5 rounded-full bg-purple-400 mt-2 flex-shrink-0" />
                 <span><span className="font-medium text-slate-800">Necessary:</span> authentication, session security — cannot be disabled.</span>
               </li>
               <li className="flex items-start gap-3 text-sm text-slate-600">
-                <span className="w-1.5 h-1.5 rounded-full bg-amber-400 mt-2 flex-shrink-0" />
+                <span className="w-1.5 h-1.5 rounded-full bg-purple-400 mt-2 flex-shrink-0" />
                 <span><span className="font-medium text-slate-800">Analytics:</span> help us understand how students/teachers interact with LMS features.</span>
               </li>
               <li className="flex items-start gap-3 text-sm text-slate-600">
-                <span className="w-1.5 h-1.5 rounded-full bg-amber-400 mt-2 flex-shrink-0" />
+                <span className="w-1.5 h-1.5 rounded-full bg-purple-400 mt-2 flex-shrink-0" />
                 <span><span className="font-medium text-slate-800">Functional:</span> remember preferences (e.g., dark mode, course filters).</span>
               </li>
               <li className="flex items-start gap-3 text-sm text-slate-600">
-                <span className="w-1.5 h-1.5 rounded-full bg-amber-400 mt-2 flex-shrink-0" />
+                <span className="w-1.5 h-1.5 rounded-full bg-purple-400 mt-2 flex-shrink-0" />
                 <span><span className="font-medium text-slate-800">Marketing:</span> used for targeted advertising (disabled by default).</span>
               </li>
               <li className="flex items-start gap-3 text-sm text-slate-600">
-                <span className="w-1.5 h-1.5 rounded-full bg-amber-400 mt-2 flex-shrink-0" />
+                <span className="w-1.5 h-1.5 rounded-full bg-purple-400 mt-2 flex-shrink-0" />
                 <span>Manage cookie preferences via the cookie banner on our LMS login page.</span>
               </li>
             </ul>
@@ -332,7 +332,7 @@ export default function PrivacyPage() {
           </div>
 
           {/* 10. Contact Us */}
-          <div className="group bg-gradient-to-r from-orange-50 to-amber-50 rounded-2xl border border-orange-200/60 shadow-sm hover:shadow-xl transition-all duration-300 p-7">
+          <div className="group bg-gradient-to-r from-orange-50 to-purple-50 rounded-2xl border border-orange-200/60 shadow-sm hover:shadow-xl transition-all duration-300 p-7">
             <div className="flex items-center gap-3 mb-4">
               <div className="p-2 rounded-xl bg-orange-200/60 group-hover:bg-orange-200 transition-colors">
                 <Mail className="w-5 h-5 text-orange-600" />

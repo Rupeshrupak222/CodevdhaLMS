@@ -342,7 +342,7 @@ export const Header = ({ onMenuClick }) => {
                <p className="text-[16px] text-slate-500 dark:text-slate-400 truncate">
                  {user ? user.email : 'admin@codvedha.com'}
                </p>
-               <span className="inline-block mt-2 px-2 py-0.5 text-[14px] font-semibold uppercase rounded bg-amber-100 text-amber-700 border border-amber-200">
+               <span className="inline-block mt-2 px-2 py-0.5 text-[14px] font-semibold uppercase rounded bg-purple-100 text-purple-700 border border-purple-200">
                  {roleDisplayName || 'User'}
                </span>
              </div>
@@ -402,7 +402,7 @@ export const Header = ({ onMenuClick }) => {
                  <p className="text-[16px] text-slate-500 dark:text-slate-400 truncate">
                    {user ? user.email : 'admin@codvedha.com'}
                  </p>
-                 <span className="inline-block mt-2 px-2 py-0.5 text-[14px] font-semibold uppercase rounded bg-amber-100 text-amber-700 border border-amber-200">
+                 <span className="inline-block mt-2 px-2 py-0.5 text-[14px] font-semibold uppercase rounded bg-purple-100 text-purple-700 border border-purple-200">
                    {roleDisplayName || 'User'}
                  </span>
                </div>

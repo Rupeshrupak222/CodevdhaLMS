@@ -139,7 +139,7 @@ export default function BatchDetailPage() {
 
       {/* Header Card */}
       <div className="bg-white dark:bg-[#1E293B] border border-slate-200 dark:border-slate-800 rounded-3xl p-6 shadow-sm relative overflow-hidden">
-        <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#a855f7] to-amber-500" />
+        <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#a855f7] to-purple-500" />
 
         <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
           <div>
@@ -159,7 +159,7 @@ export default function BatchDetailPage() {
             <div className="flex gap-2">
               <button
                 onClick={handleToggle}
-                className={`flex items-center gap-1.5 px-4 py-2 border rounded-xl text-xs font-bold transition cursor-pointer ${batch.isActive ? 'border-amber-200 text-amber-500 hover:bg-amber-500/5' : 'border-emerald-250 text-emerald-500 hover:bg-emerald-500/5'}`}
+                className={`flex items-center gap-1.5 px-4 py-2 border rounded-xl text-xs font-bold transition cursor-pointer ${batch.isActive ? 'border-purple-200 text-purple-500 hover:bg-purple-500/5' : 'border-emerald-250 text-emerald-500 hover:bg-emerald-500/5'}`}
               >
                 {batch.isActive ? <ToggleRight className="w-4 h-4" /> : <ToggleLeft className="w-4 h-4" />}
                 {batch.isActive ? 'Deactivate' : 'Activate'}
@@ -212,7 +212,7 @@ export default function BatchDetailPage() {
             className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold transition whitespace-nowrap cursor-pointer ${activeTab === tab.key ? 'bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-sm' : 'text-slate-500 dark:text-slate-400 hover:text-slate-800'}`}
           >
             {tab.icon} {tab.label}
-            <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${activeTab === tab.key ? 'bg-amber-100 text-amber-700' : 'bg-slate-200 dark:bg-slate-800 text-slate-550 dark:text-slate-400'}`}>
+            <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${activeTab === tab.key ? 'bg-purple-100 text-purple-700' : 'bg-slate-200 dark:bg-slate-800 text-slate-550 dark:text-slate-400'}`}>
               {tab.count}
             </span>
           </button>
@@ -228,7 +228,7 @@ export default function BatchDetailPage() {
               <div className="flex justify-end">
                 <button
                   onClick={() => setShowAssignModal(true)}
-                  className="flex items-center justify-center gap-1.5 bg-[#a855f7] hover:bg-amber-400 text-slate-950 px-4 py-2 rounded-xl text-xs font-bold transition cursor-pointer"
+                  className="flex items-center justify-center gap-1.5 bg-[#a855f7] hover:bg-purple-400 text-slate-950 px-4 py-2 rounded-xl text-xs font-bold transition cursor-pointer"
                 >
                   <UserPlus className="w-4 h-4" /> Assign Students
                 </button>
@@ -287,7 +287,7 @@ export default function BatchDetailPage() {
               <div className="flex justify-end">
                 <button
                   onClick={() => router.push(`/${activeRole}/quizzes?courseId=${batch.courseId}&batchId=${batchId}`)}
-                  className="flex items-center justify-center gap-1.5 bg-[#a855f7] hover:bg-amber-400 text-slate-950 px-4 py-2 rounded-xl text-xs font-bold transition cursor-pointer"
+                  className="flex items-center justify-center gap-1.5 bg-[#a855f7] hover:bg-purple-400 text-slate-950 px-4 py-2 rounded-xl text-xs font-bold transition cursor-pointer"
                 >
                   <Plus className="w-4 h-4" /> Create Batch Quiz
                 </button>
@@ -330,7 +330,7 @@ export default function BatchDetailPage() {
               <div className="flex justify-end">
                 <button
                   onClick={() => router.push(`/${activeRole}/tasks?courseId=${batch.courseId}&batchId=${batchId}`)}
-                  className="flex items-center justify-center gap-1.5 bg-[#a855f7] hover:bg-amber-400 text-slate-950 px-4 py-2 rounded-xl text-xs font-bold transition cursor-pointer"
+                  className="flex items-center justify-center gap-1.5 bg-[#a855f7] hover:bg-purple-400 text-slate-950 px-4 py-2 rounded-xl text-xs font-bold transition cursor-pointer"
                 >
                   <Plus className="w-4 h-4" /> Create Batch Assignment
                 </button>
@@ -343,7 +343,7 @@ export default function BatchDetailPage() {
                   className="bg-white dark:bg-[#1E293B] border border-slate-200/50 dark:border-slate-800/50 rounded-2xl p-4 flex items-center justify-between gap-3"
                 >
                   <div className="flex items-center gap-3">
-                    <div className="w-9 h-9 rounded-full bg-amber-500/10 text-amber-500 flex items-center justify-center">
+                    <div className="w-9 h-9 rounded-full bg-purple-500/10 text-purple-500 flex items-center justify-center">
                       <ClipboardList className="w-4 h-4" />
                     </div>
                     <div>
@@ -351,7 +351,7 @@ export default function BatchDetailPage() {
                       <div className="text-[11px] text-slate-400 font-medium">Due: {new Date(task.dueDate).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })}</div>
                     </div>
                   </div>
-                  <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-50 dark:bg-amber-500/10 text-amber-500 border border-amber-100 dark:border-amber-550/20">
+                  <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-purple-50 dark:bg-purple-500/10 text-purple-500 border border-purple-100 dark:border-purple-550/20">
                     Batch Task
                   </span>
                 </div>
@@ -373,7 +373,7 @@ export default function BatchDetailPage() {
               <div className="flex justify-end">
                 <button
                   onClick={() => router.push(`/${activeRole}/classes?courseId=${batch.courseId}&batchId=${batchId}`)}
-                  className="flex items-center justify-center gap-1.5 bg-[#a855f7] hover:bg-amber-400 text-slate-950 px-4 py-2 rounded-xl text-xs font-bold transition cursor-pointer"
+                  className="flex items-center justify-center gap-1.5 bg-[#a855f7] hover:bg-purple-400 text-slate-950 px-4 py-2 rounded-xl text-xs font-bold transition cursor-pointer"
                 >
                   <Plus className="w-4 h-4" /> Schedule Batch Class
                 </button>
@@ -484,7 +484,7 @@ export default function BatchDetailPage() {
                 <button
                   onClick={handleAssignStudents}
                   disabled={assigning || selectedStudents.length === 0}
-                  className="flex-2 py-2 bg-[#a855f7] hover:bg-amber-400 disabled:opacity-50 text-slate-950 font-bold rounded-xl text-xs transition flex items-center justify-center gap-1.5 cursor-pointer"
+                  className="flex-2 py-2 bg-[#a855f7] hover:bg-purple-400 disabled:opacity-50 text-slate-950 font-bold rounded-xl text-xs transition flex items-center justify-center gap-1.5 cursor-pointer"
                 >
                   {assigning ? <Loader2 className="w-4.5 h-4.5 animate-spin" /> : <UserPlus className="w-4 h-4" />}
                   Assign {selectedStudents.length > 0 ? `(${selectedStudents.length})` : ''}

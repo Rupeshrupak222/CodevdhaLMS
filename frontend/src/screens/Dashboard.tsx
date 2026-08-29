@@ -142,7 +142,7 @@ export const Dashboard = () => {
           href="https://ai.codvedha.com"
           target="_blank"
           rel="noopener noreferrer"
-          className="group flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-[#a855f7] to-[#ff8c00] text-white font-semibold text-sm shadow-lg shadow-amber-500/25 hover:shadow-amber-500/40 hover:scale-105 transition-all duration-300 cursor-pointer"
+          className="group flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-[#a855f7] to-[#ff8c00] text-white font-semibold text-sm shadow-lg shadow-purple-500/25 hover:shadow-purple-500/40 hover:scale-105 transition-all duration-300 cursor-pointer"
         >
           <span className="relative flex h-2.5 w-2.5">
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75"></span>
@@ -206,12 +206,12 @@ export const Dashboard = () => {
               >
                 <div className="flex justify-between items-center mb-4">
                   <h3 className="text-sm font-semibold text-slate-900 dark:text-white">Top Performing Courses</h3>
-                  <Award className="w-5 h-5 text-amber-500" />
+                  <Award className="w-5 h-5 text-purple-500" />
                 </div>
                 <div className="space-y-3 max-h-48 overflow-y-auto scrollbar-hide pr-1">
                   {topPerformingCourses.length > 0 ? (
                     topPerformingCourses.map((course: any, idx: number) => {
-                      const medalColors = ['text-yellow-500', 'text-slate-400', 'text-amber-600'];
+                      const medalColors = ['text-purple-500', 'text-slate-400', 'text-purple-600'];
                       return (
                         <div key={course.id} className="flex items-center justify-between p-2 rounded-xl bg-slate-50/50 dark:bg-slate-800/50 hover:bg-slate-100 dark:hover:bg-slate-700/50 transition-colors">
                           <div className="flex items-center gap-2.5 min-w-0 flex-1">
@@ -380,9 +380,9 @@ export const Dashboard = () => {
                 </div>
                 <div 
                   onClick={() => router.push(`/${activeRole}/tasks`)}
-                  className="rounded-xl bg-amber-50 dark:bg-amber-900/10 border border-amber-100 dark:border-amber-900/20 flex flex-col justify-center items-center cursor-pointer hover:bg-amber-100 dark:hover:bg-amber-900/20 transition-colors"
+                  className="rounded-xl bg-purple-50 dark:bg-purple-900/10 border border-purple-100 dark:border-purple-900/20 flex flex-col justify-center items-center cursor-pointer hover:bg-purple-100 dark:hover:bg-purple-900/20 transition-colors"
                 >
-                  <span className="text-xs font-semibold text-amber-600 dark:text-amber-400 block mb-1">Assig. Pending</span>
+                  <span className="text-xs font-semibold text-purple-600 dark:text-purple-400 block mb-1">Assig. Pending</span>
                   <span className="text-2xl font-black text-slate-900 dark:text-white">{currentPerformance['Assignment Pending']}</span>
                 </div>
               </div>

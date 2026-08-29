@@ -355,7 +355,7 @@ export const Quizzes = () => {
  {(activeRole === 'admin' || activeRole === 'faculty') && (
  <button
  onClick={() => router.push(`${routeBase}?action=create`)}
- className="flex items-center justify-center gap-2 bg-[#a855f7] hover:bg-amber-400 text-slate-950 px-4 py-2 rounded-xl text-[16px] font-semibold transition shadow-lg shadow-amber-500/10 cursor-pointer"
+ className="flex items-center justify-center gap-2 bg-[#a855f7] hover:bg-purple-400 text-slate-950 px-4 py-2 rounded-xl text-[16px] font-semibold transition shadow-lg shadow-purple-500/10 cursor-pointer"
  >
  <Plus className="w-4 h-4" />
  Assemble Quiz
@@ -366,12 +366,12 @@ export const Quizzes = () => {
   {/* Grid list of quizzes */}
   {activeRole === 'student' && visibleQuizzes.length === 0 ? (
     <div className="flex flex-col items-center justify-center py-20 text-center">
-      <div className="w-16 h-16 rounded-full bg-amber-50 dark:bg-amber-900/20 flex items-center justify-center mb-4">
+      <div className="w-16 h-16 rounded-full bg-purple-50 dark:bg-purple-900/20 flex items-center justify-center mb-4">
         <Award className="w-8 h-8 text-[#a855f7]" />
       </div>
       <h3 className="font-semibold text-slate-900 dark:text-white text-base">No Quizzes Available</h3>
       <p className="text-[14px] text-slate-500 dark:text-slate-400 mt-1 max-w-xs">You need to be enrolled in a course to access quizzes. Enroll first from the Courses page.</p>
-      <button onClick={() => router.push(`/${activeRole}/courses`)} className="mt-5 px-5 py-2.5 bg-[#a855f7] hover:bg-amber-400 text-slate-950 font-semibold rounded-xl transition">
+      <button onClick={() => router.push(`/${activeRole}/courses`)} className="mt-5 px-5 py-2.5 bg-[#a855f7] hover:bg-purple-400 text-slate-950 font-semibold rounded-xl transition">
         Go to My Courses
       </button>
     </div>
@@ -441,7 +441,7 @@ export const Quizzes = () => {
     ) : (
       <button
         onClick={() => startQuiz(quiz)}
-        className="flex items-center gap-1 bg-[#a855f7] hover:bg-amber-400 text-slate-950 text-[14px] font-semibold py-1.5 px-3.5 rounded-xl transition"
+        className="flex items-center gap-1 bg-[#a855f7] hover:bg-purple-400 text-slate-950 text-[14px] font-semibold py-1.5 px-3.5 rounded-xl transition"
       >
         <Play className="w-3.5 h-3.5" /> Start Attempt
       </button>
@@ -552,7 +552,7 @@ export const Quizzes = () => {
  <button
  disabled={!answers[currentQuestionIdx]}
  onClick={handleNext}
- className="px-5 py-2.5 bg-[#a855f7] hover:bg-amber-400 disabled:opacity-40 text-slate-950 text-[16px] font-semibold rounded-xl transition cursor-pointer flex items-center gap-1.5"
+ className="px-5 py-2.5 bg-[#a855f7] hover:bg-purple-400 disabled:opacity-40 text-slate-950 text-[16px] font-semibold rounded-xl transition cursor-pointer flex items-center gap-1.5"
  >
  {currentQuestionIdx < selectedQuiz.questions.length - 1 ? (
  <>Next Question <ChevronRight className="w-4 h-4" /></>
@@ -567,7 +567,7 @@ export const Quizzes = () => {
  {/* 3. SCORE CARD RESULTS VIEW */}
  {mode === 'result' && scoreSummary && (
  <div className="max-w-md mx-auto p-8 bg-white dark:bg-[#1E293B] border border-slate-200/50 dark:border-slate-800/50 rounded-3xl shadow-xl text-center space-y-6">
- <div className="w-20 h-20 bg-amber-400/10 border-2 border-[#a855f7]/40 rounded-full flex items-center justify-center mx-auto text-[#a855f7]">
+ <div className="w-20 h-20 bg-purple-400/10 border-2 border-[#a855f7]/40 rounded-full flex items-center justify-center mx-auto text-[#a855f7]">
  <Award className="w-10 h-10 animate-bounce" />
  </div>
  
@@ -601,7 +601,7 @@ export const Quizzes = () => {
 
  <button
  onClick={() => setMode('list')}
- className="w-full py-2.5 bg-[#a855f7] hover:bg-amber-400 text-slate-950 font-semibold rounded-xl transition"
+ className="w-full py-2.5 bg-[#a855f7] hover:bg-purple-400 text-slate-950 font-semibold rounded-xl transition"
  >
  Return to Dashboard
  </button>
@@ -750,7 +750,7 @@ export const Quizzes = () => {
 
  <button
  type="submit"
- className="w-full py-2.5 bg-[#a855f7] hover:bg-amber-400 text-slate-950 font-semibold rounded-xl transition"
+ className="w-full py-2.5 bg-[#a855f7] hover:bg-purple-400 text-slate-950 font-semibold rounded-xl transition"
  >
  Publish Quiz
  </button>

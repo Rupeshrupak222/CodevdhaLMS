@@ -74,25 +74,25 @@ export const Certificates = () => {
       case 'Best Performance':
         return (
           <>
-            This certificate is awarded to <strong>{name}</strong> for being the Best Performer in the <strong>{course}</strong> Program conducted by <span className='text-yellow-500 font-bold'>CODVEDHA</span> from <strong>{start}</strong> to <strong>{end}</strong>. In recognition of outstanding dedication, exceptional performance, and commitment to excellence, we proudly acknowledge this achievement and wish them continuous success in their future endeavors.
+            This certificate is awarded to <strong>{name}</strong> for being the Best Performer in the <strong>{course}</strong> Program conducted by <span className='text-purple-500 font-bold'>CODVEDHA</span> from <strong>{start}</strong> to <strong>{end}</strong>. In recognition of outstanding dedication, exceptional performance, and commitment to excellence, we proudly acknowledge this achievement and wish them continuous success in their future endeavors.
           </>
         );
       case 'Project Completion':
         return (
           <>
-            This is to certify that <strong>{name}</strong> has successfully completed the <strong>{course}</strong> Project at <span className='text-yellow-500 font-bold'>CODVEDHA</span> from <strong>{start}</strong> to <strong>{end}</strong>. The participant demonstrated commitment, technical skills, and professionalism throughout the project and successfully fulfilled all project requirements. We wish them success in all their future endeavors.
+            This is to certify that <strong>{name}</strong> has successfully completed the <strong>{course}</strong> Project at <span className='text-purple-500 font-bold'>CODVEDHA</span> from <strong>{start}</strong> to <strong>{end}</strong>. The participant demonstrated commitment, technical skills, and professionalism throughout the project and successfully fulfilled all project requirements. We wish them success in all their future endeavors.
           </>
         );
       case 'Internship Completion':
         return (
           <>
-            This certification confirms that <strong>{name}</strong> successfully completed the {duration}<strong>{course}</strong> Internship Programme at <span className='text-yellow-500 font-bold'>CODVEDHA</span> from <strong>{start}</strong> to <strong>{end}</strong>. During the internship, the candidate demonstrated dedication, practical skills and a strong commitment to professional growth. We wish them continuous success in their future endeavours.
+            This certification confirms that <strong>{name}</strong> successfully completed the {duration}<strong>{course}</strong> Internship Programme at <span className='text-purple-500 font-bold'>CODVEDHA</span> from <strong>{start}</strong> to <strong>{end}</strong>. During the internship, the candidate demonstrated dedication, practical skills and a strong commitment to professional growth. We wish them continuous success in their future endeavours.
           </>
         );
       default: // Course Completion
         return (
           <>
-            This is to certify that <strong>{name}</strong> has successfully completed the {duration}<strong>{course}</strong> Course offered by <span className='text-yellow-500 font-bold'>CODVEDHA</span> from <strong>{start}</strong> to <strong>{end}</strong>. The participant actively engaged in the course and successfully fulfilled all learning objectives and assessment requirements. We commend their commitment to skill development and wish them every success in their future endeavors.
+            This is to certify that <strong>{name}</strong> has successfully completed the {duration}<strong>{course}</strong> Course offered by <span className='text-purple-500 font-bold'>CODVEDHA</span> from <strong>{start}</strong> to <strong>{end}</strong>. The participant actively engaged in the course and successfully fulfilled all learning objectives and assessment requirements. We commend their commitment to skill development and wish them every success in their future endeavors.
           </>
         );
     }
@@ -139,10 +139,180 @@ export const Certificates = () => {
   // Render certificate modal
   const handleViewCertificate = (cert: any) => {
     setSelectedCert(cert);
-    setImgError(false);
+    // Always use the CodVedha-branded certificate design (drawn in code),
+    // not the legacy template JPGs.
+    setImgError(true);
   };
 
+  // Draw a CodVedha-branded certificate entirely on canvas (no legacy template image).
   const handleDownload = () => {
+    if (!selectedCert) return;
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    // Landscape A4-ish at high resolution
+    const W = 1600;
+    const H = 1131;
+    canvas.width = W;
+    canvas.height = H;
+
+    const PURPLE = '#a855f7';
+    const PURPLE_DARK = '#7c3aed';
+    const PURPLE_DEEP = '#6d28d9';
+    const ORANGE = '#f97316';
+    const INK = '#1e293b';
+    const MUTED = '#64748b';
+
+    const centerX = W / 2;
+
+    const drawCertificate = (logo: HTMLImageElement | null) => {
+      // Background
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, W, H);
+
+      // Outer gradient border band
+      const grad = ctx.createLinearGradient(0, 0, W, H);
+      grad.addColorStop(0, PURPLE);
+      grad.addColorStop(0.5, PURPLE_DARK);
+      grad.addColorStop(1, PURPLE_DEEP);
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, W, H);
+
+      // Inner white card
+      const m = 34;
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(m, m, W - m * 2, H - m * 2);
+
+      // Thin accent inner frame
+      ctx.strokeStyle = PURPLE;
+      ctx.lineWidth = 2;
+      ctx.strokeRect(m + 22, m + 22, W - (m + 22) * 2, H - (m + 22) * 2);
+
+      // Orange accent corner ticks
+      ctx.strokeStyle = ORANGE;
+      ctx.lineWidth = 6;
+      const c = 70; const off = m + 22;
+      // top-left
+      ctx.beginPath(); ctx.moveTo(off, off + c); ctx.lineTo(off, off); ctx.lineTo(off + c, off); ctx.stroke();
+      // top-right
+      ctx.beginPath(); ctx.moveTo(W - off - c, off); ctx.lineTo(W - off, off); ctx.lineTo(W - off, off + c); ctx.stroke();
+      // bottom-left
+      ctx.beginPath(); ctx.moveTo(off, H - off - c); ctx.lineTo(off, H - off); ctx.lineTo(off + c, H - off); ctx.stroke();
+      // bottom-right
+      ctx.beginPath(); ctx.moveTo(W - off - c, H - off); ctx.lineTo(W - off, H - off); ctx.lineTo(W - off, H - off - c); ctx.stroke();
+
+      // Logo
+      if (logo) {
+        const ls = 120;
+        try { ctx.drawImage(logo, centerX - ls / 2, 95, ls, ls); } catch (_) {}
+      }
+
+      // Brand name
+      ctx.textAlign = 'center';
+      ctx.fillStyle = PURPLE_DARK;
+      ctx.font = "700 34px 'Space Grotesk', sans-serif";
+      ctx.fillText('CodVedha', centerX, 250);
+      ctx.fillStyle = MUTED;
+      ctx.font = "600 15px 'Inter', sans-serif";
+      ctx.fillText('MASTER 4.0 TECHNOLOGIES', centerX, 278);
+
+      // Title
+      ctx.fillStyle = INK;
+      ctx.font = "800 62px 'Space Grotesk', sans-serif";
+      ctx.fillText((selectedCert.type || 'Certificate').toUpperCase(), centerX, 380);
+
+      // Purple underline
+      ctx.fillStyle = ORANGE;
+      ctx.fillRect(centerX - 90, 400, 180, 5);
+
+      // "This is to certify that"
+      ctx.fillStyle = MUTED;
+      ctx.font = "500 22px 'Inter', sans-serif";
+      ctx.fillText('This certificate is proudly presented to', centerX, 470);
+
+      // Student name
+      ctx.fillStyle = PURPLE_DARK;
+      ctx.font = "700 56px 'Playfair Display', serif";
+      ctx.fillText(selectedCert.studentName, centerX, 545);
+      // name underline
+      const nameW = Math.min(ctx.measureText(selectedCert.studentName).width + 80, W - 300);
+      ctx.strokeStyle = '#e2e8f0';
+      ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.moveTo(centerX - nameW / 2, 575); ctx.lineTo(centerX + nameW / 2, 575); ctx.stroke();
+
+      // Paragraph (wrapped)
+      ctx.fillStyle = INK;
+      ctx.font = "400 22px 'Inter', sans-serif";
+      const para = getPlainParagraphText(selectedCert).replace(/<\/?b>|<\/?y>/g, '');
+      const words = para.split(/\s+/);
+      let line = '';
+      let y = 640;
+      const maxW = W * 0.72;
+      words.forEach((w: string) => {
+        const test = line ? line + ' ' + w : w;
+        if (ctx.measureText(test).width > maxW && line) {
+          ctx.fillText(line, centerX, y);
+          y += 36;
+          line = w;
+        } else {
+          line = test;
+        }
+      });
+      if (line) ctx.fillText(line, centerX, y);
+
+      // Seal
+      const sealX = centerX; const sealY = 880; const r = 58;
+      const sealGrad = ctx.createLinearGradient(sealX - r, sealY - r, sealX + r, sealY + r);
+      sealGrad.addColorStop(0, PURPLE);
+      sealGrad.addColorStop(1, PURPLE_DEEP);
+      ctx.fillStyle = sealGrad;
+      ctx.beginPath(); ctx.arc(sealX, sealY, r, 0, Math.PI * 2); ctx.fill();
+      ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 5; ctx.stroke();
+      ctx.fillStyle = '#ffffff';
+      ctx.font = "700 20px 'Space Grotesk', sans-serif";
+      ctx.fillText('CV', sealX, sealY + 7);
+
+      // Signatures / date row
+      const rowY = 1000;
+      ctx.strokeStyle = '#cbd5e1'; ctx.lineWidth = 2;
+      // date (left)
+      ctx.beginPath(); ctx.moveTo(230, rowY); ctx.lineTo(560, rowY); ctx.stroke();
+      ctx.fillStyle = INK; ctx.font = "600 22px 'Inter', sans-serif";
+      ctx.fillText(formatDate(selectedCert.issueDate), 395, rowY - 12);
+      ctx.fillStyle = MUTED; ctx.font = "600 15px 'Inter', sans-serif";
+      ctx.fillText('DATE OF ISSUE', 395, rowY + 28);
+      // registrar (right)
+      ctx.strokeStyle = '#cbd5e1';
+      ctx.beginPath(); ctx.moveTo(W - 560, rowY); ctx.lineTo(W - 230, rowY); ctx.stroke();
+      ctx.fillStyle = PURPLE_DARK; ctx.font = "italic 600 24px 'Playfair Display', serif";
+      ctx.fillText('CodVedha', W - 395, rowY - 12);
+      ctx.fillStyle = MUTED; ctx.font = "600 15px 'Inter', sans-serif";
+      ctx.fillText('AUTHORISED SIGNATORY', W - 395, rowY + 28);
+
+      // Verify ID (bottom center)
+      ctx.fillStyle = MUTED;
+      ctx.font = "500 16px 'JetBrains Mono', monospace";
+      ctx.fillText(`Verify ID: ${selectedCert.verifyId.replace('CERT-', 'CV-')}`, centerX, H - 60);
+
+      // Export
+      const dataUrl = canvas.toDataURL('image/jpeg', 0.98);
+      const pdf = new jsPDF({ orientation: 'landscape', unit: 'px', format: [W, H] });
+      pdf.addImage(dataUrl, 'JPEG', 0, 0, W, H);
+      pdf.save(`${selectedCert.studentName.replace(/\s+/g, '_')}_${selectedCert.type.replace(/\s+/g, '_')}_CodVedha.pdf`);
+      toast.success('Certificate downloaded successfully!');
+    };
+
+    // Load the CodVedha logo, then draw (draw anyway if it fails)
+    const logo = new Image();
+    logo.crossOrigin = 'Anonymous';
+    logo.onload = () => drawCertificate(logo);
+    logo.onerror = () => drawCertificate(null);
+    logo.src = '/assets/logo-codvedha.png';
+  };
+
+  // Legacy template renderer (kept for reference, no longer used)
+  const handleDownloadLegacy = () => {
     if (!selectedCert) return;
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d');
@@ -222,7 +392,7 @@ export const Certificates = () => {
 
           lineObj.tokens.forEach(token => {
             context.font = token.bold ? bFont : normalFont;
-            context.fillStyle = token.yellow ? '#eab308' : '#000000';
+            context.fillStyle = token.yellow ? '#9333ea' : '#000000';
             context.fillText(token.text, x, y);
             x += context.measureText(token.text).width;
           });
@@ -241,7 +411,7 @@ export const Certificates = () => {
       // Draw Certificate No / Verify ID
       ctx.font = `bold ${Math.floor(img.height * 0.015)}px sans-serif`;
       ctx.textAlign = 'right';
-      ctx.fillText(`CERTIFICATE NO: ${selectedCert.verifyId.replace('CERT-', 'ADY-')}`, canvas.width * 0.95, canvas.height * 0.05);
+      ctx.fillText(`CERTIFICATE NO: ${selectedCert.verifyId.replace('CERT-', 'CV-')}`, canvas.width * 0.95, canvas.height * 0.05);
 
       const dataUrl = canvas.toDataURL('image/jpeg', 1.0);
       const pdf = new jsPDF({
@@ -391,7 +561,7 @@ export const Certificates = () => {
           {(activeRole === 'admin' || activeRole === 'faculty') && (
             <button 
               onClick={() => setIsIssueModalOpen(true)}
-              className="flex items-center justify-center gap-1.5 sm:gap-2 bg-[#a855f7] hover:bg-amber-400 text-slate-950 px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl text-[14px] sm:text-[16px] font-bold transition shadow-lg shadow-amber-500/10 cursor-pointer"
+              className="flex items-center justify-center gap-1.5 sm:gap-2 bg-[#a855f7] hover:bg-purple-400 text-slate-950 px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl text-[14px] sm:text-[16px] font-bold transition shadow-lg shadow-purple-500/10 cursor-pointer"
             >
               <Award className="w-3.5 h-3.5 sm:w-4 sm:h-4" /> Issue Certificate
             </button>
@@ -411,7 +581,7 @@ export const Certificates = () => {
               className="p-4 sm:p-5 rounded-2xl sm:rounded-3xl bg-white dark:bg-[#1E293B] border border-slate-200/50 dark:border-slate-800/50 shadow-sm flex flex-col justify-between"
             >
               <div className="flex items-start justify-between">
-                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-amber-50 dark:bg-amber-500/10 text-amber-500 flex items-center justify-center">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-purple-50 dark:bg-purple-500/10 text-purple-500 flex items-center justify-center">
                   <Award className="w-5 h-5 sm:w-6 sm:h-6" />
                 </div>
                 <span className="text-[14px] sm:text-[14px] font-bold text-slate-600">{cert.issueDate}</span>
@@ -423,7 +593,7 @@ export const Certificates = () => {
                   <p className="text-[14px] sm:text-[16px] text-slate-500 dark:text-slate-300 mt-1 font-medium">Issued to: <span className="text-slate-800 dark:text-slate-200">{cert.studentName}</span></p>
                 )}
                 <p className="text-[14px] sm:text-[16px] text-emerald-500 font-bold mt-1">Grade: {cert.grade || 'A'}</p>
-                <p className="text-[10px] sm:text-[14px] text-slate-400 font-mono mt-1">ID: {cert.verifyId.replace('CERT-', 'ADY-')}</p>
+                <p className="text-[10px] sm:text-[14px] text-slate-400 font-mono mt-1">ID: {cert.verifyId.replace('CERT-', 'CV-')}</p>
               </div>
 
               <div className="mt-4 sm:mt-6 flex items-center justify-end gap-2">
@@ -477,7 +647,7 @@ export const Certificates = () => {
             </button>
             <button 
               onClick={handleDownload}
-              className="absolute top-2 left-2 sm:top-4 sm:left-4 flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1.5 sm:py-2 bg-[#a855f7] hover:bg-amber-400 text-slate-900 font-bold rounded-xl shadow-md transition text-[14px] sm:text-[16px] z-20 cursor-pointer"
+              className="absolute top-2 left-2 sm:top-4 sm:left-4 flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1.5 sm:py-2 bg-[#a855f7] hover:bg-purple-400 text-slate-900 font-bold rounded-xl shadow-md transition text-[14px] sm:text-[16px] z-20 cursor-pointer"
             >
               <Download className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
               Download
@@ -514,7 +684,7 @@ export const Certificates = () => {
                   
                   <div className="absolute text-right" style={{ top: '5%', right: '5%' }}>
                     <span className="text-[4px] sm:text-[6px] md:text-[7px] lg:text-[14px] text-black font-sans font-bold uppercase">
-                      CERTIFICATE NO: {selectedCert.verifyId.replace('CERT-', 'ADY-')}
+                      CERTIFICATE NO: {selectedCert.verifyId.replace('CERT-', 'CV-')}
                     </span>
                   </div>
                 </div>
@@ -522,21 +692,24 @@ export const Certificates = () => {
             ) : (
               <div className="border-[8px] sm:border-[12px] border-[#a855f7] p-4 sm:p-6 md:p-8 lg:p-12 relative bg-white">
                 {/* Corner Ornaments */}
-                <div className="absolute top-0 left-0 w-10 h-10 sm:w-16 sm:h-16 border-t-2 sm:border-t-4 border-l-2 sm:border-l-4 border-amber-600" />
-                <div className="absolute top-0 right-0 w-10 h-10 sm:w-16 sm:h-16 border-t-2 sm:border-t-4 border-r-2 sm:border-r-4 border-amber-600" />
-                <div className="absolute bottom-0 left-0 w-10 h-10 sm:w-16 sm:h-16 border-b-2 sm:border-b-4 border-l-2 sm:border-l-4 border-amber-600" />
-                <div className="absolute bottom-0 right-0 w-10 h-10 sm:w-16 sm:h-16 border-b-2 sm:border-b-4 border-r-2 sm:border-r-4 border-amber-600" />
+                <div className="absolute top-0 left-0 w-10 h-10 sm:w-16 sm:h-16 border-t-2 sm:border-t-4 border-l-2 sm:border-l-4 border-purple-600" />
+                <div className="absolute top-0 right-0 w-10 h-10 sm:w-16 sm:h-16 border-t-2 sm:border-t-4 border-r-2 sm:border-r-4 border-purple-600" />
+                <div className="absolute bottom-0 left-0 w-10 h-10 sm:w-16 sm:h-16 border-b-2 sm:border-b-4 border-l-2 sm:border-l-4 border-purple-600" />
+                <div className="absolute bottom-0 right-0 w-10 h-10 sm:w-16 sm:h-16 border-b-2 sm:border-b-4 border-r-2 sm:border-r-4 border-purple-600" />
 
-                <div className="mx-auto w-16 h-16 sm:w-24 sm:h-24 mb-4 sm:mb-6 opacity-20">
-                  <img src="/assets/ball_logo.png.png" alt="Logo" className="w-full h-full object-contain grayscale" />
+                <div className="mx-auto w-16 h-16 sm:w-24 sm:h-24 mb-2 sm:mb-3 flex items-center justify-center">
+                  <img src="/assets/logo-codvedha.png" alt="CodVedha Logo" className="w-full h-full object-contain" />
                 </div>
+                <p className="text-sm sm:text-lg font-bold text-purple-700 font-display tracking-tight mb-1">CodVedha</p>
+                <p className="text-[10px] sm:text-xs text-slate-400 uppercase tracking-widest font-semibold mb-4 sm:mb-6">Master 4.0 Technologies</p>
 
-                <h2 className="text-xl sm:text-3xl md:text-5xl font-serif font-black text-slate-900 uppercase st mb-2 sm:mb-4">
-                  Certificate of Completion
+                <h2 className="text-xl sm:text-3xl md:text-5xl font-display font-black text-slate-900 uppercase st mb-2 sm:mb-4">
+                  {selectedCert.type || 'Certificate of Completion'}
                 </h2>
+                <div className="mx-auto w-24 h-1.5 bg-orange-500 rounded-full mb-4 sm:mb-6" />
                 <p className="text-[14px] sm:text-sm text-slate-500 uppercase st font-semibold mb-4 sm:mb-8">This is to certify that</p>
                 
-                <h3 className="text-2xl sm:text-4xl md:text-5xl font-script text-[#a855f7] mb-4 sm:mb-8 font-bold italic" style={{ fontFamily: "'Dancing Script', cursive, serif" }}>
+                <h3 className="text-2xl sm:text-4xl md:text-5xl text-purple-700 mb-4 sm:mb-8 font-bold" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>
                   {selectedCert.studentName}
                 </h3>
                 
@@ -566,18 +739,18 @@ export const Certificates = () => {
                     <span className="text-[10px] sm:text-[16px] uppercase font-bold text-slate-500">Date of Issue</span>
                   </div>
                   
-                  <div className="w-16 h-16 sm:w-24 sm:h-24 rounded-full bg-gradient-to-br from-amber-300 via-amber-500 to-amber-600 flex items-center justify-center shadow-lg border-4 border-white">
+                  <div className="w-16 h-16 sm:w-24 sm:h-24 rounded-full bg-gradient-to-br from-purple-300 via-purple-500 to-purple-600 flex items-center justify-center shadow-lg border-4 border-white">
                     <Award className="w-7 h-7 sm:w-10 sm:h-10 text-white" />
                   </div>
 
                   <div className="text-center w-full sm:w-48">
-                    <div className="border-b border-slate-400 mb-1 sm:mb-2 font-script text-base sm:text-xl text-slate-700 italic">LMS Registrar</div>
-                    <span className="text-[10px] sm:text-[16px] uppercase font-bold text-slate-500">Instructor Signature</span>
+                    <div className="border-b border-slate-400 mb-1 sm:mb-2 text-base sm:text-xl text-purple-700 italic" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>CodVedha</div>
+                    <span className="text-[10px] sm:text-[16px] uppercase font-bold text-slate-500">Authorised Signatory</span>
                   </div>
                 </div>
 
                 <div className="absolute bottom-2 right-2 sm:bottom-4 sm:right-6 text-right">
-                  <p className="text-[6px] sm:text-[14px] font-mono text-slate-400">Verify ID: {selectedCert.verifyId.replace('CERT-', 'ADY-')}</p>
+                  <p className="text-[6px] sm:text-[14px] font-mono text-slate-400">Verify ID: {selectedCert.verifyId.replace('CERT-', 'CV-')}</p>
                 </div>
               </div>
             )}
@@ -697,7 +870,7 @@ export const Certificates = () => {
 
               <button
                 type="submit"
-                className="w-full py-2.5 bg-[#a855f7] hover:bg-amber-400 text-slate-950 font-bold rounded-xl transition mt-2 sm:mt-4 text-[16px] sm:text-sm cursor-pointer"
+                className="w-full py-2.5 bg-[#a855f7] hover:bg-purple-400 text-slate-950 font-bold rounded-xl transition mt-2 sm:mt-4 text-[16px] sm:text-sm cursor-pointer"
               >
                 Issue Certificate
               </button>
@@ -731,13 +904,13 @@ export const Certificates = () => {
                   type="text"
                   value={verifyInput}
                   onChange={(e) => setVerifyInput(e.target.value)}
-                  placeholder="Enter Verify ID (e.g., ADY-12345)"
+                  placeholder="Enter Verify ID (e.g., CV-12345)"
                   className="w-full px-3 sm:px-4 py-2 sm:py-2.5 border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 rounded-xl text-slate-900 dark:text-white focus:outline-none focus:border-[#a855f7] text-[14px] sm:text-sm"
                   required
                 />
                 <button
                   type="submit"
-                  className="px-3 sm:px-4 py-2 sm:py-2.5 bg-[#a855f7] hover:bg-amber-400 text-slate-950 font-bold rounded-xl transition flex items-center justify-center cursor-pointer"
+                  className="px-3 sm:px-4 py-2 sm:py-2.5 bg-[#a855f7] hover:bg-purple-400 text-slate-950 font-bold rounded-xl transition flex items-center justify-center cursor-pointer"
                 >
                   <Search className="w-4 h-4 sm:w-5 sm:h-5" />
                 </button>
@@ -758,7 +931,7 @@ export const Certificates = () => {
                       <p><span className="font-semibold text-slate-700 dark:text-slate-300">Type:</span> {verifiedCert.type}</p>
                       <p><span className="font-semibold text-slate-700 dark:text-slate-300">Course:</span> {verifiedCert.courseName}</p>
                       <p><span className="font-semibold text-slate-700 dark:text-slate-300">Issue Date:</span> {formatDate(verifiedCert.completionDate)}</p>
-                      <p><span className="font-semibold text-slate-700 dark:text-slate-300">Verify ID:</span> <span className="font-mono bg-slate-100 dark:bg-slate-800 px-1 py-0.5 rounded">{verifiedCert.verifyId.replace('CERT-', 'ADY-')}</span></p>
+                      <p><span className="font-semibold text-slate-700 dark:text-slate-300">Verify ID:</span> <span className="font-mono bg-slate-100 dark:bg-slate-800 px-1 py-0.5 rounded">{verifiedCert.verifyId.replace('CERT-', 'CV-')}</span></p>
                     </div>
                   </div>
                 </div>

@@ -328,7 +328,7 @@ export const Students = () => {
  {activeRole === 'admin' && (
  <button
  onClick={() => { setCourseSearchQuery(''); setCourseCategoryFilter('All'); setIsAddOpen(true); }}
- className="flex items-center justify-center gap-2 bg-[#a855f7] hover:bg-amber-400 text-slate-950 px-4 py-2 rounded-xl text-[16px] font-semibold transition shadow-lg shadow-amber-500/10 cursor-pointer"
+ className="flex items-center justify-center gap-2 bg-[#a855f7] hover:bg-purple-400 text-slate-950 px-4 py-2 rounded-xl text-[16px] font-semibold transition shadow-lg shadow-purple-500/10 cursor-pointer"
  >
  <Plus className="w-4 h-4" />
  Add Student Profile
@@ -401,7 +401,7 @@ export const Students = () => {
  paginatedStudents.map((stud) => (
  <tr key={stud.id} className="border-b border-slate-100 dark:border-slate-800 hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition duration-150">
  <td className="px-6 py-3.5">
- <Avatar src={stud.avatar} alt={stud.name} className="w-9 h-9 rounded-full object-cover border border-amber-400/50 shadow-sm" />
+ <Avatar src={stud.avatar} alt={stud.name} className="w-9 h-9 rounded-full object-cover border border-purple-400/50 shadow-sm" />
  </td>
  <td className="px-6 py-3.5 font-semibold text-[16px] text-slate-900 dark:text-white">
  {stud.name}
@@ -431,7 +431,7 @@ export const Students = () => {
 <div className="flex items-center gap-2">
   <button
     onClick={() => router.push(`${pathname}/${stud.id}`)}
-    className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-50 hover:bg-amber-400 hover:text-slate-900 dark:bg-slate-700 dark:hover:bg-amber-400 text-slate-800 dark:text-slate-300 dark:hover:text-slate-900 transition"
+    className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-50 hover:bg-purple-400 hover:text-slate-900 dark:bg-slate-700 dark:hover:bg-purple-400 text-slate-800 dark:text-slate-300 dark:hover:text-slate-900 transition"
     title="Preview Student"
   >
     <Eye className="w-4 h-4" />
@@ -445,7 +445,7 @@ export const Students = () => {
     <>
       <button
         onClick={() => triggerEdit(stud)}
-        className="p-1.5 rounded-lg bg-slate-50 hover:bg-amber-400 hover:text-slate-900 dark:bg-slate-900 dark:hover:bg-amber-400 text-slate-800 dark:text-slate-300 dark:hover:text-slate-900 transition"
+        className="p-1.5 rounded-lg bg-slate-50 hover:bg-purple-400 hover:text-slate-900 dark:bg-slate-900 dark:hover:bg-purple-400 text-slate-800 dark:text-slate-300 dark:hover:text-slate-900 transition"
         title="Edit Student"
       >
         <Edit3 className="w-4 h-4" />
@@ -453,7 +453,7 @@ export const Students = () => {
 
       <button
         onClick={() => handleToggleActive(stud)}
-        className={`p-1.5 rounded-lg transition ${stud.isActive ? 'bg-yellow-50 hover:bg-yellow-400 text-yellow-600 dark:bg-yellow-950/30 dark:text-yellow-400' : 'bg-emerald-50 hover:bg-emerald-500 hover:text-white text-emerald-600 dark:bg-emerald-950/30 dark:text-emerald-400'}`}
+        className={`p-1.5 rounded-lg transition ${stud.isActive ? 'bg-purple-50 hover:bg-purple-400 text-purple-600 dark:bg-purple-950/30 dark:text-purple-400' : 'bg-emerald-50 hover:bg-emerald-500 hover:text-white text-emerald-600 dark:bg-emerald-950/30 dark:text-emerald-400'}`}
         title={stud.isActive ? 'Deactivate Student' : 'Activate Student'}
       >
         {stud.isActive ? <ToggleRight className="w-4 h-4" /> : <ToggleLeft className="w-4 h-4" />}
@@ -739,7 +739,7 @@ export const Students = () => {
 
  <button
  type="submit"
- className="w-full py-2.5 bg-[#a855f7] hover:bg-amber-400 text-slate-950 font-semibold rounded-xl transition mt-4"
+ className="w-full py-2.5 bg-[#a855f7] hover:bg-purple-400 text-slate-950 font-semibold rounded-xl transition mt-4"
  >
  Enroll Student
  </button>
@@ -943,7 +943,7 @@ export const Students = () => {
 
  <button
  type="submit"
- className="w-full py-2.5 bg-[#a855f7] hover:bg-amber-400 text-slate-950 font-semibold rounded-xl transition mt-4"
+ className="w-full py-2.5 bg-[#a855f7] hover:bg-purple-400 text-slate-950 font-semibold rounded-xl transition mt-4"
  >
  Save Changes
  </button>

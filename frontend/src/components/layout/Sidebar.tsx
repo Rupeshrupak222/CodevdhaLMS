@@ -151,12 +151,12 @@ export const Sidebar = ({ isOpen, onClose }) => {
  className="px-5 py-3 border-b border-gray-200 dark:border-slate-800"
  >
  <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[14px] font-semibold uppercase dark:bg-white dark:text-slate-900 dark:border-white ${
- activeRole === 'admin' ? 'bg-amber-100 text-amber-700 border border-amber-300 ' :
+ activeRole === 'admin' ? 'bg-purple-100 text-purple-700 border border-purple-300 ' :
  activeRole === 'faculty' ? 'bg-sky-100 text-sky-700 border border-sky-300' :
  'bg-emerald-100 text-emerald-700 border border-emerald-300'
  }`}>
  <span className={`w-1.5 h-1.5 rounded-full ${
- activeRole === 'admin' ? 'bg-amber-500' :
+ activeRole === 'admin' ? 'bg-purple-500' :
  activeRole === 'faculty' ? 'bg-sky-500' :
  'bg-emerald-500'
  }`} />
@@ -181,8 +181,8 @@ export const Sidebar = ({ isOpen, onClose }) => {
  }}
  className={`relative flex items-center ${isCollapsed ? 'justify-center' : 'justify-between'} w-full px-4 py-3 rounded-[22px] font-medium text-[16px] transition-all duration-200 cursor-pointer group ${
  active 
- ? 'bg-[#F8A63A] text-white shadow-md shadow-orange-200/50' 
- : 'text-[#222222] dark:text-slate-300 hover:bg-[#EEE8DF] dark:hover:bg-slate-800/50 dark:hover:text-white'
+ ? 'bg-gradient-to-r from-[#a855f7] to-[#7c3aed] text-white shadow-md shadow-purple-300/50' 
+ : 'text-[#222222] dark:text-slate-300 hover:bg-purple-50 dark:hover:bg-slate-800/50 dark:hover:text-white'
  }`}
  title={isCollapsed ? item.label : ''}
  >

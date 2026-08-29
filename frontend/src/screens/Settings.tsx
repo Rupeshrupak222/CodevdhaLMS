@@ -209,7 +209,7 @@ export const Settings = () => {
                       {...registerProfile('confirmPassword')}
                       placeholder="••••••••"
                       className={`w-full px-3 py-2 border bg-slate-50 dark:bg-slate-900 rounded-lg focus:outline-none text-slate-900 dark:text-white ${
-                        watchPassword ? 'border-amber-400' : 'border-slate-200 dark:border-slate-800'
+                        watchPassword ? 'border-purple-400' : 'border-slate-200 dark:border-slate-800'
                       }`}
                     />
                     {profileErrors.confirmPassword && (
@@ -220,7 +220,7 @@ export const Settings = () => {
 
                 <button
                   type="submit"
-                  className="px-5 py-2.5 bg-[#a855f7] hover:bg-amber-400 text-slate-950 font-semibold rounded-xl transition"
+                  className="px-5 py-2.5 bg-[#a855f7] hover:bg-purple-400 text-slate-950 font-semibold rounded-xl transition"
                 >
                   Save Profile Details
                 </button>
@@ -243,7 +243,7 @@ export const Settings = () => {
                   onClick={() => { if (theme === 'dark') toggleTheme(); }}
                   className={`p-5 rounded-2xl border flex flex-col items-center gap-3 transition cursor-pointer ${
                     theme === 'light'
-                      ? 'border-[#a855f7] bg-amber-400/5 text-slate-950 font-black'
+                      ? 'border-[#a855f7] bg-purple-400/5 text-slate-950 font-black'
                       : 'border-slate-800 text-slate-600 dark:text-slate-200 '
                   }`}
                 >
@@ -255,7 +255,7 @@ export const Settings = () => {
                   onClick={() => { if (theme === 'light') toggleTheme(); }}
                   className={`p-5 rounded-2xl border flex flex-col items-center gap-3 transition cursor-pointer ${
                     theme === 'dark'
-                      ? 'border-[#a855f7] bg-amber-400/5 text-[#a855f7] font-black'
+                      ? 'border-[#a855f7] bg-purple-400/5 text-[#a855f7] font-black'
                       : 'border-slate-200 text-slate-600 hover:bg-slate-50'
                   }`}
                 >

@@ -369,7 +369,7 @@ export const Classes = () => {
         {(activeRole === 'admin' || activeRole === 'faculty') && (
           <button
             onClick={() => setIsCreateOpen(true)}
-            className="flex items-center justify-center gap-2 bg-[#a855f7] hover:bg-amber-400 text-slate-950 px-4 py-2 rounded-xl text-[16px] font-semibold transition shadow-lg shadow-amber-500/10 cursor-pointer"
+            className="flex items-center justify-center gap-2 bg-[#a855f7] hover:bg-purple-400 text-slate-950 px-4 py-2 rounded-xl text-[16px] font-semibold transition shadow-lg shadow-purple-500/10 cursor-pointer"
           >
             <Plus className="w-4 h-4" />
             Schedule Room
@@ -380,18 +380,18 @@ export const Classes = () => {
       {/* Grid of Sections */}
       {activeRole === 'student' && rawClasses.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-20 text-center">
-          <div className="w-16 h-16 rounded-full bg-amber-50 dark:bg-amber-900/20 flex items-center justify-center mb-4">
+          <div className="w-16 h-16 rounded-full bg-purple-50 dark:bg-purple-900/20 flex items-center justify-center mb-4">
             <Video className="w-8 h-8 text-[#a855f7]" />
           </div>
           <h3 className="font-semibold text-slate-900 dark:text-white text-base">No Lecture Rooms Scheduled</h3>
           <p className="text-[14px] text-slate-500 dark:text-slate-400 mt-1 max-w-xs">You must be enrolled in a course to access live classrooms, schedule webinars, or review archives.</p>
-          <button onClick={() => router.push(`/${activeRole}/courses`)} className="mt-5 px-5 py-2.5 bg-[#a855f7] hover:bg-amber-400 text-slate-950 font-semibold rounded-xl transition">
+          <button onClick={() => router.push(`/${activeRole}/courses`)} className="mt-5 px-5 py-2.5 bg-[#a855f7] hover:bg-purple-400 text-slate-950 font-semibold rounded-xl transition">
             Go to My Courses
           </button>
         </div>
       ) : (activeRole !== 'student' && rawClasses.length === 0) ? (
         <div className="flex flex-col items-center justify-center py-20 text-center">
-          <div className="w-16 h-16 rounded-full bg-amber-50 dark:bg-amber-900/20 flex items-center justify-center mb-4">
+          <div className="w-16 h-16 rounded-full bg-purple-50 dark:bg-purple-900/20 flex items-center justify-center mb-4">
             <Video className="w-8 h-8 text-[#a855f7]" />
           </div>
           <h3 className="font-semibold text-slate-900 dark:text-white text-base">No Classes Found</h3>
@@ -445,7 +445,7 @@ export const Classes = () => {
                     <div className="flex items-center gap-1.5">
                       <button
                         onClick={() => setSelectedClass(item)}
-                        className="px-3 py-1.5 border border-slate-200 dark:border-slate-850 hover:border-amber-400 text-[14px] font-semibold rounded-lg text-slate-500 hover:text-slate-900 dark:hover:text-amber-400 transition"
+                        className="px-3 py-1.5 border border-slate-200 dark:border-slate-850 hover:border-purple-400 text-[14px] font-semibold rounded-lg text-slate-500 hover:text-slate-900 dark:hover:text-purple-400 transition"
                       >
                         Info
                       </button>
@@ -476,7 +476,7 @@ export const Classes = () => {
                           <button
                             onClick={() => setCancelModalClass(item)}
                             title="Cancel Class"
-                            className="p-1.5 bg-slate-50 hover:bg-amber-500 hover:text-slate-900 dark:bg-slate-900 rounded-lg transition"
+                            className="p-1.5 bg-slate-50 hover:bg-purple-500 hover:text-slate-900 dark:bg-slate-900 rounded-lg transition"
                           >
                             <X className="w-4 h-4" />
                           </button>
@@ -500,7 +500,7 @@ export const Classes = () => {
         {/* 2. Upcoming Schedule Section */}
         {upcomingClasses.length > 0 && (
           <div className="space-y-3 pt-4 border-t border-slate-200 dark:border-slate-800/80">
-            <span className="text-[14px] font-black text-amber-500 flex items-center gap-1.5">
+            <span className="text-[14px] font-black text-purple-500 flex items-center gap-1.5">
               <Calendar className="w-4.5 h-4.5" /> Upcoming Syllabus Broadcasts
             </span>
             
@@ -540,7 +540,7 @@ export const Classes = () => {
                     <div className="flex items-center gap-1.5">
                       <button
                         onClick={() => setSelectedClass(item)}
-                        className="px-3 py-1.5 border border-slate-200 dark:border-slate-850 hover:border-amber-400 text-[14px] font-semibold rounded-lg text-slate-500 hover:text-slate-900 dark:hover:text-amber-400 transition"
+                        className="px-3 py-1.5 border border-slate-200 dark:border-slate-850 hover:border-purple-400 text-[14px] font-semibold rounded-lg text-slate-500 hover:text-slate-900 dark:hover:text-purple-400 transition"
                       >
                         Info
                       </button>
@@ -561,7 +561,7 @@ export const Classes = () => {
                           <button
                             onClick={() => setCancelModalClass(item)}
                             title="Cancel Class"
-                            className="p-1.5 bg-slate-50 hover:bg-amber-500 hover:text-slate-900 dark:bg-slate-900 rounded-lg transition"
+                            className="p-1.5 bg-slate-50 hover:bg-purple-500 hover:text-slate-900 dark:bg-slate-900 rounded-lg transition"
                           >
                             <X className="w-4 h-4" />
                           </button>
@@ -625,7 +625,7 @@ export const Classes = () => {
                     <div className="flex items-center gap-1.5">
                       <button
                         onClick={() => setSelectedClass(item)}
-                        className="px-3 py-1.5 border border-slate-200 dark:border-slate-850 hover:border-amber-400 text-[14px] font-semibold rounded-lg text-slate-500 hover:text-slate-905 dark:hover:text-amber-400 transition"
+                        className="px-3 py-1.5 border border-slate-200 dark:border-slate-850 hover:border-purple-400 text-[14px] font-semibold rounded-lg text-slate-500 hover:text-slate-905 dark:hover:text-purple-400 transition"
                       >
                         Info
                       </button>
@@ -634,7 +634,7 @@ export const Classes = () => {
                           href={item.recordingUrl}
                           target="_blank"
                           rel="noreferrer"
-                          className="flex items-center gap-1 px-3 py-1.5 bg-[#a855f7] hover:bg-amber-400 text-slate-950 rounded-lg text-[14px] font-semibold transition"
+                          className="flex items-center gap-1 px-3 py-1.5 bg-[#a855f7] hover:bg-purple-400 text-slate-950 rounded-lg text-[14px] font-semibold transition"
                         >
                           <PlayCircle className="w-3.5 h-3.5" /> Watch
                         </a>
@@ -716,7 +716,7 @@ export const Classes = () => {
                     <div className="flex items-center gap-1.5">
                       <button
                         onClick={() => setSelectedClass(item)}
-                        className="px-3 py-1.5 border border-slate-200 dark:border-slate-850 hover:border-amber-400 text-[14px] font-semibold rounded-lg text-slate-500 hover:text-slate-905 dark:hover:text-amber-400 transition"
+                        className="px-3 py-1.5 border border-slate-200 dark:border-slate-850 hover:border-purple-400 text-[14px] font-semibold rounded-lg text-slate-500 hover:text-slate-905 dark:hover:text-purple-400 transition"
                       >
                         Info
                       </button>
@@ -724,7 +724,7 @@ export const Classes = () => {
                         href={item.link}
                         target="_blank"
                         rel="noreferrer"
-                        className="flex items-center gap-1 px-3.5 py-1.5 bg-[#a855f7] hover:bg-amber-400 text-slate-950 rounded-xl text-[14px] font-semibold transition shadow shadow-amber-500/10 animate-pulse"
+                        className="flex items-center gap-1 px-3.5 py-1.5 bg-[#a855f7] hover:bg-purple-400 text-slate-950 rounded-xl text-[14px] font-semibold transition shadow shadow-purple-500/10 animate-pulse"
                       >
                         <PlayCircle className="w-3.5 h-3.5" /> Replay Session
                       </a>
@@ -985,7 +985,7 @@ export const Classes = () => {
 
                 <button
                   type="submit"
-                  className="w-full py-2.5 bg-[#a855f7] hover:bg-amber-400 text-slate-950 font-semibold rounded-xl transition mt-4"
+                  className="w-full py-2.5 bg-[#a855f7] hover:bg-purple-400 text-slate-950 font-semibold rounded-xl transition mt-4"
                 >
                   Publish Room
                 </button>
@@ -1150,7 +1150,7 @@ export const Classes = () => {
 
                 <button
                   type="submit"
-                  className="w-full py-2.5 bg-[#a855f7] hover:bg-amber-400 text-slate-950 font-semibold rounded-xl transition mt-4"
+                  className="w-full py-2.5 bg-[#a855f7] hover:bg-purple-400 text-slate-950 font-semibold rounded-xl transition mt-4"
                 >
                   Save Changes
                 </button>
