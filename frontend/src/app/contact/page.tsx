@@ -275,7 +275,7 @@ export default function SupportContact() {
             </Link>
           </div>
           <p className="mt-4 text-center text-xs text-slate-400">
-            © {new Date().getFullYear()} CodVedha Edutech Pvt. Ltd. All rights reserved.
+            © {new Date().getFullYear()} CodVedha Edtech LLP. All rights reserved.
           </p>
         </motion.div>
       </div>

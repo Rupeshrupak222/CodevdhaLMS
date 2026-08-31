@@ -104,16 +104,20 @@ export const Sidebar = ({ isOpen, onClose }) => {
  <motion.div 
  animate={{ width: isCollapsed ? 90 : 300 }}
  transition={{ type: 'spring', stiffness: 300, damping: 30 }}
- className="flex flex-col h-full bg-[#F5F5F5] dark:bg-[#1E293B] text-[#222222] dark:text-white border-r border-gray-200 dark:border-slate-500 max-h-screen relative overflow-hidden"
+ className="flex flex-col h-full text-white max-h-screen relative overflow-hidden"
+ style={{ background: 'linear-gradient(180deg, #280192 0%, #3A0BB0 55%, #530AD9 100%)' }}
  >
+ {/* Subtle dotted texture */}
+ <div className="absolute inset-0 opacity-[0.08] pointer-events-none" style={{ backgroundImage: 'radial-gradient(#ffffff 0.6px, transparent 0.6px)', backgroundSize: '20px 20px' }} />
+
  {/* Brand Header */}
- <div className={`flex items-center ${isCollapsed ? 'justify-center' : 'justify-between'} px-6 py-5 border-b border-gray-200 dark:border-slate-500 flex-shrink-0`}>
+ <div className={`relative flex items-center ${isCollapsed ? 'justify-center' : 'justify-between'} px-6 py-5 border-b border-white/10 flex-shrink-0`}>
 <Link href={`${dashboardPath}`} onClick={() => { if (onClose) onClose(); }} className={`flex items-center gap-3 ${isCollapsed ? 'justify-center' : ''} cursor-pointer`}>
- <div className="w-12 h-12 rounded-full overflow-hidden shadow-md flex-shrink-0 bg-white flex items-center justify-center">
+ <div className="w-11 h-11 rounded-2xl overflow-hidden shadow-lg flex-shrink-0 bg-white flex items-center justify-center">
  <img
- src="/assets/logo-codvedha.png"
+ src="/assets/logo-codvedha-icon.png"
  alt="CodVedha Logo"
- className="w-full h-full object-contain p-1"
+ className="w-7 h-7 object-contain"
  />
  </div>
  <AnimatePresence>
@@ -122,7 +126,7 @@ export const Sidebar = ({ isOpen, onClose }) => {
  initial={{ opacity: 0, x: -10 }}
  animate={{ opacity: 1, x: 0 }}
  exit={{ opacity: 0, x: -10 }}
- className="font-semibold text-[20px] text-[#222222] dark:text-white whitespace-nowrap"
+ className="font-extrabold text-[20px] text-white whitespace-nowrap tracking-tight"
  >
  CodVedha
  </motion.span>
@@ -134,7 +138,7 @@ export const Sidebar = ({ isOpen, onClose }) => {
  {onClose && (
  <button 
  onClick={onClose} 
- className="p-1 rounded-lg bg-gray-200 dark:bg-slate-800 text-gray-600 dark:text-slate-400 hover:bg-gray-300 dark:hover:bg-slate-700 transition-colors lg:hidden"
+ className="p-1 rounded-lg bg-white/10 text-white/80 hover:bg-white/20 transition-colors lg:hidden"
  >
  <X className="w-4 h-4" />
  </button>
@@ -148,18 +152,10 @@ export const Sidebar = ({ isOpen, onClose }) => {
  initial={{ opacity: 0, height: 0 }}
  animate={{ opacity: 1, height: 'auto' }}
  exit={{ opacity: 0, height: 0 }}
- className="px-5 py-3 border-b border-gray-200 dark:border-slate-800"
+ className="relative px-5 py-3"
  >
- <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[14px] font-semibold uppercase dark:bg-white dark:text-slate-900 dark:border-white ${
- activeRole === 'admin' ? 'bg-purple-100 text-purple-700 border border-purple-300 ' :
- activeRole === 'faculty' ? 'bg-sky-100 text-sky-700 border border-sky-300' :
- 'bg-emerald-100 text-emerald-700 border border-emerald-300'
- }`}>
- <span className={`w-1.5 h-1.5 rounded-full ${
- activeRole === 'admin' ? 'bg-purple-500' :
- activeRole === 'faculty' ? 'bg-sky-500' :
- 'bg-emerald-500'
- }`} />
+ <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[13px] font-semibold uppercase tracking-wide bg-white/10 text-white border border-white/20">
+ <span className="w-1.5 h-1.5 rounded-full bg-emerald-300 animate-pulse" />
  {activeRole} Portal
  </span>
  </motion.div>
@@ -167,7 +163,7 @@ export const Sidebar = ({ isOpen, onClose }) => {
  </AnimatePresence>
 
  {/* Main Nav Scroll List - Hidden Scrollbar */}
- <div className="flex-1 overflow-y-auto px-4 py-6 space-y-1.5 scrollbar-hide">
+ <div className="relative flex-1 overflow-y-auto px-3 py-4 space-y-1 scrollbar-hide">
  {scopedMenuItems.map((item) => {
  const active = isMenuLinkActive(item);
 
@@ -179,15 +175,17 @@ export const Sidebar = ({ isOpen, onClose }) => {
    e.preventDefault();
    handleMenuClick(item);
  }}
- className={`relative flex items-center ${isCollapsed ? 'justify-center' : 'justify-between'} w-full px-4 py-3 rounded-[22px] font-medium text-[16px] transition-all duration-200 cursor-pointer group ${
+ className={`relative flex items-center ${isCollapsed ? 'justify-center' : 'gap-3'} w-full px-4 py-2.5 rounded-xl font-medium text-[15px] transition-all duration-200 cursor-pointer group ${
  active 
- ? 'bg-gradient-to-r from-[#a855f7] to-[#7c3aed] text-white shadow-md shadow-purple-300/50' 
- : 'text-[#222222] dark:text-slate-300 hover:bg-purple-50 dark:hover:bg-slate-800/50 dark:hover:text-white'
+ ? 'bg-white text-[#280192] shadow-lg shadow-black/20' 
+ : 'text-white/75 hover:bg-white/10 hover:text-white'
  }`}
  title={isCollapsed ? item.label : ''}
  >
- <div className={`flex items-center ${isCollapsed ? 'justify-center' : 'gap-3'}`}>
- <item.icon className={`w-5 h-5 flex-shrink-0 ${active ? 'text-white' : 'text-[#222222] dark:text-slate-400 group-hover:dark:text-white'}`} />
+ {active && !isCollapsed && (
+ <motion.span layoutId="sidebarActiveRail" className="absolute left-0 top-1/2 -translate-y-1/2 h-6 w-1 rounded-r-full" style={{ backgroundColor: '#530AD9' }} transition={{ type: 'spring', stiffness: 400, damping: 32 }} />
+ )}
+ <item.icon className={`w-5 h-5 flex-shrink-0 ${active ? 'text-[#530AD9]' : 'text-white/70 group-hover:text-white'}`} />
  <AnimatePresence>
  {!isCollapsed && (
  <motion.span
@@ -200,7 +198,6 @@ export const Sidebar = ({ isOpen, onClose }) => {
  </motion.span>
  )}
  </AnimatePresence>
- </div>
  </Link>
  </div>
  );
@@ -208,10 +205,10 @@ export const Sidebar = ({ isOpen, onClose }) => {
  </div>
 
  {/* Sign Out Footer */}
- <div className="border-t border-gray-200 dark:border-slate-500 px-4 py-4 flex-shrink-0">
+ <div className="relative border-t border-white/10 px-3 py-4 flex-shrink-0">
  <button
  onClick={handleSignOut}
- className={`w-full flex items-center ${isCollapsed ? 'justify-center' : 'justify-center gap-2'} rounded-[22px] bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 px-4 py-3 text-[#222222] dark:text-white hover:bg-red-50 dark:hover:bg-red-950/30 hover:border-red-200 dark:hover:border-red-900 hover:text-red-600 dark:hover:text-red-400 transition-all group`}
+ className={`w-full flex items-center ${isCollapsed ? 'justify-center' : 'justify-center gap-2'} rounded-xl bg-white/10 border border-white/15 px-4 py-2.5 text-white hover:bg-red-500/90 hover:border-red-400 transition-all group`}
  title={isCollapsed ? 'Sign Out' : ''}
  >
  <LogOut size={18} className="flex-shrink-0" />
@@ -233,14 +230,14 @@ export const Sidebar = ({ isOpen, onClose }) => {
  {/* Collapse Button - On the dividing line */}
  <button 
  onClick={toggleCollapse} 
- className="absolute -right-2 top-22 transform -translate-y-1/2 hidden lg:flex items-center justify-center w-9 h-9 rounded-full bg-white border-2 border-gray-200 shadow-md hover:bg-gray-50 hover:border-gray-300 transition-all z-10"
+ className="absolute -right-2 top-22 transform -translate-y-1/2 hidden lg:flex items-center justify-center w-9 h-9 rounded-full bg-white border-2 border-purple-200 shadow-md hover:bg-purple-50 transition-all z-10"
  aria-label={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
  >
  <motion.div
  animate={{ rotate: isCollapsed ? 180 : 0 }}
  transition={{ duration: 0.3 }}
  >
- <ChevronLeft className="w-4 h-4 text-gray-900" />
+ <ChevronLeft className="w-4 h-4" style={{ color: '#530AD9' }} />
  </motion.div>
  </button>
  </motion.div>
