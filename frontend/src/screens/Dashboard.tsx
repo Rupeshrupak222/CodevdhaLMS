@@ -71,7 +71,7 @@ export const Dashboard = () => {
   };
 
   const renderStatsGrid = (stats: any) => (
-    <div className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 ${stats.length === 5 ? 'xl:grid-cols-5' : 'xl:grid-cols-4'} gap-4`}>
+    <div className={`grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 ${stats.length === 5 ? 'xl:grid-cols-5' : 'xl:grid-cols-4'} gap-3 sm:gap-4`}>
       {stats.map((stat: any, idx: number) => {
         let Icon = Users;
         if (stat.title.includes('Courses') || stat.title.includes('Course')) Icon = BookOpen;
@@ -89,27 +89,27 @@ export const Dashboard = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3, delay: idx * 0.05 }}
             key={stat.title}
-            className="p-5 rounded-2xl bg-white dark:bg-[#1E293B] border border-slate-200/50 dark:border-slate-800/50 hover:shadow-lg cursor-pointer transition-all duration-300 relative overflow-hidden group"
+            className="p-3.5 sm:p-5 rounded-2xl bg-white dark:bg-[#1E293B] border border-slate-200/50 dark:border-slate-800/50 hover:shadow-lg cursor-pointer transition-all duration-300 relative overflow-hidden group"
           >
             <div className={`absolute -right-8 -top-8 w-24 h-24 bg-gradient-to-br ${color} rounded-full blur-xl group-hover:scale-125 transition-transform duration-500`} />
-            <div className="flex justify-between items-start z-10 relative">
-              <div>
-                <p className="text-[16px] text-slate-600 dark:text-slate-300 font-semibold">{stat.title}</p>
-                <h3 className="text-2xl font-black mt-2 text-slate-900 dark:text-slate-300 ">
+            <div className="flex justify-between items-start gap-2 z-10 relative">
+              <div className="min-w-0">
+                <p className="text-xs sm:text-[16px] text-slate-600 dark:text-slate-300 font-semibold leading-snug">{stat.title}</p>
+                <h3 className="text-xl sm:text-2xl font-black mt-1.5 sm:mt-2 text-slate-900 dark:text-slate-300 ">
                   {stat.value}
                 </h3>
               </div>
-              <div className={`p-2.5 rounded-xl bg-slate-50 dark:bg-slate-900 ${iconColor}`}>
-                <Icon className="w-5 h-5" />
+              <div className={`p-2 sm:p-2.5 rounded-xl bg-slate-50 dark:bg-slate-900 ${iconColor} shrink-0`}>
+                <Icon className="w-4 h-4 sm:w-5 sm:h-5" />
               </div>
             </div>
-            <div className="flex items-center gap-1 mt-4 text-[16px] font-medium z-10 relative">
+            <div className="flex items-center gap-1 mt-3 sm:mt-4 text-xs sm:text-[16px] font-medium z-10 relative">
               {stat.isPositive ? (
-                <ArrowUpRight className="w-3.5 h-3.5 text-emerald-500" />
+                <ArrowUpRight className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
               ) : (
-                <ArrowDownRight className="w-3.5 h-3.5 text-rose-500" />
+                <ArrowDownRight className="w-3.5 h-3.5 text-rose-500 shrink-0" />
               )}
-              <span className={stat.isPositive ? 'text-emerald-500' : 'text-rose-500'}>
+              <span className={`${stat.isPositive ? 'text-emerald-500' : 'text-rose-500'} truncate`}>
                 {stat.change}
               </span>
             </div>
@@ -137,20 +137,6 @@ export const Dashboard = () => {
           </p>
         </div>
 
-        {/* CODVEDHA AI Button */}
-        <a
-          href="https://ai.codvedha.com"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="group flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-[#a855f7] to-[#ff8c00] text-white font-semibold text-sm shadow-lg shadow-purple-500/25 hover:shadow-purple-500/40 hover:scale-105 transition-all duration-300 cursor-pointer"
-        >
-          <span className="relative flex h-2.5 w-2.5">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75"></span>
-            <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-white"></span>
-          </span>
-          CODVEDHA AI
-          <ArrowUpRight className="w-4 h-4 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform duration-200" />
-        </a>
       </div>
 
       {/* Role-Based Stats Grid */}
@@ -175,8 +161,8 @@ export const Dashboard = () => {
                   <AreaChart data={studentGrowth} margin={{ top: 10, right: 10, left: -25, bottom: 0 }}>
                     <defs>
                       <linearGradient id="colorStudents" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor="#a855f7" stopOpacity={0.4}/>
-                        <stop offset="95%" stopColor="#a855f7" stopOpacity={0}/>
+                        <stop offset="5%" stopColor="#530AD9" stopOpacity={0.4}/>
+                        <stop offset="95%" stopColor="#530AD9" stopOpacity={0}/>
                       </linearGradient>
                     </defs>
                     <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E2E8F0" className="dark:hidden" />
@@ -192,7 +178,7 @@ export const Dashboard = () => {
                         fontSize: '12px' 
                       }} 
                     />
-                    <Area type="monotone" dataKey="students" stroke="#a855f7" strokeWidth={2.5} fillOpacity={1} fill="url(#colorStudents)" />
+                    <Area type="monotone" dataKey="students" stroke="#530AD9" strokeWidth={2.5} fillOpacity={1} fill="url(#colorStudents)" />
                   </AreaChart>
                 </ResponsiveContainer>
               </div>
@@ -400,7 +386,7 @@ export const Dashboard = () => {
         >
           <div className="flex justify-between items-center mb-4">
             <h3 className="text-sm font-semibold text-slate-900 dark:text-white">Recent Activities</h3>
-            <BellRing className="w-4.5 h-4.5 text-[#a855f7]" />
+            <BellRing className="w-4.5 h-4.5" style={{ color: '#530AD9' }} />
           </div>
           <div className="space-y-3.5">
             {recentActivities.length > 0 ? recentActivities.map((act: any) => (

@@ -44,7 +44,7 @@ export default function TermsPage() {
                 <h1 className="text-4xl font-bold bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent">
                   Terms of Service
                 </h1>
-                <p className="text-slate-500 text-sm">CodVedha Edutech Pvt. Ltd. · LMS Portal</p>
+                <p className="text-slate-500 text-sm">CodVedha Edtech LLP · LMS Portal</p>
               </div>
             </div>
             
@@ -63,7 +63,7 @@ export default function TermsPage() {
               <span className="text-orange-500 mt-0.5">📋</span>
               <span>
                 Please read these Terms of Service carefully before using <strong className="text-slate-900">CodVedha's</strong> LMS Platform. 
-                These terms constitute a legally binding agreement between you and <strong className="text-slate-900">CodVedha Edutech Pvt. Ltd.</strong>
+                These terms constitute a legally binding agreement between you and <strong className="text-slate-900">CodVedha Edtech LLP.</strong>
               </span>
             </p>
           </div>
@@ -198,7 +198,7 @@ export default function TermsPage() {
             <ul className="space-y-3">
               <li className="flex items-start gap-3 text-sm text-slate-600">
                 <span className="w-1.5 h-1.5 rounded-full bg-rose-400 mt-2 flex-shrink-0" />
-                <span>All course content, materials, and platform features are owned by <strong className="text-slate-800">CodVedha Edutech Pvt. Ltd.</strong></span>
+                <span>All course content, materials, and platform features are owned by <strong className="text-slate-800">CodVedha Edtech LLP.</strong></span>
               </li>
               <li className="flex items-start gap-3 text-sm text-slate-600">
                 <span className="w-1.5 h-1.5 rounded-full bg-rose-400 mt-2 flex-shrink-0" />
@@ -334,7 +334,7 @@ export default function TermsPage() {
             <ul className="space-y-3">
               <li className="flex items-start gap-3 text-sm text-slate-700">
                 <span className="w-1.5 h-1.5 rounded-full bg-orange-400 mt-2 flex-shrink-0" />
-                <span><span className="font-medium">CodVedha Edutech Pvt. Ltd.</span></span>
+                <span><span className="font-medium">CodVedha Edtech LLP.</span></span>
               </li>
               <li className="flex items-start gap-3 text-sm text-slate-700">
                 <span className="w-1.5 h-1.5 rounded-full bg-orange-400 mt-2 flex-shrink-0" />
@@ -364,7 +364,7 @@ export default function TermsPage() {
             </Link>
           </div>
           <p className="mt-4 text-xs text-slate-400">
-            © {new Date().getFullYear()} CodVedha Edutech Pvt. Ltd. All rights reserved.
+            © {new Date().getFullYear()} CodVedha Edtech LLP. All rights reserved.
           </p>
         </div>
       </div>

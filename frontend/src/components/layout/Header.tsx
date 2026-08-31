@@ -236,7 +236,7 @@ export const Header = ({ onMenuClick }) => {
          {breadcrumbs.map((item, index) => (
            <div key={item.path} className="flex items-center gap-1 flex-shrink-0">
              {index === 0 && (
-               <Home className="w-4 h-4 text-[#a855f7] flex-shrink-0" />
+               <Home className="w-4 h-4 flex-shrink-0" style={{ color: '#530AD9' }} />
              )}
              {index > 0 && (
                <ChevronRight className="w-4 h-4 text-slate-400 flex-shrink-0" />
@@ -250,7 +250,7 @@ export const Header = ({ onMenuClick }) => {
                // All other items - clickable links
                <Link
                  href={item.path}
-                 className="text-slate-500 hover:text-[#a855f7] dark:text-slate-400 dark:hover:text-[#a855f7] transition-colors truncate max-w-[100px] md:max-w-[150px]"
+                 className="text-slate-500 dark:text-slate-400 transition-colors truncate max-w-[100px] md:max-w-[150px] hover:text-[#530AD9] dark:hover:text-[#8b5cf6]"
                >
                  {item.label}
                </Link>
@@ -266,16 +266,13 @@ export const Header = ({ onMenuClick }) => {
          <Menu className="w-6 h-6" />
        </button>
 
-       {/* Mobile: Logo + Brand Name only */}
-       <Link href="/home" className="flex lg:hidden items-center gap-1 flex-shrink-0">
+       {/* Mobile: Original logo only (includes wordmark) */}
+       <Link href="/home" className="flex lg:hidden items-center flex-shrink-0">
          <img
            src="/assets/logo-codvedha.png"
            alt="CodVedha Logo"
-           className="h-10 w-auto object-contain"
+           className="h-14 w-auto object-contain"
          />
-         <span className="text-xl font-bold text-slate-900 dark:text-white whitespace-nowrap">
-           CodVedha
-         </span>
        </Link>
      </div>
 
@@ -286,7 +283,7 @@ export const Header = ({ onMenuClick }) => {
           placeholder="Search students, courses, tasks..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="w-full pl-10 pr-4 py-1.5 rounded-full border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50 focus:border-[#a855f7] focus:ring-1 focus:ring-[#a855f7] text-sm focus:outline-none dark:text-white transition"
+          className="w-full pl-10 pr-4 py-1.5 rounded-full border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50 focus:border-[#530AD9] focus:ring-1 focus:ring-[#530AD9] text-sm focus:outline-none dark:text-white transition"
         />
        <Search className="w-4 h-4 text-slate-400 absolute left-3.5" />
      </div>
@@ -325,7 +322,7 @@ export const Header = ({ onMenuClick }) => {
            onClick={() => setProfileOpen(!profileOpen)}
            className="flex items-center gap-1.5 p-1 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition cursor-pointer"
          >
-           <Avatar src={user?.avatar} alt={user?.name} className="w-8 h-8 rounded-full object-cover border border-[#a855f7]" />
+           <Avatar src={user?.avatar} alt={user?.name} className="w-8 h-8 rounded-full object-cover border-2 border-[#530AD9]" />
            <ChevronDown className={`w-4 h-4 text-slate-500 transition-transform duration-200 ${profileOpen ? 'rotate-180' : ''}`} />
          </button>
 
@@ -342,7 +339,7 @@ export const Header = ({ onMenuClick }) => {
                <p className="text-[16px] text-slate-500 dark:text-slate-400 truncate">
                  {user ? user.email : 'admin@codvedha.com'}
                </p>
-               <span className="inline-block mt-2 px-2 py-0.5 text-[14px] font-semibold uppercase rounded bg-purple-100 text-purple-700 border border-purple-200">
+               <span className="inline-block mt-2 px-2 py-0.5 text-[14px] font-semibold uppercase rounded" style={{ backgroundColor: '#530AD91a', color: '#280192', border: '1px solid #530AD940' }}>
                  {roleDisplayName || 'User'}
                </span>
              </div>
@@ -386,7 +383,7 @@ export const Header = ({ onMenuClick }) => {
              onClick={() => setProfileOpen(!profileOpen)}
              className="flex items-center gap-1.5 p-1 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition cursor-pointer"
            >
-             <Avatar src={user?.avatar} alt={user?.name} className="w-8 h-8 rounded-full object-cover border border-[#a855f7]" />
+             <Avatar src={user?.avatar} alt={user?.name} className="w-8 h-8 rounded-full object-cover border-2 border-[#530AD9]" />
            </button>
 
            {/* Profile Dropdown Items */}
@@ -402,7 +399,7 @@ export const Header = ({ onMenuClick }) => {
                  <p className="text-[16px] text-slate-500 dark:text-slate-400 truncate">
                    {user ? user.email : 'admin@codvedha.com'}
                  </p>
-                 <span className="inline-block mt-2 px-2 py-0.5 text-[14px] font-semibold uppercase rounded bg-purple-100 text-purple-700 border border-purple-200">
+                 <span className="inline-block mt-2 px-2 py-0.5 text-[14px] font-semibold uppercase rounded" style={{ backgroundColor: '#530AD91a', color: '#280192', border: '1px solid #530AD940' }}>
                    {roleDisplayName || 'User'}
                  </span>
                </div>

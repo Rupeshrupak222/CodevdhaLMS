@@ -29,7 +29,7 @@ export default function PrivacyPage() {
                 <h1 className="text-4xl font-bold bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent">
                   Privacy Policy
                 </h1>
-                <p className="text-slate-500 text-sm">CodVedha Edutech Pvt. Ltd. · LMS Portal</p>
+                <p className="text-slate-500 text-sm">CodVedha Edtech LLP · LMS Portal</p>
               </div>
             </div>
             
@@ -47,7 +47,7 @@ export default function PrivacyPage() {
             <p className="text-sm text-slate-700 leading-relaxed flex items-start gap-3">
               <span className="text-orange-500 mt-0.5">🔒</span>
               <span>
-                At <strong className="text-slate-900">CodVedha Edutech Pvt. Ltd.</strong>, we are committed to protecting your privacy.
+                At <strong className="text-slate-900">CodVedha Edtech LLP.</strong>, we are committed to protecting your privacy.
                 This policy explains how we collect, use, and safeguard your information when you use our 
                 <strong className="text-slate-900"> Learning Management System (LMS) Portal</strong> — for both students and teachers.
               </span>
@@ -342,7 +342,7 @@ export default function PrivacyPage() {
             <ul className="space-y-3">
               <li className="flex items-start gap-3 text-sm text-slate-700">
                 <span className="w-1.5 h-1.5 rounded-full bg-orange-400 mt-2 flex-shrink-0" />
-                <span><span className="font-medium">CodVedha Edutech Pvt. Ltd.</span></span>
+                <span><span className="font-medium">CodVedha Edtech LLP.</span></span>
               </li>
               <li className="flex items-start gap-3 text-sm text-slate-700">
                 <span className="w-1.5 h-1.5 rounded-full bg-orange-400 mt-2 flex-shrink-0" />
@@ -372,7 +372,7 @@ export default function PrivacyPage() {
             </Link>
           </div>
           <p className="mt-4 text-xs text-slate-400">
-            © {new Date().getFullYear()} CodVedha Edutech Pvt. Ltd. All rights reserved.
+            © {new Date().getFullYear()} CodVedha Edtech LLP. All rights reserved.
           </p>
         </div>
       </div>
