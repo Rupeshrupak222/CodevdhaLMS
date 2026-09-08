@@ -17,3 +17,9 @@ export const hashToken = (token: string): string => {
 export const generateSecureToken = (bytes: number = 32): string => {
   return crypto.randomBytes(bytes).toString('hex');
 };
+
+// Generate a 48-hex-char session id (24 random bytes) for single-session binding.
+// Matches the ^[0-9a-f]{48}$ pattern validated on the X-Session-Id header.
+export const generateSessionId = (): string => {
+  return crypto.randomBytes(24).toString('hex');
+};

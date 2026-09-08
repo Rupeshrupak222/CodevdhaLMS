@@ -3,6 +3,8 @@ import { authService } from './auth.service';
 import { asyncHandler } from '../../utils/asyncHandler';
 import { sendSuccess, sendCreated } from '../../utils/response';
 import { env } from '../../config/env';
+import { blacklistToken } from '../../utils/tokenBlacklist';
+import { decodeJwt, verifyAccessToken } from '../../utils/jwt';
 
 const getCookieOptions = () => ({
   httpOnly: true,
@@ -38,6 +40,7 @@ export const authController = {
       message: 'Account created successfully',
       data: {
         accessToken: result.accessToken,
+        sessionId: result.sessionId,
         user: result.user,
       },
     });
@@ -82,6 +85,7 @@ export const authController = {
       message: 'Face enrolled successfully',
       data: {
         accessToken: result.accessToken,
+        sessionId: result.sessionId,
         user: result.user,
       },
     });
@@ -104,6 +108,7 @@ export const authController = {
       message: 'Face verified successfully',
       data: {
         accessToken: result.accessToken,
+        sessionId: result.sessionId,
         user: result.user,
       },
     });
@@ -128,16 +133,28 @@ export const authController = {
 
     return sendSuccess(res, {
       message: 'Token refreshed',
-      data: { accessToken: result.accessToken },
+      data: { accessToken: result.accessToken, sessionId: result.sessionId },
     });
   }),
 
   // POST /api/auth/logout
   logout: asyncHandler(async (req: Request, res: Response) => {
     const rawToken = req.cookies?.refreshToken;
-    if (rawToken) {
-      await authService.logout(rawToken);
+
+    // Revoke session(s) + clear activeSessionId. Pass the authenticated userId so
+    // the session can be cleared even if the refresh cookie is missing.
+    await authService.logout(rawToken || '', req.user?.userId);
+
+    // Blacklist the current access token so it cannot be reused before its
+    // natural expiry (defends a stolen/leaked access token after logout).
+    const authHeader = req.headers.authorization;
+    if (authHeader && authHeader.startsWith('Bearer ')) {
+      const accessToken = authHeader.slice(7);
+      const decoded = decodeJwt(accessToken);
+      const expiresAtMs = decoded?.exp ? decoded.exp * 1000 : undefined;
+      await blacklistToken(accessToken, expiresAtMs);
     }
+
     res.clearCookie('refreshToken', getCookieOptions());
     return sendSuccess(res, { message: 'Logged out successfully' });
   }),
@@ -146,6 +163,31 @@ export const authController = {
   getMe: asyncHandler(async (req: Request, res: Response) => {
     const user = await authService.getMe(req.user!.userId);
     return sendSuccess(res, { data: user });
+  }),
+
+  // GET /api/auth/session-check
+  // Lightweight heartbeat: verifies the Bearer token and compares X-Session-Id
+  // against the user's active session WITHOUT running the full requireAuth
+  // pipeline (so it never 401s on a mismatch — it reports it in the body).
+  sessionCheck: asyncHandler(async (req: Request, res: Response) => {
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return sendSuccess(res, { data: { valid: false, code: 'NO_TOKEN' } });
+    }
+
+    const token = authHeader.slice(7);
+    let payload: { userId: string };
+    try {
+      payload = verifyAccessToken(token);
+    } catch {
+      return sendSuccess(res, { data: { valid: false, code: 'INVALID_TOKEN' } });
+    }
+
+    const headerSessionId = req.headers['x-session-id'];
+    const sessionId = Array.isArray(headerSessionId) ? headerSessionId[0] : headerSessionId;
+
+    const result = await authService.sessionCheck(payload.userId, sessionId);
+    return sendSuccess(res, { data: result });
   }),
 
   // POST /api/auth/forgot-password

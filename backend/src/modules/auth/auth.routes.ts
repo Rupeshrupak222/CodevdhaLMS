@@ -27,6 +27,9 @@ router.post('/refresh', authController.refresh);
 router.post('/forgot-password', validate(forgotPasswordSchema), authController.forgotPassword);
 router.post('/reset-password', validate(resetPasswordSchema), authController.resetPassword);
 
+// Session heartbeat — does its own token/session inspection (never hard-401s)
+router.get('/session-check', authController.sessionCheck);
+
 // Protected routes
 router.post('/logout', authenticate, authController.logout);
 router.get('/me', authenticate, authController.getMe);
