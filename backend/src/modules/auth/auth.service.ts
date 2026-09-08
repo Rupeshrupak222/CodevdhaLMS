@@ -8,8 +8,8 @@ import {
   generateTempToken,
   verifyTempToken,
 } from '../../utils/jwt';
-import { hashToken, generateSecureToken } from '../../utils/crypto';
-import { isAccountLocked, recordFailedAttempt, clearLockout } from '../../utils/loginLockout';
+import { hashToken, generateSecureToken, generateSessionId } from '../../utils/crypto';
+import { isAccountLocked, recordFailedAttempt, clearLockout, isIpLockedOut, recordFailedIpAttempt, clearIpLockout } from '../../utils/loginLockout';
 import { logAdminEvent } from '../../utils/adminAuditLog';
 import { isTempTokenUsed, markTempTokenUsed } from '../../utils/tempTokenBlacklist';
 import { isSessionActive, clearActivity } from '../../utils/activityTracker';
@@ -81,6 +81,8 @@ export const authService = {
     const rawRefreshToken = generateRefreshToken({ userId: user.id, tokenId });
     const tokenHash = hashToken(rawRefreshToken);
 
+    const sessionId = generateSessionId();
+
     const expiresAt = new Date();
     expiresAt.setDate(expiresAt.getDate() + REFRESH_TOKEN_EXPIRY_DAYS);
     const refreshTokenMaxAgeMs = REFRESH_TOKEN_EXPIRY_DAYS * 24 * 60 * 60 * 1000;
@@ -88,15 +90,20 @@ export const authService = {
     await authRepository.createRefreshToken({
       userId: user.id,
       tokenHash,
+      accessTokenHash: hashToken(accessToken),
+      sessionId,
       expiresAt,
       userAgent: meta.userAgent,
       ipAddress: meta.ipAddress,
     });
 
+    await authRepository.setActiveSessionId(user.id, sessionId);
+
     return {
       accessToken,
       refreshToken: rawRefreshToken,
       refreshTokenMaxAgeMs,
+      sessionId,
       user,
     };
   },
@@ -106,12 +113,31 @@ export const authService = {
     input: LoginInput,
     meta: { userAgent?: string; ipAddress?: string }
   ) => {
-    // Check account lockout BEFORE any database/bcrypt operations
-    const lockStatus = isAccountLocked(input.email);
-    if (lockStatus.locked) {
-      throw AppError.tooManyRequests(
-        `Account temporarily locked due to too many failed attempts. Try again in ${Math.ceil(lockStatus.remainingSeconds / 60)} minutes.`
-      );
+    // Check per-IP lockout FIRST — catches credential-stuffing / password-spraying
+    // where an attacker cycles through many emails from a single IP (which the
+    // per-email lockout below would not slow down).
+    const ip = meta.ipAddress;
+    if (ip) {
+      const ipLock = isIpLockedOut(ip, meta.userAgent);
+      if (ipLock.locked) {
+        throw AppError.tooManyRequests(
+          'Too many failed login attempts. Please try again later.'
+        );
+      }
+    }
+
+    // Check per-account-per-device lockout BEFORE any database/bcrypt operations.
+    // Scoped to this device so blocking one account here does not affect the same
+    // account on the user's other devices, nor other accounts on this device.
+    // Message is intentionally generic — it does not reveal remaining attempts or
+    // whether the account is privileged (which would leak account state).
+    if (ip) {
+      const lockStatus = isAccountLocked(input.email, ip, meta.userAgent);
+      if (lockStatus.locked) {
+        throw AppError.tooManyRequests(
+          'Too many failed login attempts. Please try again later.'
+        );
+      }
     }
 
     const user = await authRepository.findUserByEmail(input.email);
@@ -124,9 +150,15 @@ export const authService = {
     );
 
     if (!user || !isPasswordValid) {
-      // Record failed attempt with role-specific policy (stricter for admins)
       const userRole = user?.role;
-      const lockResult = recordFailedAttempt(input.email, userRole);
+
+      // Record the failure against BOTH the account-on-this-device (5 -> 10 min)
+      // and the device total (10 -> 10 min). Both are scoped per device.
+      let lockResult = { locked: false, attemptsRemaining: 0 };
+      if (ip) {
+        lockResult = recordFailedAttempt(input.email, ip, meta.userAgent);
+        recordFailedIpAttempt(ip, meta.userAgent);
+      }
 
       // Log failed admin login attempts
       if (userRole === 'ADMIN' || input.role === 'ADMIN') {
@@ -140,19 +172,23 @@ export const authService = {
         });
       }
 
+      // Generic responses only — do not reveal remaining attempts (leaks that the
+      // account exists and how close it is to lockout) or role-based lock duration
+      // (leaks whether the email is an admin).
       if (lockResult.locked) {
-        const lockMinutes = userRole === 'ADMIN' ? 30 : 15;
         throw AppError.tooManyRequests(
-          `Account locked due to too many failed attempts. Try again in ${lockMinutes} minutes.`
+          'Too many failed login attempts. Please try again later.'
         );
       }
-      throw AppError.unauthorized(
-        `Invalid email or password. ${lockResult.attemptsRemaining} attempt(s) remaining.`
-      );
+      throw AppError.unauthorized('Invalid email or password.');
     }
 
-    // Successful credentials — clear any lockout
-    clearLockout(input.email);
+    // Successful credentials — clear any lockout for this account+device and the
+    // device total.
+    if (ip) {
+      clearLockout(input.email, ip, meta.userAgent);
+      clearIpLockout(ip, meta.userAgent);
+    }
 
     if (!user.isActive) {
       throw AppError.forbidden('Your account has been deactivated');
@@ -242,6 +278,9 @@ export const authService = {
     const rawRefreshToken = generateRefreshToken({ userId: user.id, tokenId });
     const tokenHash = hashToken(rawRefreshToken);
 
+    // 48-hex session id bound to this login and enforced via X-Session-Id
+    const sessionId = generateSessionId();
+
     const expiryDays = input.rememberMe
       ? REFRESH_TOKEN_REMEMBER_ME_DAYS
       : REFRESH_TOKEN_EXPIRY_DAYS;
@@ -253,10 +292,15 @@ export const authService = {
     await authRepository.createRefreshToken({
       userId: user.id,
       tokenHash,
+      accessTokenHash: hashToken(accessToken),
+      sessionId,
       expiresAt,
       userAgent: meta.userAgent,
       ipAddress: meta.ipAddress,
     });
+
+    // Bind this session as the user's only active session
+    await authRepository.setActiveSessionId(user.id, sessionId);
 
     const safeUser = {
       id: user.id,
@@ -271,6 +315,7 @@ export const authService = {
       accessToken,
       refreshToken: rawRefreshToken,
       refreshTokenMaxAgeMs,
+      sessionId,
       user: safeUser,
     };
   },
@@ -358,11 +403,16 @@ export const authService = {
     // Convert Prisma array to normal number array if needed, then compare
     const storedEmbedding = faceEmbedding;
     const distance = euclideanDistance(embedding, storedEmbedding);
-    console.log(`[FaceVerify] Calculated Euclidean distance: ${distance} (threshold: 0.65)`);
+    // Only log the exact distance in development — printing it in prod would let
+    // an attacker calibrate a spoof against the match threshold.
+    if (env.isDev) {
+      console.log(`[FaceVerify] Euclidean distance: ${distance} (threshold: 0.65)`);
+    }
 
-    // Threshold 0.65: allows cross-device matching (web enroll → mobile verify)
+    // Threshold 0.65: allows cross-device matching (web enroll → mobile verify).
+    // The client-facing message is generic — it never reveals the exact distance.
     if (distance > 0.65) {
-      throw AppError.unauthorized(`Face verification failed (Distance: ${distance.toFixed(3)}). Please try again.`);
+      throw AppError.unauthorized('Face verification failed. Please try again.');
     }
 
     // Mark temp token as used (prevent replay)
@@ -387,6 +437,8 @@ export const authService = {
     const rawRefreshToken = generateRefreshToken({ userId: user.id, tokenId });
     const tokenHash = hashToken(rawRefreshToken);
 
+    const sessionId = generateSessionId();
+
     const expiryDays = rememberMe
       ? REFRESH_TOKEN_REMEMBER_ME_DAYS
       : REFRESH_TOKEN_EXPIRY_DAYS;
@@ -401,10 +453,15 @@ export const authService = {
     await authRepository.createRefreshToken({
       userId: user.id,
       tokenHash,
+      accessTokenHash: hashToken(accessToken),
+      sessionId,
       expiresAt,
       userAgent: meta.userAgent,
       ipAddress: meta.ipAddress,
     });
+
+    // Bind this session as the user's only active session
+    await authRepository.setActiveSessionId(user.id, sessionId);
 
     const safeUser = {
       id: user.id,
@@ -419,6 +476,7 @@ export const authService = {
       accessToken,
       refreshToken: rawRefreshToken,
       refreshTokenMaxAgeMs,
+      sessionId,
       user: safeUser,
     };
   },
@@ -451,15 +509,24 @@ export const authService = {
       throw AppError.unauthorized('Refresh token not found or expired');
     }
 
+    // Reject sessions that were explicitly revoked (logout / force-logout)
+    if (stored.revokedAt) {
+      throw AppError.unauthorized('Session has been revoked');
+    }
+
     // Check if user is still active (prevents deactivated users from refreshing)
     if (!stored.user.isActive) {
       // Revoke all sessions for deactivated user
       await authRepository.deleteAllRefreshTokensForUser(stored.user.id);
+      await authRepository.setActiveSessionId(stored.user.id, null);
       throw AppError.forbidden('Your account has been deactivated');
     }
 
-    // Token rotation: delete old, create new
+    // Token rotation: delete old, create new. The session id is preserved across
+    // rotation so the client's X-Session-Id remains valid without a re-login.
     await authRepository.deleteRefreshToken(tokenHash);
+
+    const sessionId = stored.sessionId ?? generateSessionId();
 
     const newTokenId = uuidv4();
     const newAccessToken = generateAccessToken({
@@ -477,34 +544,71 @@ export const authService = {
     await authRepository.createRefreshToken({
       userId: stored.user.id,
       tokenHash: newHash,
+      accessTokenHash: hashToken(newAccessToken),
+      sessionId,
       expiresAt: newExpiry,
       userAgent: meta.userAgent,
       ipAddress: meta.ipAddress,
     });
 
+    // Re-affirm this session as the active one (covers the case where the stored
+    // sessionId was regenerated for a legacy row without one).
+    await authRepository.setActiveSessionId(stored.user.id, sessionId);
+
     return {
       accessToken: newAccessToken,
       refreshToken: newRawRefresh,
       refreshTokenExpiresAt: newExpiry,
+      sessionId,
     };
   },
 
   // ── Logout ───────────────────────────────────────────────────────────────────
+  // Revokes the user's session(s) and clears their activeSessionId so any request
+  // carrying the old X-Session-Id is rejected. The controller additionally
+  // blacklists the current access token (it holds the Bearer token).
   logout: async (rawToken: string, userId?: string) => {
     const tokenHash = hashToken(rawToken);
     try {
       const token = await authRepository.findRefreshToken(tokenHash);
-      await authRepository.deleteRefreshToken(tokenHash);
-      // Clear activity tracking for the user
-      if (token?.user?.id) {
-        clearActivity(token.user.id);
-      } else if (userId) {
-        clearActivity(userId);
+      const resolvedUserId = token?.user?.id ?? userId;
+
+      if (resolvedUserId) {
+        // Single-session model: end the session entirely.
+        await authRepository.deleteAllRefreshTokensForUser(resolvedUserId);
+        await authRepository.setActiveSessionId(resolvedUserId, null);
+        clearActivity(resolvedUserId);
+      } else {
+        // Fall back to deleting just this token if we couldn't resolve a user.
+        await authRepository.deleteRefreshToken(tokenHash);
       }
     } catch {
       // Token already gone — that's fine
-      if (userId) clearActivity(userId);
+      if (userId) {
+        try {
+          await authRepository.setActiveSessionId(userId, null);
+        } catch {
+          /* ignore */
+        }
+        clearActivity(userId);
+      }
     }
+  },
+
+  // ── Session heartbeat ─────────────────────────────────────────────────────────
+  // Lightweight check used by the frontend to detect force-logout. Returns
+  // valid=false with FORCE_LOGOUT when the provided session id no longer matches
+  // the user's active session. When no session id is provided yet (the first
+  // moments after login) it returns valid=true to avoid a false logout.
+  sessionCheck: async (userId: string, sessionId?: string) => {
+    if (!sessionId) {
+      return { valid: true };
+    }
+    const activeSessionId = await authRepository.getActiveSessionId(userId);
+    if (!activeSessionId || activeSessionId !== sessionId) {
+      return { valid: false, code: 'FORCE_LOGOUT' as const };
+    }
+    return { valid: true };
   },
 
   // ── Get current user ─────────────────────────────────────────────────────────

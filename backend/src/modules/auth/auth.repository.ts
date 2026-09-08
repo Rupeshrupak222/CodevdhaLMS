@@ -81,6 +81,21 @@ export const authRepository = {
       data: { passwordHash },
     }),
 
+  // Single-session: set / clear the user's active session id
+  setActiveSessionId: (userId: string, sessionId: string | null) =>
+    prisma.user.update({
+      where: { id: userId },
+      data: { activeSessionId: sessionId },
+    }),
+
+  getActiveSessionId: async (userId: string): Promise<string | null> => {
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      select: { activeSessionId: true },
+    });
+    return user?.activeSessionId ?? null;
+  },
+
   updateUserFace: async (id: string, faceEmbedding: number[], isFaceRegistered: boolean) => {
     return prisma.user.update({
       where: { id },
@@ -107,6 +122,8 @@ export const authRepository = {
   createRefreshToken: (data: {
     userId: string;
     tokenHash: string;
+    accessTokenHash?: string;
+    sessionId?: string;
     expiresAt: Date;
     userAgent?: string;
     ipAddress?: string;
@@ -125,8 +142,9 @@ export const authRepository = {
   deleteAllRefreshTokensForUser: (userId: string) =>
     prisma.refreshToken.deleteMany({ where: { userId } }),
 
+  // Only count sessions that have not been revoked
   countRefreshTokensForUser: (userId: string) =>
-    prisma.refreshToken.count({ where: { userId } }),
+    prisma.refreshToken.count({ where: { userId, revokedAt: null } }),
 
   deleteOldestRefreshTokensForUser: async (userId: string, count: number) => {
     const oldest = await prisma.refreshToken.findMany({
@@ -141,6 +159,23 @@ export const authRepository = {
       });
     }
   },
+
+  // ── Blacklisted Access Tokens ───────────────────────────────────────────────
+
+  createBlacklistedToken: (data: { tokenHash: string; expiresAt: Date }) =>
+    prisma.blacklistedToken.upsert({
+      where: { tokenHash: data.tokenHash },
+      update: { expiresAt: data.expiresAt },
+      create: data,
+    }),
+
+  findBlacklistedToken: (tokenHash: string) =>
+    prisma.blacklistedToken.findUnique({ where: { tokenHash } }),
+
+  deleteExpiredBlacklistedTokens: () =>
+    prisma.blacklistedToken.deleteMany({
+      where: { expiresAt: { lt: new Date() } },
+    }),
 
   // ── Password Reset ─────────────────────────────────────────────────────────
 

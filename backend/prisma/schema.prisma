@@ -106,6 +106,9 @@ model User {
   isActive        Boolean  @default(true)
   faceEmbedding   Float[]
   isFaceRegistered Boolean @default(false)
+  // Single-session enforcement: the currently-authorized session id (48-hex).
+  // Any request whose X-Session-Id header does not match this is rejected.
+  activeSessionId String?
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 
@@ -153,18 +156,36 @@ model UserSettings {
 
 // ─── Auth Tokens ────────────────────────────────────────────────────────────
 
+// Session store. Holds one row per active login. Only hashes are stored, never
+// raw tokens — a DB leak does not expose usable credentials.
 model RefreshToken {
-  id        String   @id @default(uuid())
-  userId    String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  tokenHash String   @unique
-  userAgent String?
-  ipAddress String?
-  expiresAt DateTime
-  createdAt DateTime @default(now())
+  id              String   @id @default(uuid())
+  userId          String
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tokenHash       String   @unique // sha256(refreshToken)
+  accessTokenHash String?  // sha256(accessToken) — for reference/auditing
+  sessionId       String?  // 48-hex session id bound to this login
+  userAgent       String?
+  ipAddress       String?
+  revokedAt       DateTime? // set when the session is revoked (logout/force-logout)
+  expiresAt       DateTime
+  createdAt       DateTime @default(now())
 
   @@index([userId])
+  @@index([sessionId])
   @@map("refresh_tokens")
+}
+
+// Persistent access-token blacklist (survives restarts, shared across instances).
+// Entries are pruned after `expiresAt` since the JWT itself expires by then.
+model BlacklistedToken {
+  id        String   @id @default(uuid())
+  tokenHash String   @unique // sha256(accessToken)
+  expiresAt DateTime // when the underlying JWT naturally expires
+  createdAt DateTime @default(now())
+
+  @@index([expiresAt])
+  @@map("blacklisted_tokens")
 }
 
 model PasswordReset {

@@ -13,6 +13,10 @@ import router from './routes';
 export const createApp = () => {
   const app = express();
 
+  // Trust the first proxy hop (hosting load balancer / reverse proxy) so req.ip
+  // reflects the real client — required for correct IP rate limiting and audit IPs.
+  app.set('trust proxy', 1);
+
   // ── Security ───────────────────────────────────────────────────────────────
   app.use(helmet({
     contentSecurityPolicy: {
@@ -29,11 +33,29 @@ export const createApp = () => {
     crossOriginEmbedderPolicy: false, // Allow loading external images
   }));
 
+  // Explicit hardening headers (belt-and-suspenders alongside helmet)
+  app.use((req, res, next) => {
+    res.setHeader('X-Content-Type-Options', 'nosniff');
+    res.setHeader('X-Frame-Options', 'DENY'); // clickjacking protection
+    res.setHeader('X-XSS-Protection', '1; mode=block');
+    // HSTS only makes sense over HTTPS (production behind TLS)
+    if (env.isProd) {
+      res.setHeader(
+        'Strict-Transport-Security',
+        'max-age=31536000; includeSubDomains'
+      );
+    }
+    next();
+  });
+
   app.use(
     cors({
       origin: (origin, callback) => {
-        // Allow requests with no origin (server-to-server, Postman, curl)
-        if (!origin) return callback(null, true);
+        // Requests with no Origin header (server-to-server, curl, Postman, some
+        // native clients). Allowed in dev for tooling convenience, but rejected
+        // in production to reduce the cross-origin attack surface for the
+        // credentialed API.
+        if (!origin) return callback(null, !env.isProd);
         const allowedOrigins = [
           env.FRONTEND_URL,
           'https://my.codvedha.com',
@@ -51,7 +73,7 @@ export const createApp = () => {
       },
       credentials: true,
       methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-      allowedHeaders: ['Content-Type', 'Authorization'],
+      allowedHeaders: ['Content-Type', 'Authorization', 'X-Session-Id', 'X-Timezone'],
     })
   );
 
