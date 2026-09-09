@@ -23,6 +23,20 @@ export const markForceLogout = (userId: string, newAccessToken: string): void =>
 };
 
 /**
+ * Clear any pending force-logout flag for a user.
+ *
+ * Must be called whenever a NEW session is legitimately established for the user
+ * through a non-force login path (normal login, face auth). Without this, a stale
+ * flag left behind by an earlier force-login would keep rejecting every future
+ * token for that user (since it only ever whitelists the ONE token captured at
+ * force-login time), bouncing the user straight back to /login after they reach
+ * the dashboard.
+ */
+export const clearForceLogout = (userId: string): void => {
+  forceLogoutMap.delete(userId);
+};
+
+/**
  * Check if a user should be force-logged out.
  * Returns true if the token being used is NOT the new one.
  * Does NOT clear the flag — keeps rejecting until old token expires or 5min timeout.

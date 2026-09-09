@@ -12,8 +12,8 @@ import { hashToken, generateSecureToken, generateSessionId } from '../../utils/c
 import { isAccountLocked, recordFailedAttempt, clearLockout, isIpLockedOut, recordFailedIpAttempt, clearIpLockout } from '../../utils/loginLockout';
 import { logAdminEvent } from '../../utils/adminAuditLog';
 import { isTempTokenUsed, markTempTokenUsed } from '../../utils/tempTokenBlacklist';
-import { isSessionActive, clearActivity } from '../../utils/activityTracker';
-import { markForceLogout } from '../../utils/forceLogout';
+import { isSessionActive, clearActivity, recordActivity } from '../../utils/activityTracker';
+import { markForceLogout, clearForceLogout } from '../../utils/forceLogout';
 import { AppError } from '../../utils/apiError';
 import { env } from '../../config/env';
 import { uploadToS3, resolveS3Url } from '../../utils/s3';
@@ -269,9 +269,16 @@ export const authService = {
       email: user.email,
     });
 
-    // If this is a force-login, mark the old session for immediate termination
+    // If this is a force-login, mark the old session's token for immediate
+    // termination (everything except this brand-new token gets kicked).
+    // Otherwise, clear any stale force-logout flag left over from an earlier
+    // force-login — if we didn't, that stale flag (which only whitelists the ONE
+    // token captured back then) would reject this fresh token and bounce the user
+    // out of the dashboard right after login.
     if (input.forceLogin) {
       markForceLogout(user.id, accessToken);
+    } else {
+      clearForceLogout(user.id);
     }
 
     const tokenId = uuidv4();
@@ -301,6 +308,12 @@ export const authService = {
 
     // Bind this session as the user's only active session
     await authRepository.setActiveSessionId(user.id, sessionId);
+
+    // Count the freshly-created session as active immediately. Without this,
+    // isSessionActive() stays false until the client's first authenticated
+    // request — so a second login in that window would skip the confirmation
+    // popup and silently kill this session instead of prompting.
+    recordActivity(user.id);
 
     const safeUser = {
       id: user.id,
@@ -462,6 +475,14 @@ export const authService = {
 
     // Bind this session as the user's only active session
     await authRepository.setActiveSessionId(user.id, sessionId);
+
+    // Fresh session established — clear any stale force-logout flag so this new
+    // token is not immediately rejected by shouldForceLogout().
+    clearForceLogout(user.id);
+
+    // Count this session as active immediately so a subsequent login triggers
+    // the confirmation popup rather than silently killing this session.
+    recordActivity(user.id);
 
     const safeUser = {
       id: user.id,
