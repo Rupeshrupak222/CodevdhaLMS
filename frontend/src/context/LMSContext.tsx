@@ -51,13 +51,10 @@ export const LMSProvider = ({ children, skipAuthCheck = false }: { children: Rea
       return;
     }
     const checkAuth = async () => {
-      console.log('[LMSContext] checkAuth starting...');
       try {
         const res = await api.get('/auth/me');
-        console.log('[LMSContext] checkAuth success:', res.data.data);
         setUser(res.data.data);
-      } catch (error: any) {
-        console.log('[LMSContext] checkAuth failed:', error.message || error);
+      } catch {
         setUser(null);
       } finally {
         setIsLoading(false);
@@ -87,7 +84,6 @@ export const LMSProvider = ({ children, skipAuthCheck = false }: { children: Rea
         // Don't logout if user is watching a video/lecture
         if (mediaPlayingRef.current) return;
         // Auto-logout on idle
-        console.log('[LMSContext] Idle timeout — auto logging out');
         setUser(null);
         clearClientAuth();
         broadcastLogout();
@@ -170,12 +166,9 @@ export const LMSProvider = ({ children, skipAuthCheck = false }: { children: Rea
   }, [router, user]);
 
   const login = async (email: any, password: any, selectedRole?: string, rememberMe?: boolean, forceLogin?: boolean) => {
-    console.log('[LMSContext] login starting for:', email, 'role:', selectedRole, 'rememberMe:', rememberMe);
     try {
       const expectedRole = selectedRole ? (selectedRole.toUpperCase() === 'FACULTY' ? 'TEACHER' : selectedRole.toUpperCase()) : undefined;
       const res = await api.post('/auth/login', { email, password, role: expectedRole, rememberMe, forceLogin });
-      console.log('[LMSContext] login success:', res.data.data);
-      
       const data = res.data.data;
 
       // Handle active session confirmation
@@ -215,7 +208,6 @@ export const LMSProvider = ({ children, skipAuthCheck = false }: { children: Rea
       setUser(user);
       toast.success(`Welcome back, ${user.name}!`);
       
-      console.log('[LMSContext] Routing for role:', role);
       if (role === 'ADMIN') {
         router.push('/');
       } else if (role === 'TEACHER') {
@@ -226,7 +218,6 @@ export const LMSProvider = ({ children, skipAuthCheck = false }: { children: Rea
       
       return { status: 'SUCCESS' };
     } catch (error: any) {
-      console.log('[LMSContext] login failed:', error.message || error);
       toast.error(error.response?.data?.message || 'Login failed');
       return { status: 'ERROR' };
     }

@@ -1,5 +1,5 @@
 import { userRepository } from './user.repository';
-import { hashPassword } from '../../utils/password';
+import { hashPassword, comparePassword } from '../../utils/password';
 import { AppError } from '../../utils/apiError';
 import { parsePaginationParams, buildPaginationMeta } from '../../utils/response';
 import { CreateUserInput, UpdateUserInput, UserListQuery } from './user.validator';
@@ -75,7 +75,7 @@ export const userService = {
 
   // ── Update user ─────────────────────────────────────────────────────────────
   updateUser: async (id: string, input: UpdateUserInput, requesterId: string, requesterRole: string) => {
-    const user = await userRepository.findById(id);
+    const user = await userRepository.findByIdWithHash(id);
     if (!user) throw AppError.notFound('User not found');
 
     // Only admin can update other users
@@ -83,11 +83,7 @@ export const userService = {
       throw AppError.forbidden('You can only update your own profile');
     }
 
-    // Privilege guard: a non-admin editing their own profile must not be able to
-    // set account-state or enrollment fields (isActive, courseIds, enrollments,
-    // email). These are admin-only. Strip them for non-admin self-updates so a
-    // student cannot activate/deactivate themselves or self-enroll into arbitrary
-    // courses via this endpoint. Admins retain full control.
+    // Privilege guard: non-admin self-update cannot touch admin-only fields
     const sanitizedInput: any = { ...input };
     if (requesterRole !== 'ADMIN') {
       delete sanitizedInput.isActive;
@@ -96,10 +92,20 @@ export const userService = {
       delete sanitizedInput.email;
     }
 
-    const { password, courseIds, enrollments, ...updateData } = sanitizedInput;
+    const { password, currentPassword, courseIds, enrollments, settings, ...updateData } = sanitizedInput;
     const finalData: any = { ...updateData };
 
     if (password) {
+      // Non-admins must supply their current password to change it
+      if (requesterRole !== 'ADMIN') {
+        if (!currentPassword) {
+          throw AppError.badRequest('Current password is required to set a new password');
+        }
+        const isValid = await comparePassword(currentPassword, user.passwordHash);
+        if (!isValid) {
+          throw AppError.unauthorized('Current password is incorrect');
+        }
+      }
       finalData.passwordHash = await hashPassword(password);
     }
 
@@ -107,6 +113,11 @@ export const userService = {
     const newAvatar = finalData.avatar;
 
     const updated = await userRepository.update(id, finalData);
+
+    // Persist notification settings if provided
+    if (settings) {
+      await userRepository.upsertSettings(id, settings);
+    }
 
     if (user.role === 'STUDENT') {
       if (enrollments !== undefined) {

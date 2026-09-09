@@ -3,7 +3,6 @@
 import React, { useState, useEffect } from 'react';
 import { useLMS } from '@/context/LMSContext';
 import { usePathname, useSearchParams, useRouter } from 'next/navigation';
-import { motion } from 'framer-motion';
 import { Settings as SettingsIcon, Bell, Moon, Sun, User, Camera, Loader2 } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
@@ -12,7 +11,7 @@ import { Avatar } from '@/components/common/Avatar';
 
 export const Settings = () => {
   const { theme, toggleTheme, user, activeRole, refreshUser } = useLMS();
-  const pathname = usePathname(); const searchParams = useSearchParams();
+  const searchParams = useSearchParams();
   const router = useRouter();
   const routeBase = activeRole === 'faculty' ? '/teacher/settings' : `/${activeRole}/settings`;
 
@@ -20,6 +19,11 @@ export const Settings = () => {
   const [uploadingAvatar, setUploadingAvatar] = useState(false);
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+
+  // Notification preferences state (loaded from UserSettings)
+  const [pushNotifications, setPushNotifications] = useState(true);
+  const [emailNotifications, setEmailNotifications] = useState(true);
+  const [savingNotifications, setSavingNotifications] = useState(false);
 
   // Sync tab with URL queries ?tab=general, ?tab=theme, etc.
   useEffect(() => {
@@ -30,10 +34,24 @@ export const Settings = () => {
     }
   }, [searchParams.toString()]);
 
+  // Load notification preferences from backend when tab opens
+  useEffect(() => {
+    if (activeTab !== 'notifications' || !user) return;
+    api.get(`/users/${user.id}`)
+      .then((res) => {
+        const settings = res.data.data?.settings;
+        if (settings) {
+          setPushNotifications(settings.pushNotifications ?? true);
+          setEmailNotifications(settings.emailNotifications ?? true);
+        }
+      })
+      .catch(() => { /* keep defaults */ });
+  }, [activeTab, user]);
+
   const { register: registerProfile, handleSubmit: handleSubmitProfile, reset, watch, formState: { errors: profileErrors } } = useForm({
     defaultValues: {
       name: user ? user.name : '',
-      email: user ? user.email : '',
+      currentPassword: '',
       password: '',
       confirmPassword: '',
     }
@@ -45,7 +63,7 @@ export const Settings = () => {
     if (user) {
       reset({
         name: user.name,
-        email: user.email,
+        currentPassword: '',
         password: '',
         confirmPassword: '',
       });
@@ -58,7 +76,6 @@ export const Settings = () => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    // Show temporary local object URL preview instantly
     const localPreview = URL.createObjectURL(file);
     setPreviewUrl(localPreview);
 
@@ -71,7 +88,6 @@ export const Settings = () => {
     } catch (err: any) {
       toast.error('Failed to upload display picture');
       setPreviewUrl(null);
-      console.error(err);
     } finally {
       setUploadingAvatar(false);
     }
@@ -79,21 +95,49 @@ export const Settings = () => {
 
   const onProfileSubmit = async (data: any) => {
     if (!user) return;
-    if (data.password && data.password !== data.confirmPassword) {
-      toast.error('Passwords do not match');
-      return;
+
+    // If user wants to change password, current password is required
+    if (data.password && data.password.trim() !== '') {
+      if (!data.currentPassword || data.currentPassword.trim() === '') {
+        toast.error('Please enter your current password to set a new one.');
+        return;
+      }
+      if (data.password !== data.confirmPassword) {
+        toast.error('New passwords do not match.');
+        return;
+      }
     }
+
     try {
-      const payload: any = { name: data.name, email: data.email, avatar: avatarUrl };
+      const payload: any = { name: data.name, avatar: avatarUrl };
       if (data.password && data.password.trim() !== '') {
+        // Backend updateUser verifies currentPassword server-side via changePassword endpoint
+        // For self-update, we send both so backend can verify before hashing new password
+        payload.currentPassword = data.currentPassword;
         payload.password = data.password;
       }
       await api.put(`/users/${user.id}`, payload);
       await refreshUser();
-      reset({ name: data.name, email: data.email, password: '', confirmPassword: '' });
+      reset({ name: data.name, currentPassword: '', password: '', confirmPassword: '' });
       toast.success('Profile updated successfully!');
     } catch (err: any) {
-      toast.error('Something went wrong. Please try again.');
+      const msg = err.response?.data?.message || 'Something went wrong. Please try again.';
+      toast.error(msg);
+    }
+  };
+
+  const handleSaveNotifications = async () => {
+    if (!user) return;
+    setSavingNotifications(true);
+    try {
+      await api.put(`/users/${user.id}`, {
+        settings: { pushNotifications, emailNotifications },
+      } as any);
+      toast.success('Notification preferences saved!');
+    } catch {
+      toast.error('Failed to save notification preferences.');
+    } finally {
+      setSavingNotifications(false);
     }
   };
 
@@ -114,7 +158,7 @@ export const Settings = () => {
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
         
         {/* Left Nav Tabs */}
-        <div className="lg:col-span-1 flex flex-row lg:flex-col gap-2 overflow-x-auto lg:overflow-x-visible pb-3 lg:pb-0 border-b lg:border-b-0 lg:border-r border-slate-200 dark:border-slate-800 pr-0 lg:pr-6 text-[16px] font-semibold ">
+        <div className="lg:col-span-1 flex flex-row lg:flex-col gap-2 overflow-x-auto lg:overflow-x-visible pb-3 lg:pb-0 border-b lg:border-b-0 lg:border-r border-slate-200 dark:border-slate-800 pr-0 lg:pr-6 text-[16px] font-semibold">
           {[
             { id: 'general', label: 'My Profile Details', icon: User },
             { id: 'theme', label: 'System Theme Mode', icon: Moon },
@@ -168,11 +212,12 @@ export const Settings = () => {
                   <div>
                     <h4 className="text-slate-900 dark:text-white font-semibold text-sm">Display Picture</h4>
                     <p className="text-[12px] text-slate-500 dark:text-slate-400 mt-1 font-medium">
-                      Upload a premium display image to personalize your LMS dashboard profile.
+                      Upload a display image to personalize your LMS dashboard profile.
                     </p>
                   </div>
                 </div>
 
+                {/* Name only (email is read-only) */}
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="block text-slate-450 dark:text-slate-300 mb-1">Display Name</label>
@@ -183,38 +228,54 @@ export const Settings = () => {
                     />
                   </div>
                   <div>
-                    <label className="block text-slate-450 dark:text-slate-300 mb-1">Administrative Email</label>
+                    <label className="block text-slate-450 dark:text-slate-300 mb-1">
+                      Email Address
+                      <span className="ml-2 text-[11px] font-normal text-slate-400">(cannot be changed)</span>
+                    </label>
                     <input
                       type="email"
-                      {...registerProfile('email')}
-                      className="w-full px-3 py-2 border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 rounded-lg text-slate-900 dark:text-white focus:outline-none"
+                      value={user?.email || ''}
+                      disabled
+                      className="w-full px-3 py-2 border border-slate-200 dark:border-slate-800 bg-slate-100 dark:bg-slate-800 rounded-lg text-slate-500 dark:text-slate-400 focus:outline-none cursor-not-allowed"
                     />
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-4 pt-3 border-t border-slate-100 dark:border-slate-800">
-                  <div>
-                    <label className="block text-slate-450 dark:text-slate-300 mb-1">New Password</label>
-                    <input
-                      type="password"
-                      {...registerProfile('password')}
-                      placeholder="••••••••"
-                      className="w-full px-3 py-2 border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 rounded-lg focus:outline-none text-slate-900 dark:text-white"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-slate-450 dark:text-slate-300 mb-1">Confirm Password</label>
-                    <input
-                      type="password"
-                      {...registerProfile('confirmPassword')}
-                      placeholder="••••••••"
-                      className={`w-full px-3 py-2 border bg-slate-50 dark:bg-slate-900 rounded-lg focus:outline-none text-slate-900 dark:text-white ${
-                        watchPassword ? 'border-purple-400' : 'border-slate-200 dark:border-slate-800'
-                      }`}
-                    />
-                    {profileErrors.confirmPassword && (
-                      <p className="text-red-500 text-[13px] mt-1">{(profileErrors.confirmPassword as any).message}</p>
-                    )}
+                {/* Password change — requires current password */}
+                <div className="pt-3 border-t border-slate-100 dark:border-slate-800">
+                  <p className="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-3">
+                    Change Password <span className="text-[12px] font-normal text-slate-400">(leave blank to keep current)</span>
+                  </p>
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div>
+                      <label className="block text-slate-450 dark:text-slate-300 mb-1">Current Password</label>
+                      <input
+                        type="password"
+                        {...registerProfile('currentPassword')}
+                        placeholder="••••••••"
+                        className="w-full px-3 py-2 border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 rounded-lg focus:outline-none text-slate-900 dark:text-white"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-slate-450 dark:text-slate-300 mb-1">New Password</label>
+                      <input
+                        type="password"
+                        {...registerProfile('password')}
+                        placeholder="••••••••"
+                        className="w-full px-3 py-2 border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 rounded-lg focus:outline-none text-slate-900 dark:text-white"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-slate-450 dark:text-slate-300 mb-1">Confirm New Password</label>
+                      <input
+                        type="password"
+                        {...registerProfile('confirmPassword')}
+                        placeholder="••••••••"
+                        className={`w-full px-3 py-2 border bg-slate-50 dark:bg-slate-900 rounded-lg focus:outline-none text-slate-900 dark:text-white ${
+                          watchPassword ? 'border-purple-400' : 'border-slate-200 dark:border-slate-800'
+                        }`}
+                      />
+                    </div>
                   </div>
                 </div>
 
@@ -244,7 +305,7 @@ export const Settings = () => {
                   className={`p-5 rounded-2xl border flex flex-col items-center gap-3 transition cursor-pointer ${
                     theme === 'light'
                       ? 'border-[#a855f7] bg-purple-400/5 text-slate-950 font-black'
-                      : 'border-slate-800 text-slate-600 dark:text-slate-200 '
+                      : 'border-slate-800 text-slate-600 dark:text-slate-200'
                   }`}
                 >
                   <Sun className="w-8 h-8 text-[#a855f7]" />
@@ -274,22 +335,49 @@ export const Settings = () => {
               </h3>
               
               <div className="space-y-4 pt-2 text-[16px] font-semibold text-slate-600 dark:text-slate-350">
-                <label className="flex items-center gap-3 p-3 bg-slate-50 dark:bg-slate-900 border border-slate-200/30 dark:border-slate-800 rounded-2xl cursor-pointer">
-                  <input type="checkbox" defaultChecked className="rounded border-slate-300 text-[#a855f7] focus:ring-0 bg-white dark:bg-slate-900" />
+                <label
+                  className="flex items-center gap-3 p-3 bg-slate-50 dark:bg-slate-900 border border-slate-200/30 dark:border-slate-800 rounded-2xl cursor-pointer"
+                  onClick={() => setPushNotifications(prev => !prev)}
+                >
+                  <input
+                    type="checkbox"
+                    checked={pushNotifications}
+                    onChange={() => setPushNotifications(prev => !prev)}
+                    className="rounded border-slate-300 text-[#a855f7] focus:ring-0 bg-white dark:bg-slate-900"
+                    onClick={(e) => e.stopPropagation()}
+                  />
                   <div>
                     <p className="font-semibold text-slate-850 dark:text-slate-200">System Activity Toasts</p>
                     <p className="text-[14px] text-slate-600 font-medium mt-0.5">Show overlay alerts when materials are uploaded, graded, or submitted.</p>
                   </div>
                 </label>
                 
-                <label className="flex items-center gap-3 p-3 bg-slate-50 dark:bg-slate-900 border border-slate-200/30 dark:border-slate-800 rounded-2xl cursor-pointer">
-                  <input type="checkbox" defaultChecked className="rounded border-slate-300 text-[#a855f7] focus:ring-0 bg-white dark:bg-slate-900" />
+                <label
+                  className="flex items-center gap-3 p-3 bg-slate-50 dark:bg-slate-900 border border-slate-200/30 dark:border-slate-800 rounded-2xl cursor-pointer"
+                  onClick={() => setEmailNotifications(prev => !prev)}
+                >
+                  <input
+                    type="checkbox"
+                    checked={emailNotifications}
+                    onChange={() => setEmailNotifications(prev => !prev)}
+                    className="rounded border-slate-300 text-[#a855f7] focus:ring-0 bg-white dark:bg-slate-900"
+                    onClick={(e) => e.stopPropagation()}
+                  />
                   <div>
-                    <p className="font-semibold text-slate-850 dark:text-slate-200">Email Digest Digests</p>
-                    <p className="text-[14px] text-slate-600 font-medium mt-0.5">Receive weekly calendar alerts outlining course schedules and pending assignment deadlines.</p>
+                    <p className="font-semibold text-slate-850 dark:text-slate-200">Email Digest</p>
+                    <p className="text-[14px] text-slate-600 font-medium mt-0.5">Receive weekly alerts outlining course schedules and pending assignment deadlines.</p>
                   </div>
                 </label>
               </div>
+
+              <button
+                onClick={handleSaveNotifications}
+                disabled={savingNotifications}
+                className="flex items-center gap-2 px-5 py-2.5 bg-[#a855f7] hover:bg-purple-400 disabled:opacity-60 text-slate-950 font-semibold rounded-xl transition"
+              >
+                {savingNotifications && <Loader2 className="w-4 h-4 animate-spin" />}
+                Save Preferences
+              </button>
             </div>
           )}
 

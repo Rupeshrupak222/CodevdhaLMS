@@ -12,6 +12,13 @@ const safeSelect = {
   isEmailVerified: true,
   createdAt: true,
   updatedAt: true,
+  settings: {
+    select: {
+      theme: true,
+      emailNotifications: true,
+      pushNotifications: true,
+    },
+  },
   enrollments: {
     select: {
       courseId: true,
@@ -132,6 +139,13 @@ export const userRepository = {
   findById: (id: string) =>
     prisma.user.findUnique({ where: { id }, select: safeSelect }),
 
+  // Used internally when password hash is needed (e.g. verifying current password)
+  findByIdWithHash: (id: string) =>
+    prisma.user.findUnique({
+      where: { id },
+      select: { ...safeSelect, passwordHash: true },
+    }),
+
   findByEmail: (email: string) =>
     prisma.user.findUnique({ where: { email: email.toLowerCase() } }),
 
@@ -237,5 +251,13 @@ export const userRepository = {
     prisma.user.groupBy({
       by: ['role'],
       _count: { id: true },
+    }),
+
+  // ── Upsert UserSettings (notification preferences) ───────────────────────
+  upsertSettings: (userId: string, data: { pushNotifications?: boolean; emailNotifications?: boolean }) =>
+    prisma.userSettings.upsert({
+      where: { userId },
+      create: { userId, ...data },
+      update: data,
     }),
 };

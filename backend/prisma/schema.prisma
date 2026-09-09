@@ -137,6 +137,8 @@ model User {
   createdTasks     Task[]      @relation("TaskCreator")
   createdMaterials Material[]  @relation("MaterialUploader")
   createdClasses   LiveClass[] @relation("ClassCreator")
+  markedAttendances Attendance[] @relation("AttendanceMarker")
+  issuedCertificates Certificate[] @relation("CertificateIssuer")
 
   @@index([email])
   @@index([role])
@@ -493,6 +495,7 @@ model Attendance {
   status     AttendanceStatus @default(PRESENT)
   remarks    String?
   markedById String
+  markedBy   User             @relation("AttendanceMarker", fields: [markedById], references: [id])
   createdAt  DateTime         @default(now())
 
   @@unique([studentId, courseId, date])
@@ -542,6 +545,7 @@ model Certificate {
   startDate      DateTime?
   durationMonths String?
   issuedById     String
+  issuedBy       User            @relation("CertificateIssuer", fields: [issuedById], references: [id])
   isRevoked      Boolean         @default(false)
   createdAt      DateTime        @default(now())
 

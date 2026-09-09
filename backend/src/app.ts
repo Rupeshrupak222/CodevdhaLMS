@@ -101,7 +101,12 @@ export const createApp = () => {
   app.use(express.json({ limit: '10mb' }));
   app.use(express.urlencoded({ extended: true, limit: '10mb' }));
   app.use(cookieParser());
-  app.use(compression() as any);
+  // compression returns a RequestHandler compatible with Express 4/5
+  // The cast to `any` is needed because @types/compression uses the Express 4
+  // RequestHandler signature which conflicts with Express 5's stricter types.
+  // This is a known upstream types issue; the runtime behaviour is correct.
+  const compressionMiddleware: any = compression();
+  app.use(compressionMiddleware);
 
   // ── Logging ───────────────────────────────────────────────────────────────
   if (env.isDev) {
