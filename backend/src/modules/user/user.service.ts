@@ -78,12 +78,25 @@ export const userService = {
     const user = await userRepository.findById(id);
     if (!user) throw AppError.notFound('User not found');
 
-    // Only admin can change isActive or update other users
+    // Only admin can update other users
     if (requesterRole !== 'ADMIN' && requesterId !== id) {
       throw AppError.forbidden('You can only update your own profile');
     }
 
-    const { password, courseIds, enrollments, ...updateData } = input as any;
+    // Privilege guard: a non-admin editing their own profile must not be able to
+    // set account-state or enrollment fields (isActive, courseIds, enrollments,
+    // email). These are admin-only. Strip them for non-admin self-updates so a
+    // student cannot activate/deactivate themselves or self-enroll into arbitrary
+    // courses via this endpoint. Admins retain full control.
+    const sanitizedInput: any = { ...input };
+    if (requesterRole !== 'ADMIN') {
+      delete sanitizedInput.isActive;
+      delete sanitizedInput.courseIds;
+      delete sanitizedInput.enrollments;
+      delete sanitizedInput.email;
+    }
+
+    const { password, courseIds, enrollments, ...updateData } = sanitizedInput;
     const finalData: any = { ...updateData };
 
     if (password) {

@@ -7,10 +7,23 @@ import { blacklistToken } from '../../utils/tokenBlacklist';
 import { decodeJwt, verifyAccessToken } from '../../utils/jwt';
 
 const getCookieOptions = () => ({
-  httpOnly: true,
-  secure: env.isProd,
-  sameSite: 'lax' as const,
+  httpOnly: true,           // not readable by JS — protects against XSS token theft
+  secure: env.isProd,       // HTTPS-only in production
+  sameSite: 'lax' as const, // CSRF hardening
   // No maxAge = session cookie (deleted when browser/tab closes)
+  //
+  // sameSite policy note (deployment-dependent — do not change blindly):
+  //   - 'lax' (current): the cookie is NOT sent on cross-site XHR/fetch, which
+  //     blocks CSRF on the credentialed refresh endpoint. Correct when the
+  //     frontend and API are same-site (e.g. app.codvedha.com + api.codvedha.com
+  //     share the codvedha.com registrable domain).
+  //   - 'strict' would also work same-site and is marginally stronger, but can
+  //     break flows that rely on top-level cross-site navigation.
+  //   - If the frontend and API are deployed on DIFFERENT sites, the refresh
+  //     cookie would require sameSite:'none' + secure:true to be sent at all —
+  //     which is weaker against CSRF and should be paired with a CSRF token.
+  // Keeping 'lax' as the safe default; revisit only if the deployment topology
+  // makes the frontend and API cross-site.
 });
 
 export const authController = {

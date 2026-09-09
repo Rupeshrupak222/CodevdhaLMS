@@ -72,6 +72,17 @@ export const faceAuthLimiter = rateLimit({
   legacyHeaders: false,
 });
 
+// Public certificate verification — IP-based (endpoint is unauthenticated).
+// Prevents enumeration/scraping of certificate verify IDs while staying generous
+// for legitimate verifiers (e.g. employers checking a batch of certificates).
+export const publicVerifyLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 60, // 60 verifications per IP per 15 min
+  message: { success: false, message: 'Too many verification requests, please try again later' },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
 // ── Layer 3: Role-based (per-user, after authentication) ─────────────────────
 // Uses userId from JWT token as the rate limit key (NOT IP-based)
 // validate: false disables the IPv6 warning since we're keying by userId, not IP
