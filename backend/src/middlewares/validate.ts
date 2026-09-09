@@ -13,7 +13,12 @@ export const validate = (schema: ZodSchema, target: ValidateTarget = 'body') => 
         field: err.path.join('.'),
         message: err.message,
       }));
-      console.error('[VALIDATION FAILED]', target, errors);
+      // Only log validation details in development. In production this can leak
+      // which fields a client is submitting (incl. auth/password endpoints) into
+      // shared log streams; the structured errors are still returned to the client.
+      if (process.env.NODE_ENV !== 'production') {
+        console.error('[VALIDATION FAILED]', target, errors);
+      }
       return next(AppError.unprocessable('Validation failed', errors));
     }
 

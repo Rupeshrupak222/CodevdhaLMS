@@ -59,6 +59,38 @@ if (process.env.JWT_ACCESS_SECRET === process.env.JWT_REFRESH_SECRET) {
   console.warn(`[SECURITY] ${message}`);
 }
 
+// ── Admin bootstrap password hardening ────────────────────────────────────────
+// ADMIN_PASSWORD is only consumed by the seed script (never at runtime login), so
+// it is optional and unset deployments are unaffected. But if it IS set, the
+// shipped placeholder ("Admin@123") is public knowledge and must never reach a
+// production seed. Reject the known weak default and enforce a minimum length in
+// production; warn (don't block) in development so local seeding stays frictionless.
+const KNOWN_DEFAULT_ADMIN_PASSWORDS = new Set([
+  'Admin@123',
+  'admin',
+  'password',
+  'changeme',
+]);
+
+const MIN_ADMIN_PASSWORD_LENGTH = 12;
+
+const adminPassword = process.env.ADMIN_PASSWORD;
+if (adminPassword) {
+  if (KNOWN_DEFAULT_ADMIN_PASSWORDS.has(adminPassword.trim())) {
+    const message = 'ADMIN_PASSWORD is set to a known default/placeholder value. Set a strong, unique admin password before seeding a production database.';
+    if (isProdEnv) {
+      throw new Error(message);
+    }
+    console.warn(`[SECURITY] ${message}`);
+  } else if (adminPassword.length < MIN_ADMIN_PASSWORD_LENGTH) {
+    const message = `ADMIN_PASSWORD is shorter than ${MIN_ADMIN_PASSWORD_LENGTH} characters. Use a longer, high-entropy value for production.`;
+    if (isProdEnv) {
+      throw new Error(message);
+    }
+    console.warn(`[SECURITY] ${message}`);
+  }
+}
+
 export const env = {
   PORT: parseInt(process.env.PORT || '5000', 10),
   NODE_ENV: process.env.NODE_ENV || 'development',

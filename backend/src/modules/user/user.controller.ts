@@ -29,7 +29,6 @@ export const userController = {
 
   // PUT /api/users/:id
   updateUser: asyncHandler(async (req: Request, res: Response) => {
-    console.log('[USER PUT BODY]', req.params.id, req.body);
     const user = await userService.updateUser(
       param(req, 'id'),
       req.body,
