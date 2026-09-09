@@ -1,11 +1,18 @@
 import { PrismaClient } from '@prisma/client';
+import { PrismaPg } from '@prisma/adapter-pg';
 import { env } from './env';
 
-// Standard Prisma client — no driver adapter.
-// SSL is handled via the DATABASE_URL query param (?sslmode=no-verify) which
-// tells libssl to encrypt the connection but skip CA chain verification.
-// This is required for Supabase's session-pooler which presents a self-signed cert.
+// Prisma v7 requires a driver adapter for direct DB connections.
+// PrismaPg accepts the same config as the `pg` Pool constructor.
+// ssl.rejectUnauthorized=false is required for Supabase's session pooler
+// which presents a self-signed certificate in its TLS chain.
+const adapter = new PrismaPg({
+  connectionString: env.DATABASE_URL,
+  ...(env.isDev ? {} : { ssl: { rejectUnauthorized: false } }),
+});
+
 const baseClient = new PrismaClient({
+  adapter,
   log: env.isDev ? ['error', 'warn'] : ['error'],
 });
 
