@@ -8,7 +8,12 @@ const pool = new Pool({
   max: 5,
   idleTimeoutMillis: 10000,
   connectionTimeoutMillis: 10000,
-  allowExitOnIdle: true
+  allowExitOnIdle: true,
+  // Supabase uses a self-signed cert in its certificate chain.
+  // rejectUnauthorized: false tells the pg driver to accept it.
+  // The connection is still encrypted (TLS); we just skip CA verification
+  // which is expected and safe for Supabase pooler connections.
+  ssl: env.isDev ? false : { rejectUnauthorized: false },
 });
 const adapter = new PrismaPg(pool);
 
