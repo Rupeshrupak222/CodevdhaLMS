@@ -6,6 +6,7 @@ import morgan from 'morgan';
 import cookieParser from 'cookie-parser';
 
 import { env } from './config/env';
+import { isAllowedOrigin } from './config/allowedOrigins';
 import { errorHandler } from './middlewares/errorHandler';
 import { globalLimiter, loginLimiter, registerLimiter, signupLimiter, forgotPasswordLimiter } from './middlewares/rateLimiter';
 import router from './routes';
@@ -56,27 +57,8 @@ export const createApp = () => {
         // in production to reduce the cross-origin attack surface for the
         // credentialed API.
         if (!origin) return callback(null, !env.isProd);
-        // Production origins — always allowed (HTTPS only).
-        const prodOrigins = [
-          env.FRONTEND_URL,
-          'https://my.codvedha.com',
-        ];
-        // Development-only origins — localhost dev servers and the plaintext
-        // (non-TLS) host. These are NOT allowed in production to shrink the
-        // cross-origin attack surface of the credentialed API.
-        const devOrigins = [
-          'http://my.codvedha.com',
-          'http://localhost:3000',
-          'http://localhost:3001',
-          'http://localhost:3002',
-          'http://localhost:5173',
-        ];
-        const allowedOrigins = env.isProd ? prodOrigins : [...prodOrigins, ...devOrigins];
-        if (allowedOrigins.includes(origin)) {
-          callback(null, true);
-        } else {
-          callback(null, false);
-        }
+        // Allowlist is shared with the CSRF Origin check (see config/allowedOrigins).
+        callback(null, isAllowedOrigin(origin));
       },
       credentials: true,
       methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
