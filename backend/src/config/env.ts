@@ -95,6 +95,12 @@ export const env = {
   PORT: parseInt(process.env.PORT || '5000', 10),
   NODE_ENV: process.env.NODE_ENV || 'development',
   DATABASE_URL: process.env.DATABASE_URL!,
+ 
+  // Optional CA certificate (PEM contents or a file path) for verifying the
+  // database server's TLS certificate. When set, the DB connection verifies the
+  // cert against this CA instead of disabling verification. Recommended in
+  // production (e.g. Supabase's CA) so the DB link is protected against MITM.
+  DATABASE_CA_CERT: process.env.DATABASE_CA_CERT || '',
 
   JWT_ACCESS_SECRET: process.env.JWT_ACCESS_SECRET!,
   JWT_REFRESH_SECRET: process.env.JWT_REFRESH_SECRET!,

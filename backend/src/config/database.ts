@@ -1,14 +1,58 @@
+import fs from 'fs';
 import { PrismaClient } from '@prisma/client';
 import { PrismaPg } from '@prisma/adapter-pg';
 import { env } from './env';
 
-// Prisma v7 requires a driver adapter for direct DB connections.
-// PrismaPg accepts the same config as the `pg` Pool constructor.
-// ssl.rejectUnauthorized=false is required for Supabase's session pooler
-// which presents a self-signed certificate in its TLS chain.
+// ── Database TLS configuration ────────────────────────────────────────────────
+// Prisma v7 requires a driver adapter for direct DB connections. PrismaPg accepts
+// the same config as the `pg` Pool constructor.
+//
+// TLS policy:
+//   - Development: no explicit ssl config (local Postgres, typically plaintext).
+//   - Production WITH DATABASE_CA_CERT: verify the server certificate against the
+//     provided CA (rejectUnauthorized:true). This is the secure path — it keeps
+//     TLS authentication ON, defeating MITM, while still trusting a provider CA
+//     (e.g. Supabase's) that isn't in Node's default bundle.
+//   - Production WITHOUT DATABASE_CA_CERT: fall back to rejectUnauthorized:false
+//     (encrypted but unauthenticated) and log a warning. This preserves the
+//     existing Supabase-pooler behaviour so deployments don't break, but flags
+//     that the connection is not verifying the server identity.
+const resolveDbCaCert = (): string | undefined => {
+  const raw = env.DATABASE_CA_CERT.trim();
+  if (!raw) return undefined;
+  // Accept either the PEM contents directly or a path to a .pem/.crt file.
+  if (raw.includes('BEGIN CERTIFICATE')) return raw;
+  try {
+    return fs.readFileSync(raw, 'utf8');
+  } catch {
+    console.warn(`[DB] DATABASE_CA_CERT points to a file that could not be read: ${raw}`);
+    return undefined;
+  }
+};
+
+const buildSslConfig = (): { rejectUnauthorized: boolean; ca?: string } | undefined => {
+  if (env.isDev) return undefined;
+
+  const ca = resolveDbCaCert();
+  if (ca) {
+    // Secure: verify the server cert against the provided CA.
+    return { rejectUnauthorized: true, ca };
+  }
+
+  // Fallback: keep the connection working but warn that it is unverified.
+  console.warn(
+    '[SECURITY] Database TLS certificate verification is DISABLED (no DATABASE_CA_CERT set). ' +
+      'The DB connection is encrypted but not authenticated (MITM risk). ' +
+      "Set DATABASE_CA_CERT to your provider's CA certificate to enable verification."
+  );
+  return { rejectUnauthorized: false };
+};
+
+const sslConfig = buildSslConfig();
+
 const adapter = new PrismaPg({
   connectionString: env.DATABASE_URL,
-  ...(env.isDev ? {} : { ssl: { rejectUnauthorized: false } }),
+  ...(sslConfig ? { ssl: sslConfig } : {}),
 });
 
 const baseClient = new PrismaClient({
