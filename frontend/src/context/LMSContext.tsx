@@ -2,7 +2,7 @@
 
 import React, { createContext, useContext, useState, useEffect, useRef, useCallback } from 'react';
 import toast from 'react-hot-toast';
-import { api } from '@/lib/api';
+import { api, TOKEN_KEY, SESSION_ID_KEY, LOGOUT_BROADCAST_KEY, ACTIVE_USER_KEY, clearClientAuth, broadcastLogout, setActiveUser } from '@/lib/api';
 import { useRouter, usePathname } from 'next/navigation';
 
 const LMSContext = createContext<any>(null);
@@ -51,13 +51,10 @@ export const LMSProvider = ({ children, skipAuthCheck = false }: { children: Rea
       return;
     }
     const checkAuth = async () => {
-      console.log('[LMSContext] checkAuth starting...');
       try {
         const res = await api.get('/auth/me');
-        console.log('[LMSContext] checkAuth success:', res.data.data);
         setUser(res.data.data);
-      } catch (error: any) {
-        console.log('[LMSContext] checkAuth failed:', error.message || error);
+      } catch {
         setUser(null);
       } finally {
         setIsLoading(false);
@@ -87,9 +84,9 @@ export const LMSProvider = ({ children, skipAuthCheck = false }: { children: Rea
         // Don't logout if user is watching a video/lecture
         if (mediaPlayingRef.current) return;
         // Auto-logout on idle
-        console.log('[LMSContext] Idle timeout — auto logging out');
         setUser(null);
-        sessionStorage.removeItem('lms-token');
+        clearClientAuth();
+        broadcastLogout();
         api.post('/auth/logout').catch(() => {});
         router.push('/login');
       }, IDLE_TIMEOUT);
@@ -116,25 +113,62 @@ export const LMSProvider = ({ children, skipAuthCheck = false }: { children: Rea
 
     const checkSession = async () => {
       try {
-        await api.get('/auth/me');
-      } catch (err: any) {
-        // If we get FORCE_LOGOUT or 401, the interceptor in api.ts handles redirect
-        // No action needed here — the response interceptor does the job
+        // Lightweight heartbeat — never hard-401s; reports validity in the body.
+        const res = await api.get('/auth/session-check');
+        if (res?.data?.data?.valid === false) {
+          // Session was taken over / revoked elsewhere.
+          setUser(null);
+          clearClientAuth();
+          if (!window.location.pathname.includes('/login')) {
+            toast.error('Session ended. You have been logged in on another device.', { duration: 4000 });
+            router.push('/login');
+          }
+        }
+      } catch {
+        // A hard 401 (FORCE_LOGOUT/TOKEN_REVOKED) is handled by the api.ts interceptor.
       }
     };
 
     const interval = setInterval(checkSession, SESSION_CHECK_INTERVAL);
 
     return () => clearInterval(interval);
-  }, [user]);
+  }, [user, router]);
+
+  // ── Cross-tab enforcement: logout broadcast + one-account-per-browser ───────
+  useEffect(() => {
+    const onStorage = (e: StorageEvent) => {
+      // 1) Another tab explicitly logged out.
+      if (e.key === LOGOUT_BROADCAST_KEY) {
+        setUser(null);
+        clearClientAuth();
+        if (!window.location.pathname.includes('/login')) {
+          router.push('/login');
+        }
+        return;
+      }
+
+      // 2) A DIFFERENT account logged in somewhere in this browser. Only the
+      //    newest login stays; this tab (old account) signs itself out.
+      if (e.key === ACTIVE_USER_KEY && e.newValue) {
+        const myId = user?.id;
+        if (myId && e.newValue !== myId) {
+          setUser(null);
+          clearClientAuth();
+          if (!window.location.pathname.includes('/login')) {
+            toast.error('You have been signed out because another account logged in on this browser.', { duration: 4000 });
+            router.push('/login');
+          }
+        }
+      }
+    };
+    window.addEventListener('storage', onStorage);
+    return () => window.removeEventListener('storage', onStorage);
+  }, [router, user]);
 
   const login = async (email: any, password: any, selectedRole?: string, rememberMe?: boolean, forceLogin?: boolean) => {
-    console.log('[LMSContext] login starting for:', email, 'role:', selectedRole, 'rememberMe:', rememberMe);
     try {
       const expectedRole = selectedRole ? (selectedRole.toUpperCase() === 'FACULTY' ? 'TEACHER' : selectedRole.toUpperCase()) : undefined;
       const res = await api.post('/auth/login', { email, password, role: expectedRole, rememberMe, forceLogin });
-      console.log('[LMSContext] login success:', res.data.data);
-      
       const data = res.data.data;
 
       // Handle active session confirmation
@@ -163,12 +197,17 @@ export const LMSProvider = ({ children, skipAuthCheck = false }: { children: Rea
         }
       }
 
-      // Store token in sessionStorage (clears when tab/browser closes)
-      sessionStorage.setItem('lms-token', data.accessToken);
+      // Store token + session id in sessionStorage (clears when tab/browser closes)
+      sessionStorage.setItem(TOKEN_KEY, data.accessToken);
+      if (data.sessionId) {
+        sessionStorage.setItem(SESSION_ID_KEY, data.sessionId);
+      }
+      // One-account-per-browser: mark this account active. Other tabs logged into a
+      // DIFFERENT account will see this change and sign themselves out.
+      setActiveUser(user.id);
       setUser(user);
       toast.success(`Welcome back, ${user.name}!`);
       
-      console.log('[LMSContext] Routing for role:', role);
       if (role === 'ADMIN') {
         router.push('/');
       } else if (role === 'TEACHER') {
@@ -179,7 +218,6 @@ export const LMSProvider = ({ children, skipAuthCheck = false }: { children: Rea
       
       return { status: 'SUCCESS' };
     } catch (error: any) {
-      console.log('[LMSContext] login failed:', error.message || error);
       toast.error(error.response?.data?.message || 'Login failed');
       return { status: 'ERROR' };
     }
@@ -190,7 +228,11 @@ export const LMSProvider = ({ children, skipAuthCheck = false }: { children: Rea
       const res = await api.post('/auth/face-enroll', { tempToken, embedding, imageBase64 });
       const user = res.data.data.user;
       
-      sessionStorage.setItem('lms-token', res.data.data.accessToken);
+      sessionStorage.setItem(TOKEN_KEY, res.data.data.accessToken);
+      if (res.data.data.sessionId) {
+        sessionStorage.setItem(SESSION_ID_KEY, res.data.data.sessionId);
+      }
+      setActiveUser(user.id);
       setUser(user);
       toast.success('Face registered successfully!');
       router.push('/teacher/dashboard');
@@ -205,7 +247,11 @@ export const LMSProvider = ({ children, skipAuthCheck = false }: { children: Rea
       const res = await api.post('/auth/face-verify', { tempToken, embedding });
       const user = res.data.data.user;
       
-      sessionStorage.setItem('lms-token', res.data.data.accessToken);
+      sessionStorage.setItem(TOKEN_KEY, res.data.data.accessToken);
+      if (res.data.data.sessionId) {
+        sessionStorage.setItem(SESSION_ID_KEY, res.data.data.sessionId);
+      }
+      setActiveUser(user.id);
       setUser(user);
       toast.success('Face verified successfully!');
       router.push('/teacher/dashboard');
@@ -219,12 +265,14 @@ export const LMSProvider = ({ children, skipAuthCheck = false }: { children: Rea
     try {
       await api.post('/auth/logout');
       setUser(null);
-      sessionStorage.removeItem('lms-token');
+      clearClientAuth();
+      broadcastLogout(); // sign out every other tab of this browser
       toast.success('Logged out successfully!');
       router.push('/login');
     } catch (error) {
       setUser(null);
-      sessionStorage.removeItem('lms-token');
+      clearClientAuth();
+      broadcastLogout();
       router.push('/login');
     }
   };

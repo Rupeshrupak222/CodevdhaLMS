@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { batchController } from './batch.controller';
 import { authenticate } from '../../middlewares/authenticate';
+import { roleLimiter } from '../../middlewares/rateLimiter';
 import { adminOnly, adminOrTeacher } from '../../middlewares/authorize';
 import { validate } from '../../middlewares/validate';
 import {
@@ -13,6 +14,7 @@ import {
 const router = Router();
 
 router.use(authenticate);
+router.use(roleLimiter);
 
 // ── Batch CRUD ────────────────────────────────────────────────────────────────
 router.get('/', validate(batchListQuerySchema, 'query'), batchController.listBatches);

@@ -6,12 +6,17 @@ import morgan from 'morgan';
 import cookieParser from 'cookie-parser';
 
 import { env } from './config/env';
+import { isAllowedOrigin } from './config/allowedOrigins';
 import { errorHandler } from './middlewares/errorHandler';
 import { globalLimiter, loginLimiter, registerLimiter, signupLimiter, forgotPasswordLimiter } from './middlewares/rateLimiter';
 import router from './routes';
 
 export const createApp = () => {
   const app = express();
+
+  // Trust the first proxy hop (hosting load balancer / reverse proxy) so req.ip
+  // reflects the real client — required for correct IP rate limiting and audit IPs.
+  app.set('trust proxy', 1);
 
   // ── Security ───────────────────────────────────────────────────────────────
   app.use(helmet({
@@ -29,29 +34,35 @@ export const createApp = () => {
     crossOriginEmbedderPolicy: false, // Allow loading external images
   }));
 
+  // Explicit hardening headers (belt-and-suspenders alongside helmet)
+  app.use((req, res, next) => {
+    res.setHeader('X-Content-Type-Options', 'nosniff');
+    res.setHeader('X-Frame-Options', 'DENY'); // clickjacking protection
+    res.setHeader('X-XSS-Protection', '1; mode=block');
+    // HSTS only makes sense over HTTPS (production behind TLS)
+    if (env.isProd) {
+      res.setHeader(
+        'Strict-Transport-Security',
+        'max-age=31536000; includeSubDomains'
+      );
+    }
+    next();
+  });
+
   app.use(
     cors({
       origin: (origin, callback) => {
-        // Allow requests with no origin (server-to-server, Postman, curl)
-        if (!origin) return callback(null, true);
-        const allowedOrigins = [
-          env.FRONTEND_URL,
-          'https://my.codvedha.com',
-          'http://my.codvedha.com',
-          'http://localhost:3000',
-          'http://localhost:3001',
-          'http://localhost:3002',
-          'http://localhost:5173'
-        ];
-        if (allowedOrigins.includes(origin)) {
-          callback(null, true);
-        } else {
-          callback(null, false);
-        }
+        // Requests with no Origin header (server-to-server, curl, Postman, some
+        // native clients). Allowed in dev for tooling convenience, but rejected
+        // in production to reduce the cross-origin attack surface for the
+        // credentialed API.
+        if (!origin) return callback(null, !env.isProd);
+        // Allowlist is shared with the CSRF Origin check (see config/allowedOrigins).
+        callback(null, isAllowedOrigin(origin));
       },
       credentials: true,
       methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-      allowedHeaders: ['Content-Type', 'Authorization'],
+      allowedHeaders: ['Content-Type', 'Authorization', 'X-Session-Id', 'X-Timezone'],
     })
   );
 
@@ -72,7 +83,12 @@ export const createApp = () => {
   app.use(express.json({ limit: '10mb' }));
   app.use(express.urlencoded({ extended: true, limit: '10mb' }));
   app.use(cookieParser());
-  app.use(compression() as any);
+  // compression returns a RequestHandler compatible with Express 4/5
+  // The cast to `any` is needed because @types/compression uses the Express 4
+  // RequestHandler signature which conflicts with Express 5's stricter types.
+  // This is a known upstream types issue; the runtime behaviour is correct.
+  const compressionMiddleware: any = compression();
+  app.use(compressionMiddleware);
 
   // ── Logging ───────────────────────────────────────────────────────────────
   if (env.isDev) {

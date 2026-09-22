@@ -2,18 +2,41 @@
 
 import { useLMS } from '@/context/LMSContext';
 import { Layout } from '@/components/layout/Layout';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import { useEffect } from 'react';
+
+// Maps a user's DB role to the URL segment they are allowed to access.
+const ROLE_TO_PATH: Record<string, string> = {
+  ADMIN: 'admin',
+  TEACHER: 'teacher',
+  STUDENT: 'student',
+};
 
 export default function PortalLayout({ children }: { children: React.ReactNode }) {
   const { user, isLoading } = useLMS();
   const router = useRouter();
+  const pathname = usePathname();
 
   useEffect(() => {
-    if (!isLoading && !user) {
+    // Not loaded yet — wait
+    if (isLoading) return;
+
+    // Not logged in — go to login
+    if (!user) {
       router.replace('/login');
+      return;
     }
-  }, [user, isLoading, router]);
+
+    // Derive the URL role segment from the current path (e.g. /admin/..., /teacher/..., /student/...)
+    const urlRoleSegment = pathname.split('/')[1]; // 'admin' | 'teacher' | 'student'
+    const allowedSegment = ROLE_TO_PATH[user.role as string];
+
+    // If the URL role doesn't match the user's actual role, redirect to their correct dashboard.
+    // This prevents a STUDENT from visiting /admin/students, /teacher/dashboard etc.
+    if (allowedSegment && urlRoleSegment !== allowedSegment) {
+      router.replace(`/${allowedSegment}/dashboard`);
+    }
+  }, [user, isLoading, router, pathname]);
 
   if (isLoading) {
     return (

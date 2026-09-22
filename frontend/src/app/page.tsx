@@ -8,15 +8,11 @@ export default function RootPage() {
   const { user, activeRole } = useLMS();
   const router = useRouter();
 
-  console.log('[RootPage] user:', user, 'activeRole:', activeRole);
-
   useEffect(() => {
     if (!user) {
-      console.log('[RootPage] No user, redirecting to /login');
       router.replace('/login');
     } else {
       const basePath = activeRole === 'faculty' ? '/teacher' : `/${activeRole}`;
-      console.log('[RootPage] Redirecting to:', `${basePath}/dashboard`);
       router.replace(`${basePath}/dashboard`);
     }
   }, [user, activeRole, router]);

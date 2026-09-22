@@ -16,11 +16,23 @@ const pool = new Pool({ connectionString: process.env.DATABASE_URL });
 const adapter = new PrismaPg(pool);
 const prisma = new PrismaClient({ adapter });
 
+// Safety guard: never seed the public placeholder admin password into a
+// production database. In production, ADMIN_PASSWORD must be explicitly set to a
+// non-default value. Development keeps the convenient fallback.
+const isProd = process.env.NODE_ENV === 'production';
+const adminPassword = process.env.ADMIN_PASSWORD || 'Admin@123';
+if (isProd && (!process.env.ADMIN_PASSWORD || adminPassword === 'Admin@123')) {
+  console.error(
+    '❌ Refusing to seed in production with the default ADMIN_PASSWORD. Set a strong ADMIN_PASSWORD env var and re-run.'
+  );
+  process.exit(1);
+}
+
 const users = [
   {
     name: process.env.ADMIN_NAME || 'Administrator',
     email: process.env.ADMIN_EMAIL || 'admin@codvedha.com',
-    password: process.env.ADMIN_PASSWORD || 'Admin@123',
+    password: adminPassword,
     role: 'ADMIN' as const,
   },
   {

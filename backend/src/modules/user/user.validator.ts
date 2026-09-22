@@ -3,7 +3,14 @@ import { z } from 'zod';
 export const createUserSchema = z.object({
   name: z.string().min(2).max(100),
   email: z.string().email(),
-  password: z.string().min(6).max(100),
+  password: z
+    .string()
+    .min(8, 'Password must be at least 8 characters')
+    .max(100)
+    .regex(
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?])/,
+      'Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character'
+    ),
   role: z.enum(['ADMIN', 'TEACHER', 'STUDENT']),
   avatar: z.string().nullable().optional(),
 });
@@ -11,7 +18,17 @@ export const createUserSchema = z.object({
 export const updateUserSchema = z.object({
   name: z.string().min(2).max(100).optional(),
   email: z.string().email().optional(),
-  password: z.string().min(6).max(100).optional(),
+  // currentPassword is required when changing password (self-update only)
+  currentPassword: z.string().min(1).optional(),
+  password: z
+    .string()
+    .min(8, 'Password must be at least 8 characters')
+    .max(100)
+    .regex(
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?])/,
+      'Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character'
+    )
+    .optional(),
   avatar: z.string().nullable().optional(),
   isActive: z.boolean().optional(),
   courseIds: z.array(z.string()).optional(),
@@ -20,6 +37,11 @@ export const updateUserSchema = z.object({
     batchId: z.string().nullable().optional(),
     durationDays: z.enum(['DAYS_30', 'DAYS_45', 'DAYS_90', 'DAYS_180']).optional(),
   })).optional(),
+  // User notification preferences (stored in UserSettings)
+  settings: z.object({
+    pushNotifications: z.boolean().optional(),
+    emailNotifications: z.boolean().optional(),
+  }).optional(),
 });
 
 export const userListQuerySchema = z.object({

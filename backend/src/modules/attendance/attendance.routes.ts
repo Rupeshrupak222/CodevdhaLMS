@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { attendanceController } from './attendance.controller';
 import { authenticate } from '../../middlewares/authenticate';
+import { roleLimiter } from '../../middlewares/rateLimiter';
 import { authorize, adminOrTeacher } from '../../middlewares/authorize';
 import { validate } from '../../middlewares/validate';
 import { markAttendanceSchema, editAttendanceSchema, attendanceQuerySchema, attendanceHistoryQuerySchema } from './attendance.validator';
@@ -8,6 +9,7 @@ import { markAttendanceSchema, editAttendanceSchema, attendanceQuerySchema, atte
 const router = Router();
 
 router.use(authenticate);
+router.use(roleLimiter);
 
 // View attendance (Students see own, Teachers/Admins see all)
 router.get('/', validate(attendanceQuerySchema, 'query'), attendanceController.getAttendance);
