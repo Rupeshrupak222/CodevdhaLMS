@@ -533,9 +533,20 @@ export default function CourseDetailsPage() {
   };
 
   // Handle lesson click to open content viewer
-  const handleLessonClick = (les: any) => {
+  const handleLessonClick = async (les: any) => {
     if (les.videoUrl) {
-      setActiveContentUrl(les.videoUrl);
+      let resolvedUrl = les.videoUrl;
+      if (les.videoUrl.includes('bunnycdn.com') || les.videoUrl.includes('s3.')) {
+        try {
+          const res = await api.post('/upload/resolve-url', { url: les.videoUrl });
+          if (res.data.data?.presignedUrl) {
+            resolvedUrl = res.data.data.presignedUrl;
+          }
+        } catch (e) {
+          console.warn('Could not resolve lesson URL via backend, using stored URL:', e);
+        }
+      }
+      setActiveContentUrl(resolvedUrl);
       setActiveContentTitle(les.title);
       setActiveContentType(les.contentType || 'VIDEO');
       setIsContentViewerOpen(true);

@@ -5,6 +5,7 @@ import { uploadLimiter } from '../middlewares/rateLimiter';
 import { asyncHandler } from '../utils/asyncHandler';
 import { sendSuccess } from '../utils/response';
 import { AppError } from '../utils/apiError';
+import { env } from '../config/env';
 import { v4 as uuidv4 } from 'uuid';
 import https from 'https';
 import http from 'http';
@@ -185,23 +186,20 @@ router.post(
       throw AppError.badRequest('URL cannot be empty');
     }
 
-    // Extract the S3 key from URL
+    // Extract the S3/Bunny key from URL
     let s3Key = trimmed;
-    if (trimmed.startsWith('http') && trimmed.includes('amazonaws.com')) {
+    if (trimmed.startsWith('http') && (trimmed.includes('amazonaws.com') || trimmed.includes('bunnycdn.com') || trimmed.includes('b-cdn.net'))) {
       try {
         const parsed = new URL(trimmed);
         s3Key = decodeURIComponent(parsed.pathname.substring(1).replace(/\+/g, ' '));
+        if (env.AWS_S3_BUCKET && s3Key.startsWith(`${env.AWS_S3_BUCKET}/`)) {
+          s3Key = s3Key.replace(`${env.AWS_S3_BUCKET}/`, '');
+        }
       } catch {
         s3Key = trimmed.replace(/\+/g, ' ');
       }
     } else {
       s3Key = s3Key.replace(/\+/g, ' ');
-    }
-
-    // Verify the object actually exists in S3
-    const exists = await checkS3ObjectExists(s3Key);
-    if (!exists) {
-      throw AppError.badRequest(`File not found in S3. No object exists at key: "${s3Key}". Please check the URL is correct.`);
     }
 
     const presignedUrl = await resolveS3Url(trimmed);
