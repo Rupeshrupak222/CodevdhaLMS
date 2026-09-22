@@ -1326,8 +1326,19 @@ export default function CourseDetailsPage() {
                   className="w-full px-3 py-2 border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 rounded-lg text-slate-900 dark:text-white focus:outline-none h-20"
                 />
               </div>
-              <button type="submit" className="w-full py-2.5 bg-[#a855f7] hover:bg-purple-400 text-slate-950 font-semibold rounded-xl transition cursor-pointer">
-                Save & Upload
+              <button
+                type="submit"
+                disabled={uploadingContent}
+                className="w-full py-2.5 bg-[#a855f7] hover:bg-purple-400 text-slate-950 font-semibold rounded-xl transition cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+              >
+                {uploadingContent ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    Uploading file, please wait...
+                  </>
+                ) : (
+                  'Save & Upload'
+                )}
               </button>
             </form>
           </div>

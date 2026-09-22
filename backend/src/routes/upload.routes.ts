@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { getPresignedUploadUrl, resolveS3Url, checkS3ObjectExists } from '../utils/s3';
+import { getPresignedUploadUrl, resolveS3Url, checkS3ObjectExists, uploadToS3 } from '../utils/s3';
 import { authenticate } from '../middlewares/authenticate';
 import { uploadLimiter } from '../middlewares/rateLimiter';
 import { asyncHandler } from '../utils/asyncHandler';
@@ -8,6 +8,12 @@ import { AppError } from '../utils/apiError';
 import { v4 as uuidv4 } from 'uuid';
 import https from 'https';
 import http from 'http';
+import multer from 'multer';
+
+const uploadMemory = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 500 * 1024 * 1024 }, // 500MB
+});
 
 const router = Router();
 
@@ -54,6 +60,61 @@ const BLOCKED_EXTENSIONS = new Set([
 // All upload routes require authentication
 router.use(authenticate);
 router.use(uploadLimiter);
+
+// ── Direct Server Upload (Bypasses Browser CORS / Preflight) ─────────────────
+router.post(
+  '/direct',
+  uploadMemory.single('file'),
+  asyncHandler(async (req, res) => {
+    const file = req.file;
+    const folder = req.body.folder || 'misc';
+
+    if (!file) {
+      throw AppError.badRequest('No file provided');
+    }
+
+    if (!ALLOWED_MIME_TYPES.has(file.mimetype)) {
+      throw AppError.badRequest(`File type '${file.mimetype}' is not allowed`);
+    }
+
+    const ext = file.originalname.includes('.')
+      ? file.originalname.substring(file.originalname.lastIndexOf('.')).toLowerCase()
+      : '';
+    if (ext && BLOCKED_EXTENSIONS.has(ext)) {
+      throw AppError.badRequest(`File extension '${ext}' is not allowed`);
+    }
+
+    const sanitizedFolder = (folder || 'misc')
+      .replace(/[^a-zA-Z0-9_\-\/\s]/g, '')
+      .replace(/\/+/g, '/')
+      .replace(/^\/|\/$/g, '');
+
+    const baseName = file.originalname.includes('.')
+      ? file.originalname.substring(0, file.originalname.lastIndexOf('.'))
+      : file.originalname;
+
+    const sanitizedName = baseName
+      .replace(/[^a-zA-Z0-9_\-\s]/g, '')
+      .replace(/\s+/g, '_')
+      .substring(0, 100);
+
+    const uniqueName = `${sanitizedName}_${uuidv4().substring(0, 8)}${ext}`;
+    const key = `${sanitizedFolder}/${uniqueName}`;
+
+    const { url } = await uploadToS3(file.buffer, key, file.mimetype);
+
+    return sendSuccess(res, {
+      message: 'File uploaded successfully',
+      data: {
+        uploadUrl: url,
+        publicUrl: url,
+        url,
+        key,
+        fileName: uniqueName,
+      },
+    });
+  })
+);
 
 // ── Get Presigned Upload URL ─────────────────────────────────────────────────
 // Frontend calls this to get a URL, then uploads directly to S3.

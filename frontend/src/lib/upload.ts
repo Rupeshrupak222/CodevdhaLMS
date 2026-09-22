@@ -14,44 +14,22 @@ export const uploadFileToS3 = async (
   folder: string,
   onProgress?: (progress: { percent: number; loaded: number; total: number }) => void
 ): Promise<{ url: string; key: string }> => {
-  // Step 1: Get presigned upload URL from backend
-  const presignedRes = await api.post('/upload/presigned-url', {
-    fileName: file.name,
-    contentType: file.type,
-    folder,
-  });
+  const formData = new FormData();
+  formData.append('file', file);
+  formData.append('folder', folder);
 
-  const { uploadUrl, publicUrl, key } = presignedRes.data.data;
-
-  // Step 2: Upload file directly to S3
-  // Use XMLHttpRequest for progress tracking (fetch doesn't support upload progress)
-  await new Promise<void>((resolve, reject) => {
-    const xhr = new XMLHttpRequest();
-    xhr.open('PUT', uploadUrl);
-    xhr.setRequestHeader('Content-Type', file.type);
-
-    if (onProgress) {
-      xhr.upload.onprogress = (event) => {
-        if (event.lengthComputable) {
-          const percent = Math.round((event.loaded / event.total) * 100);
-          onProgress({ percent, loaded: event.loaded, total: event.total });
-        }
-      };
-    }
-
-    xhr.onload = () => {
-      if (xhr.status >= 200 && xhr.status < 300) {
-        resolve();
-      } else {
-        reject(new Error(`Upload failed with status ${xhr.status}`));
+  const res = await api.post('/upload/direct', formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+    onUploadProgress: (progressEvent) => {
+      if (onProgress && progressEvent.total) {
+        const percent = Math.round((progressEvent.loaded / progressEvent.total) * 100);
+        onProgress({ percent, loaded: progressEvent.loaded, total: progressEvent.total });
       }
-    };
-
-    xhr.onerror = () => reject(new Error('Upload failed due to network error'));
-    xhr.onabort = () => reject(new Error('Upload was cancelled'));
-
-    xhr.send(file);
+    },
   });
 
-  return { url: publicUrl, key };
+  const { url, publicUrl, key } = res.data.data;
+  return { url: publicUrl || url, key };
 };

@@ -13,10 +13,24 @@ const isS3Configured = () => {
   );
 };
 
+const getPublicUrl = (key: string): string => {
+  if (env.AWS_S3_CUSTOM_DOMAIN) {
+    const domain = env.AWS_S3_CUSTOM_DOMAIN.replace(/\/$/, '');
+    return `${domain}/${key}`;
+  }
+  if (env.AWS_S3_ENDPOINT) {
+    const endpoint = env.AWS_S3_ENDPOINT.replace(/\/$/, '');
+    return `${endpoint}/${env.AWS_S3_BUCKET}/${key}`;
+  }
+  return `https://${env.AWS_S3_BUCKET}.s3.${env.AWS_REGION}.amazonaws.com/${key}`;
+};
+
 let s3Client: S3Client | null = null;
 if (isS3Configured()) {
   s3Client = new S3Client({
-    region: env.AWS_REGION,
+    // Bunny.net and S3-compatible APIs require 'us-east-1' for SigV4 signature calculations
+    region: env.AWS_S3_ENDPOINT ? 'us-east-1' : (env.AWS_REGION || 'us-east-1'),
+    ...(env.AWS_S3_ENDPOINT ? { endpoint: env.AWS_S3_ENDPOINT, forcePathStyle: true } : {}),
     credentials: {
       accessKeyId: env.AWS_ACCESS_KEY_ID,
       secretAccessKey: env.AWS_SECRET_ACCESS_KEY,
@@ -24,9 +38,9 @@ if (isS3Configured()) {
   });
 } else {
   if (env.isProd) {
-    console.error('🚨 CRITICAL: AWS S3 is NOT configured in production! File uploads will use data URLs (not suitable for production).');
+    console.error('🚨 CRITICAL: S3 / Bunny.net Storage is NOT configured in production! File uploads will use data URLs (not suitable for production).');
   } else {
-    console.warn('⚠️ AWS S3 is not configured. Running file uploads in fallback/mock mode.');
+    console.warn('⚠️ S3 / Bunny.net Storage is not configured. Running file uploads in fallback/mock mode.');
   }
 }
 
@@ -42,22 +56,33 @@ export const uploadToS3 = async (
     return { url: mockUrl, key };
   }
 
-  const command = new PutObjectCommand({
-    Bucket: env.AWS_S3_BUCKET,
-    Key: key,
-    Body: fileBuffer,
-    ContentType: mimeType,
-  });
+  try {
+    const command = new PutObjectCommand({
+      Bucket: env.AWS_S3_BUCKET,
+      Key: key,
+      Body: fileBuffer,
+      ContentType: mimeType,
+    });
 
-  await s3Client.send(command);
-  const url = `https://${env.AWS_S3_BUCKET}.s3.${env.AWS_REGION}.amazonaws.com/${key}`;
-  return { url, key };
+    await s3Client.send(command);
+    const url = getPublicUrl(key);
+    return { url, key };
+  } catch (error: any) {
+    console.error('[Bunny/S3 Upload Error]:', error?.message || error, error);
+    throw error;
+  }
 };
 
 export const getPresignedDownloadUrl = async (key: string): Promise<string> => {
   if (!s3Client || !key) {
     // Fallback: return dummy url or placeholder
     return `https://mock-s3-bucket.s3.amazonaws.com/${key}`;
+  }
+
+  // Bunny.net S3 serves files directly via public/CDN URLs.
+  // AWS SigV4 query parameters (X-Amz-Signature) cause stream/403 errors on Bunny.net GET requests.
+  if (env.AWS_S3_ENDPOINT && env.AWS_S3_ENDPOINT.includes('bunnycdn.com')) {
+    return getPublicUrl(key);
   }
 
   try {
@@ -68,7 +93,7 @@ export const getPresignedDownloadUrl = async (key: string): Promise<string> => {
     return await getSignedUrl(s3Client, command, { expiresIn: 21600 }); // 6 hours — allows full video playback regardless of length
   } catch (error) {
     console.error('Error generating presigned URL:', error);
-    return `https://${env.AWS_S3_BUCKET}.s3.${env.AWS_REGION}.amazonaws.com/${key}`;
+    return getPublicUrl(key);
   }
 };
 
@@ -96,7 +121,8 @@ export const resolveS3Url = async (urlOrKey: string | null | undefined): Promise
   if (urlOrKey.startsWith('data:')) return urlOrKey;
   
   // Return early for non-S3 external URLs
-  if (urlOrKey.startsWith('http') && !urlOrKey.includes('amazonaws.com') && !urlOrKey.includes('mock-s3-bucket')) {
+  const isS3OrBunnyUrl = urlOrKey.includes('amazonaws.com') || urlOrKey.includes('bunnycdn.com') || urlOrKey.includes('b-cdn.net') || (env.AWS_S3_ENDPOINT && urlOrKey.includes(new URL(env.AWS_S3_ENDPOINT).hostname));
+  if (urlOrKey.startsWith('http') && !isS3OrBunnyUrl && !urlOrKey.includes('mock-s3-bucket')) {
     return urlOrKey;
   }
 
@@ -105,14 +131,8 @@ export const resolveS3Url = async (urlOrKey: string | null | undefined): Promise
     if (urlOrKey.startsWith('http')) {
       const url = new URL(urlOrKey);
       key = decodeURIComponent(url.pathname.substring(1));
-    }
-    // Try literal key first; if it has '+' and fails, try with '+' as space
-    const exists = await checkS3ObjectExists(key);
-    if (!exists && key.includes('+')) {
-      const keyWithSpaces = key.replace(/\+/g, ' ');
-      const existsWithSpaces = await checkS3ObjectExists(keyWithSpaces);
-      if (existsWithSpaces) {
-        key = keyWithSpaces;
+      if (env.AWS_S3_BUCKET && key.startsWith(`${env.AWS_S3_BUCKET}/`)) {
+        key = key.replace(`${env.AWS_S3_BUCKET}/`, '');
       }
     }
     return await getPresignedDownloadUrl(key);
@@ -123,7 +143,7 @@ export const resolveS3Url = async (urlOrKey: string | null | undefined): Promise
 
 export const stripPresignedParams = (url: string | null | undefined): string | null => {
   if (!url) return null;
-  if (!url.includes('amazonaws.com')) return url;
+  if (!url.includes('amazonaws.com') && !url.includes('bunnycdn.com') && !url.includes('b-cdn.net')) return url;
   try {
     const parsed = new URL(url);
     return `${parsed.protocol}//${parsed.host}${parsed.pathname}`;
@@ -174,7 +194,7 @@ export const getPresignedUploadUrl = async (
   });
 
   const uploadUrl = await getSignedUrl(s3Client, command, { expiresIn });
-  const publicUrl = `https://${env.AWS_S3_BUCKET}.s3.${env.AWS_REGION}.amazonaws.com/${key}`;
+  const publicUrl = getPublicUrl(key);
 
   return { uploadUrl, key, publicUrl };
 };
