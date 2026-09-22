@@ -36,14 +36,14 @@ const users = [
     role: 'ADMIN' as const,
   },
   {
-    name: 'Sarah Jenkins',
-    email: 'sarah.jenkins@codvedha.com',
+    name: 'Teacher',
+    email: 'teacher@codvedha.com',
     password: 'Teacher@123',
     role: 'TEACHER' as const,
   },
   {
-    name: 'Rohan Sharma',
-    email: 'rohan.sharma@codvedha.com',
+    name: 'Student',
+    email: 'student@codvedha.com',
     password: 'Student@123',
     role: 'STUDENT' as const,
   },

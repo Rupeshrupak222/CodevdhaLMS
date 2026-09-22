@@ -72,7 +72,7 @@ export const Courses = () => {
   // Map API course object to frontend representation
   const mapCourse = (c: any) => ({
     ...c,
-    category: c.category?.name || 'CSE/IT Domains',
+    category: c.category?.name || 'CSE and IT',
     categoryId: c.categoryId || c.category?.id,
     instructor: c.teachers?.[0]?.teacher?.name || 'Guest Faculty',
     studentsCount: c._count?.enrollments || 0,
@@ -169,7 +169,7 @@ export const Courses = () => {
   };
 
   // Subcategory helper state in Add/Edit forms
-  const [formCategory, setFormCategory] = useState('CSE/IT Domains');
+  const [formCategory, setFormCategory] = useState('CSE and IT');
 
   // Sync state with URL queries (e.g. ?view=categories)
   useEffect(() => {

@@ -28,14 +28,12 @@ const start = async () => {
 
         // Auto-seed default categories
         const categoriesToSeed = [
-          { name: 'CSE/IT Domains', slug: 'cse-it-domains' },
-          { name: 'Management & commerce', slug: 'management-commerce' },
-          { name: 'ECE Domains', slug: 'ece-domains' },
-          { name: 'Economics', slug: 'economics' },
-          { name: 'Mechanical engineering', slug: 'mechanical-engineering' },
-          { name: 'Bio &Life sciences', slug: 'bio-life-sciences' },
-          { name: 'Civil engineering', slug: 'civil-engineering' },
-          { name: 'Chemical Domains', slug: 'chemical-domains' },
+          { name: 'Civil', slug: 'civil' },
+          { name: 'CodVedha Special', slug: 'codvedha-special' },
+          { name: 'CSE and IT', slug: 'cse-and-it' },
+          { name: 'ECE and EEE', slug: 'ece-and-eee' },
+          { name: 'Management', slug: 'management' },
+          { name: 'PharmaTech', slug: 'pharmatech' },
         ];
         
         const createdCats = [];
