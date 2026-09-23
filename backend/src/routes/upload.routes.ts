@@ -11,12 +11,16 @@ import https from 'https';
 import http from 'http';
 import multer from 'multer';
 
-import fs from 'fs';
-import os from 'os';
+import path from 'path';
+
+const tempUploadDir = path.join(process.cwd(), 'uploads_temp');
+if (!fs.existsSync(tempUploadDir)) {
+  fs.mkdirSync(tempUploadDir, { recursive: true });
+}
 
 const uploadDisk = multer({
   storage: multer.diskStorage({
-    destination: (req, file, cb) => cb(null, os.tmpdir()),
+    destination: (req, file, cb) => cb(null, tempUploadDir),
     filename: (req, file, cb) => cb(null, `upload_${Date.now()}_${uuidv4().substring(0, 8)}`),
   }),
   limits: { fileSize: 2000 * 1024 * 1024 }, // 2 GB limit
