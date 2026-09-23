@@ -45,14 +45,14 @@ if (isS3Configured()) {
 }
 
 export const uploadToS3 = async (
-  fileBuffer: Buffer,
+  fileInput: Buffer | import('stream').Readable,
   key: string,
   mimeType: string
 ): Promise<{ url: string; key: string }> => {
   if (!s3Client) {
-    // Fallback: Return a data URL for development so images render properly
     console.log(`[Mock Upload] Uploading to S3: Key=${key}, MimeType=${mimeType}`);
-    const mockUrl = `data:${mimeType};base64,${fileBuffer.toString('base64')}`;
+    const buffer = Buffer.isBuffer(fileInput) ? fileInput : Buffer.from('');
+    const mockUrl = `data:${mimeType};base64,${buffer.toString('base64')}`;
     return { url: mockUrl, key };
   }
 
@@ -60,7 +60,7 @@ export const uploadToS3 = async (
     const command = new PutObjectCommand({
       Bucket: env.AWS_S3_BUCKET,
       Key: key,
-      Body: fileBuffer,
+      Body: fileInput as any,
       ContentType: mimeType,
     });
 
