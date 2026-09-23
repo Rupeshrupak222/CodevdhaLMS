@@ -26,7 +26,7 @@ const start = async () => {
           }
         }
 
-        // Auto-seed default categories
+        // Auto-seed default categories if they do not exist
         const categoriesToSeed = [
           { name: 'Civil', slug: 'civil' },
           { name: 'CodVedha Special', slug: 'codvedha-special' },
@@ -36,33 +36,14 @@ const start = async () => {
           { name: 'PharmaTech', slug: 'pharmatech' },
         ];
         
-        const createdCats = [];
         for (const cat of categoriesToSeed) {
-          const dbCat = await prisma.category.upsert({
+          await prisma.category.upsert({
             where: { slug: cat.slug },
             update: { name: cat.name },
             create: cat,
           });
-          createdCats.push(dbCat);
         }
-        
-        const defaultCatId = createdCats[0].id;
-        const allowedSlugs = categoriesToSeed.map(c => c.slug);
-        
-        const otherCats = await prisma.category.findMany({
-          where: { NOT: { slug: { in: allowedSlugs } } }
-        });
-        const otherCatIds = otherCats.map((c: any) => c.id);
-        if (otherCatIds.length > 0) {
-          await prisma.course.updateMany({
-            where: { categoryId: { in: otherCatIds } },
-            data: { categoryId: defaultCatId }
-          });
-          await prisma.category.deleteMany({
-            where: { id: { in: otherCatIds } }
-          });
-        }
-        console.log('✅ Default categories verified/seeded and cleaned');
+        console.log('✅ Default categories verified/seeded');
 
         break; // Break the retry loop if successful
       } catch (error: any) {
