@@ -12,6 +12,7 @@ import { env } from './env';
 const PROD_ORIGINS = [
   env.FRONTEND_URL,
   'https://my.codvedha.com',
+  'https://lms.codvedha.com',
 ];
 
 const DEV_ORIGINS = [
