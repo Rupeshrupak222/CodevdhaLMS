@@ -114,7 +114,7 @@ router.post(
       const uniqueName = `${sanitizedName}_${uuidv4().substring(0, 8)}${ext}`;
       const key = `${sanitizedFolder}/${uniqueName}`;
 
-      const stream = fs.createReadStream(file.path);
+      const stream = fs.createReadStream(file.path, { highWaterMark: 64 * 1024 });
       const { url } = await uploadToS3(stream, key, file.mimetype);
 
       return sendSuccess(res, {
