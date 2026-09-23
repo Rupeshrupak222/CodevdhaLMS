@@ -12,6 +12,7 @@ import http from 'http';
 import multer from 'multer';
 
 import path from 'path';
+import fs from 'fs';
 
 const tempUploadDir = path.join(process.cwd(), 'uploads_temp');
 if (!fs.existsSync(tempUploadDir)) {
