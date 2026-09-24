@@ -48,7 +48,7 @@ export const Settings = () => {
       .catch(() => { /* keep defaults */ });
   }, [activeTab, user]);
 
-  const { register: registerProfile, handleSubmit: handleSubmitProfile, reset, watch, formState: { errors: profileErrors } } = useForm({
+  const { register: registerProfile, handleSubmit: handleSubmitProfile, reset, watch, formState: { errors: profileErrors, isSubmitting: isSubmittingProfile } } = useForm({
     defaultValues: {
       name: user ? user.name : '',
       currentPassword: '',
@@ -281,9 +281,17 @@ export const Settings = () => {
 
                 <button
                   type="submit"
-                  className="px-5 py-2.5 bg-[#a855f7] hover:bg-purple-400 text-slate-950 font-semibold rounded-xl transition"
+                  disabled={isSubmittingProfile || uploadingAvatar}
+                  className="px-5 py-2.5 bg-[#a855f7] hover:bg-purple-400 text-slate-950 font-semibold rounded-xl transition flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
                 >
-                  Save Profile Details
+                  {isSubmittingProfile ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      <span>Saving Details...</span>
+                    </>
+                  ) : (
+                    'Save Profile Details'
+                  )}
                 </button>
               </form>
             </div>

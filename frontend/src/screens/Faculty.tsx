@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { useLMS } from '@/context/LMSContext';
 import { usePathname, useSearchParams, useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
-import { GraduationCap, Plus, Mail, BookOpen, Briefcase, X, Camera, Trash2, AlertTriangle, ToggleLeft, ToggleRight } from 'lucide-react';
+import { GraduationCap, Plus, Mail, BookOpen, Briefcase, X, Camera, Trash2, AlertTriangle, ToggleLeft, ToggleRight, Loader2 } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import useSWR from 'swr';
 import { fetcher, api } from '@/lib/api';
@@ -37,8 +37,8 @@ export const Faculty = () => {
     if (action === 'assign') setIsAssignOpen(true);
   }, [searchParams.toString()]);
 
-  const { register, handleSubmit, reset, setValue, watch, formState: { errors } } = useForm();
-  const { register: registerEdit, handleSubmit: handleSubmitEdit, reset: resetEdit, setValue: setValueEdit, watch: watchEdit, formState: { errors: errorsEdit } } = useForm();
+  const { register, handleSubmit, reset, setValue, watch, formState: { errors, isSubmitting: isSubmittingAdd } } = useForm();
+  const { register: registerEdit, handleSubmit: handleSubmitEdit, reset: resetEdit, setValue: setValueEdit, watch: watchEdit, formState: { errors: errorsEdit, isSubmitting: isSubmittingEdit } } = useForm();
 
   const avatarPreview = watch('avatar');
   const editAvatarPreview = watchEdit('avatar');
@@ -508,9 +508,17 @@ export const Faculty = () => {
 
  <button
  type="submit"
- className="w-full py-2.5 bg-[#a855f7] hover:bg-purple-400 text-slate-950 font-semibold rounded-xl transition mt-4"
+ disabled={isSubmittingAdd}
+ className="w-full py-2.5 bg-[#a855f7] hover:bg-purple-400 text-slate-950 font-semibold rounded-xl transition mt-4 flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
  >
- Onboard Faculty Resource
+ {isSubmittingAdd ? (
+   <>
+     <Loader2 className="w-4 h-4 animate-spin" />
+     <span>Onboarding...</span>
+   </>
+ ) : (
+   'Onboard Faculty Resource'
+ )}
  </button>
  </form>
  </div>
@@ -625,9 +633,17 @@ export const Faculty = () => {
 
  <button
  type="submit"
- className="w-full py-2.5 bg-[#a855f7] hover:bg-purple-400 text-slate-950 font-semibold rounded-xl transition mt-4"
+ disabled={isSubmittingEdit}
+ className="w-full py-2.5 bg-[#a855f7] hover:bg-purple-400 text-slate-950 font-semibold rounded-xl transition mt-4 flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
  >
- Save Changes
+ {isSubmittingEdit ? (
+   <>
+     <Loader2 className="w-4 h-4 animate-spin" />
+     <span>Saving Changes...</span>
+   </>
+ ) : (
+   'Save Changes'
+ )}
  </button>
  </form>
  </div>

@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { useLMS } from '@/context/LMSContext';
 import { usePathname, useSearchParams, useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Plus, Search, Edit3, Trash2, Eye, EyeOff, User, GraduationCap, X, AlertTriangle, Camera, ToggleLeft, ToggleRight } from 'lucide-react';
+import { Plus, Search, Edit3, Trash2, Eye, EyeOff, User, GraduationCap, X, AlertTriangle, Camera, ToggleLeft, ToggleRight, Loader2 } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import useSWR from 'swr';
 import { fetcher, api } from '@/lib/api';
@@ -82,8 +82,8 @@ export const Students = () => {
   };
 
   // Form Hooks
-  const { register: registerAdd, handleSubmit: handleSubmitAdd, reset: resetAdd, setValue: setValueAdd, watch: watchAdd, formState: { errors: errorsAdd } } = useForm();
-  const { register: registerEdit, handleSubmit: handleSubmitEdit, reset: resetEdit, setValue: setValueEdit, watch: watchEdit, formState: { errors: errorsEdit } } = useForm();
+  const { register: registerAdd, handleSubmit: handleSubmitAdd, reset: resetAdd, setValue: setValueAdd, watch: watchAdd, formState: { errors: errorsAdd, isSubmitting: isSubmittingAdd } } = useForm();
+  const { register: registerEdit, handleSubmit: handleSubmitEdit, reset: resetEdit, setValue: setValueEdit, watch: watchEdit, formState: { errors: errorsEdit, isSubmitting: isSubmittingEdit } } = useForm();
 
   const avatarPreviewAdd = watchAdd('avatar');
   const avatarPreviewEdit = watchEdit('avatar');
@@ -739,9 +739,17 @@ export const Students = () => {
 
  <button
  type="submit"
- className="w-full py-2.5 bg-[#a855f7] hover:bg-purple-400 text-slate-950 font-semibold rounded-xl transition mt-4"
+ disabled={isSubmittingAdd}
+ className="w-full py-2.5 bg-[#a855f7] hover:bg-purple-400 text-slate-950 font-semibold rounded-xl transition mt-4 flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
  >
- Enroll Student
+ {isSubmittingAdd ? (
+   <>
+     <Loader2 className="w-4 h-4 animate-spin" />
+     <span>Enrolling...</span>
+   </>
+ ) : (
+   'Enroll Student'
+ )}
  </button>
  </form>
  </div>
@@ -943,9 +951,17 @@ export const Students = () => {
 
  <button
  type="submit"
- className="w-full py-2.5 bg-[#a855f7] hover:bg-purple-400 text-slate-950 font-semibold rounded-xl transition mt-4"
+ disabled={isSubmittingEdit}
+ className="w-full py-2.5 bg-[#a855f7] hover:bg-purple-400 text-slate-950 font-semibold rounded-xl transition mt-4 flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
  >
- Save Changes
+ {isSubmittingEdit ? (
+   <>
+     <Loader2 className="w-4 h-4 animate-spin" />
+     <span>Saving Changes...</span>
+   </>
+ ) : (
+   'Save Changes'
+ )}
  </button>
  </form>
  </div>

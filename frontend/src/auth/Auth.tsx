@@ -14,7 +14,7 @@ const FaceAuthModal = dynamic(
 
 import {
   BookOpen, GraduationCap, UserCog,
-  Mail, Lock, ArrowRight, Eye, EyeOff, ShieldCheck, Layers, Zap
+  Mail, Lock, ArrowRight, Eye, EyeOff, ShieldCheck, Layers, Zap, Loader2
 } from 'lucide-react';
 
 // CodVedha brand palette (sampled from logo)
@@ -27,6 +27,8 @@ export const Auth = () => {
   const { login, enrollFace, verifyFace } = useLMS();
   const [selectedRole, setSelectedRole] = useState('admin');
   const [showPassword, setShowPassword] = useState(false);
+  const [isLoggingIn, setIsLoggingIn] = useState(false);
+  const [isSessionConfirming, setIsSessionConfirming] = useState(false);
 
   // Face Auth States
   const [faceAuthMode, setFaceAuthMode] = useState<'enroll' | 'verify' | null>(null);
@@ -51,26 +53,13 @@ export const Auth = () => {
   const [pendingLoginData, setPendingLoginData] = useState<any>(null);
 
   const onSubmit = async (data: any) => {
-    const res = await login(data.email, data.password, selectedRole, data.rememberMe);
-    if (res?.status === 'REQUIRE_SESSION_CONFIRM') {
-      setPendingLoginData(data);
-      setShowSessionConfirm(true);
-    } else if (res?.status === 'REQUIRE_FACE_ENROLL') {
-      setFaceAuthMode('enroll');
-      setTempToken(res.tempToken);
-      setUserAvatar(res.avatar || null);
-    } else if (res?.status === 'REQUIRE_FACE_VERIFY') {
-      setFaceAuthMode('verify');
-      setTempToken(res.tempToken);
-      setUserAvatar(res.avatar || null);
-    }
-  };
-
-  const handleSessionConfirmLogin = async () => {
-    setShowSessionConfirm(false);
-    if (pendingLoginData) {
-      const res = await login(pendingLoginData.email, pendingLoginData.password, selectedRole, pendingLoginData.rememberMe, true);
-      if (res?.status === 'REQUIRE_FACE_ENROLL') {
+    setIsLoggingIn(true);
+    try {
+      const res = await login(data.email, data.password, selectedRole, data.rememberMe);
+      if (res?.status === 'REQUIRE_SESSION_CONFIRM') {
+        setPendingLoginData(data);
+        setShowSessionConfirm(true);
+      } else if (res?.status === 'REQUIRE_FACE_ENROLL') {
         setFaceAuthMode('enroll');
         setTempToken(res.tempToken);
         setUserAvatar(res.avatar || null);
@@ -79,8 +68,31 @@ export const Auth = () => {
         setTempToken(res.tempToken);
         setUserAvatar(res.avatar || null);
       }
+    } finally {
+      setIsLoggingIn(false);
     }
-    setPendingLoginData(null);
+  };
+
+  const handleSessionConfirmLogin = async () => {
+    setIsSessionConfirming(true);
+    try {
+      if (pendingLoginData) {
+        const res = await login(pendingLoginData.email, pendingLoginData.password, selectedRole, pendingLoginData.rememberMe, true);
+        if (res?.status === 'REQUIRE_FACE_ENROLL') {
+          setFaceAuthMode('enroll');
+          setTempToken(res.tempToken);
+          setUserAvatar(res.avatar || null);
+        } else if (res?.status === 'REQUIRE_FACE_VERIFY') {
+          setFaceAuthMode('verify');
+          setTempToken(res.tempToken);
+          setUserAvatar(res.avatar || null);
+        }
+      }
+      setShowSessionConfirm(false);
+      setPendingLoginData(null);
+    } finally {
+      setIsSessionConfirming(false);
+    }
   };
 
   const handleSessionConfirmCancel = () => {
@@ -170,10 +182,18 @@ export const Auth = () => {
                 </button>
                 <button
                   onClick={handleSessionConfirmLogin}
-                  className="flex-1 px-4 py-2.5 rounded-xl text-white font-medium transition shadow-md"
+                  disabled={isSessionConfirming}
+                  className="flex-1 px-4 py-2.5 rounded-xl text-white font-medium transition shadow-md flex items-center justify-center gap-2 disabled:opacity-75"
                   style={{ backgroundColor: BRAND.violet, boxShadow: `0 10px 25px -5px ${BRAND.violet}66` }}
                 >
-                  Login Here
+                  {isSessionConfirming ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin text-white" />
+                      <span>Logging In...</span>
+                    </>
+                  ) : (
+                    'Login Here'
+                  )}
                 </button>
               </div>
             </motion.div>
@@ -407,29 +427,39 @@ export const Auth = () => {
 
             {/* Sign In Button with animated role label */}
             <motion.button
-              whileHover={{ scale: 1.01 }}
-              whileTap={{ scale: 0.98 }}
+              whileHover={{ scale: isLoggingIn ? 1 : 1.01 }}
+              whileTap={{ scale: isLoggingIn ? 1 : 0.98 }}
               type="submit"
-              className="w-full py-3.5 text-white font-semibold rounded-xl transition text-sm flex items-center justify-center gap-2 overflow-hidden"
+              disabled={isLoggingIn}
+              className="w-full py-3.5 text-white font-semibold rounded-xl transition text-sm flex items-center justify-center gap-2 overflow-hidden disabled:opacity-75 disabled:cursor-not-allowed"
               style={{
                 background: `linear-gradient(90deg, ${BRAND.indigo}, ${BRAND.violet})`,
                 boxShadow: `0 12px 25px -8px ${BRAND.violet}66`,
               }}
             >
-              <span>Sign In as</span>
-              <AnimatePresence mode="wait">
-                <motion.span
-                  key={selectedRole}
-                  initial={{ y: 12, opacity: 0 }}
-                  animate={{ y: 0, opacity: 1 }}
-                  exit={{ y: -12, opacity: 0 }}
-                  transition={{ duration: 0.25 }}
-                  className="font-bold"
-                >
-                  {selectedRole.charAt(0).toUpperCase() + selectedRole.slice(1)}
-                </motion.span>
-              </AnimatePresence>
-              <ArrowRight className="w-4 h-4" />
+              {isLoggingIn ? (
+                <>
+                  <Loader2 className="w-5 h-5 animate-spin text-white" />
+                  <span>Signing In...</span>
+                </>
+              ) : (
+                <>
+                  <span>Sign In as</span>
+                  <AnimatePresence mode="wait">
+                    <motion.span
+                      key={selectedRole}
+                      initial={{ y: 12, opacity: 0 }}
+                      animate={{ y: 0, opacity: 1 }}
+                      exit={{ y: -12, opacity: 0 }}
+                      transition={{ duration: 0.25 }}
+                      className="font-bold"
+                    >
+                      {selectedRole.charAt(0).toUpperCase() + selectedRole.slice(1)}
+                    </motion.span>
+                  </AnimatePresence>
+                  <ArrowRight className="w-4 h-4" />
+                </>
+              )}
             </motion.button>
           </form>
 

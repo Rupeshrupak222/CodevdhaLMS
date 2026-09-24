@@ -57,9 +57,10 @@ export const Classes = () => {
 
   // Edit Modal State
   const [editModalClass, setEditModalClass] = useState<any>(null);
+  const [isSavingEdit, setIsSavingEdit] = useState(false);
 
   // Form Hooks
-  const { register, handleSubmit, reset, watch } = useForm();
+  const { register, handleSubmit, reset, watch, formState: { isSubmitting } } = useForm();
 
   const creatorCourseId = watch('courseId');
   const { data: creatorBatchesRaw } = useSWR(creatorCourseId ? `/batches?courseId=${creatorCourseId}&isActive=true` : null, fetcher);
@@ -306,6 +307,7 @@ export const Classes = () => {
     if (duration) payload.duration = duration;
     if (meetingLink) payload.meetingLink = meetingLink;
 
+    setIsSavingEdit(true);
     try {
       await api.put(`/live-classes/${editModalClass.id}`, payload);
       toast.success('Class updated successfully!');
@@ -313,6 +315,8 @@ export const Classes = () => {
       setEditModalClass(null);
     } catch (err: any) {
       toast.error(err.response?.data?.message || 'Failed to update class');
+    } finally {
+      setIsSavingEdit(false);
     }
   };
 
@@ -985,9 +989,17 @@ export const Classes = () => {
 
                 <button
                   type="submit"
-                  className="w-full py-2.5 bg-[#a855f7] hover:bg-purple-400 text-slate-950 font-semibold rounded-xl transition mt-4"
+                  disabled={isSubmitting}
+                  className="w-full py-2.5 bg-[#a855f7] hover:bg-purple-400 text-slate-950 font-semibold rounded-xl transition mt-4 flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
                 >
-                  Publish Room
+                  {isSubmitting ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      <span>Publishing...</span>
+                    </>
+                  ) : (
+                    'Publish Room'
+                  )}
                 </button>
               </form>
             </motion.div>
@@ -1150,9 +1162,17 @@ export const Classes = () => {
 
                 <button
                   type="submit"
-                  className="w-full py-2.5 bg-[#a855f7] hover:bg-purple-400 text-slate-950 font-semibold rounded-xl transition mt-4"
+                  disabled={isSavingEdit}
+                  className="w-full py-2.5 bg-[#a855f7] hover:bg-purple-400 text-slate-950 font-semibold rounded-xl transition mt-4 flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
                 >
-                  Save Changes
+                  {isSavingEdit ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      <span>Saving...</span>
+                    </>
+                  ) : (
+                    'Save Changes'
+                  )}
                 </button>
               </form>
             </motion.div>
