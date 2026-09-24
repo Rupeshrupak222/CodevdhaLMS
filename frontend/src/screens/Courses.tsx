@@ -180,8 +180,8 @@ export const Courses = () => {
   }, [searchParams.toString()]);
 
   // Form Hooks
-  const { register: registerAdd, handleSubmit: handleSubmitAdd, reset: resetAdd, formState: { errors: errorsAdd } } = useForm();
-  const { register: registerEdit, handleSubmit: handleSubmitEdit, reset: resetEdit, formState: { errors: errorsEdit } } = useForm();
+  const { register: registerAdd, handleSubmit: handleSubmitAdd, reset: resetAdd, formState: { errors: errorsAdd, isSubmitting: isSubmittingAdd } } = useForm();
+  const { register: registerEdit, handleSubmit: handleSubmitEdit, reset: resetEdit, formState: { errors: errorsEdit, isSubmitting: isSubmittingEdit } } = useForm();
 
   // Progress update handler (students only)
   const updateCourseProgress = async (courseId: string, lessonIndex: number, totalLessons: number) => {
@@ -737,9 +737,17 @@ export const Courses = () => {
 
   <button
   type="submit"
-  className="w-full py-2.5 bg-[#a855f7] hover:bg-purple-400 text-slate-950 font-semibold rounded-xl transition mt-4"
+  disabled={isSubmittingAdd || uploadingImage}
+  className="w-full py-2.5 bg-[#a855f7] hover:bg-purple-400 text-slate-950 font-semibold rounded-xl transition mt-4 flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
   >
-  Assemble Course
+  {isSubmittingAdd ? (
+    <>
+      <Loader2 className="w-4 h-4 animate-spin" />
+      <span>Assembling...</span>
+    </>
+  ) : (
+    'Assemble Course'
+  )}
   </button>
   </form>
  </div>
@@ -899,9 +907,17 @@ export const Courses = () => {
 
  <button
  type="submit"
- className="w-full py-2.5 bg-[#a855f7] hover:bg-purple-400 text-slate-950 font-semibold rounded-xl transition mt-4"
+ disabled={isSubmittingEdit || uploadingImage}
+ className="w-full py-2.5 bg-[#a855f7] hover:bg-purple-400 text-slate-950 font-semibold rounded-xl transition mt-4 flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
  >
- Save Course Config
+ {isSubmittingEdit ? (
+   <>
+     <Loader2 className="w-4 h-4 animate-spin" />
+     <span>Saving Config...</span>
+   </>
+ ) : (
+   'Save Course Config'
+ )}
  </button>
  </form>
  </div>

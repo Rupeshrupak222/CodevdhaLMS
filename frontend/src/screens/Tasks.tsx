@@ -86,9 +86,9 @@ export const Tasks = () => {
   }, [searchParams.toString()]);
 
   // Form Hooks
-  const { register: registerAssign, handleSubmit: handleSubmitAssign, reset: resetAssign, watch: watchAssign } = useForm();
-  const { register: registerSubmit, handleSubmit: handleSubmitSubmit, reset: resetSubmit } = useForm();
-  const { register: registerReview, handleSubmit: handleSubmitReview, reset: resetReview } = useForm();
+  const { register: registerAssign, handleSubmit: handleSubmitAssign, reset: resetAssign, watch: watchAssign, formState: { errors: errorsAssign, isSubmitting: isSubmittingAssign } } = useForm();
+  const { register: registerSubmit, handleSubmit: handleSubmitSubmit, reset: resetSubmit, formState: { errors: errorsSubmit, isSubmitting: isSubmittingSubmit } } = useForm();
+  const { register: registerReview, handleSubmit: handleSubmitReview, reset: resetReview, formState: { errors: errorsReview, isSubmitting: isSubmittingReview } } = useForm();
 
   const assignCourseId = watchAssign('courseId');
   const { data: assignBatchesRaw } = useSWR(assignCourseId ? `/batches?courseId=${assignCourseId}&isActive=true` : null, fetcher);
@@ -670,9 +670,17 @@ export const Tasks = () => {
 
   <button
   type="submit"
-  className="w-full py-2.5 bg-[#a855f7] hover:bg-purple-400 text-slate-950 font-semibold rounded-xl transition mt-4"
+  disabled={isSubmittingAssign || uploadingAssign}
+  className="w-full py-2.5 bg-[#a855f7] hover:bg-purple-400 text-slate-950 font-semibold rounded-xl transition mt-4 flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
   >
-  Publish Project Task
+  {isSubmittingAssign ? (
+    <>
+      <Loader2 className="w-4 h-4 animate-spin" />
+      <span>Publishing Task...</span>
+    </>
+  ) : (
+    'Publish Project Task'
+  )}
   </button>
  </form>
  </div>
@@ -749,9 +757,17 @@ export const Tasks = () => {
 
  <button
  type="submit"
- className="w-full py-2.5 bg-[#a855f7] hover:bg-purple-400 text-slate-950 font-semibold rounded-xl transition"
+ disabled={isSubmittingSubmit || uploadingSubmit}
+ className="w-full py-2.5 bg-[#a855f7] hover:bg-purple-400 text-slate-950 font-semibold rounded-xl transition flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
  >
- Send Submission
+ {isSubmittingSubmit ? (
+   <>
+     <Loader2 className="w-4 h-4 animate-spin" />
+     <span>Sending Submission...</span>
+   </>
+ ) : (
+   'Send Submission'
+ )}
  </button>
  </form>
  </div>
@@ -815,9 +831,17 @@ export const Tasks = () => {
 
  <button
  type="submit"
- className="w-full py-2.5 bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white font-semibold rounded-xl transition"
+ disabled={isSubmittingReview}
+ className="w-full py-2.5 bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white font-semibold rounded-xl transition flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
  >
- Log Grade & Close
+ {isSubmittingReview ? (
+   <>
+     <Loader2 className="w-4 h-4 animate-spin" />
+     <span>Logging Grade...</span>
+   </>
+ ) : (
+   'Log Grade & Close'
+ )}
  </button>
  </form>
  </div>

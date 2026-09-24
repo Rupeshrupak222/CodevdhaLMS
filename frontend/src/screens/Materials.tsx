@@ -84,7 +84,10 @@ export const Materials = () => {
     }
   };
 
+  const [isPublishing, setIsPublishing] = useState(false);
+
   const onSubmit = async (data) => {
+    setIsPublishing(true);
     try {
       let finalType = 'PDF';
       if (data.type === 'Videos') finalType = 'VIDEO';
@@ -115,6 +118,8 @@ export const Materials = () => {
       setIsUploadOpen(false);
     } catch (err: any) {
       toast.error(err.response?.data?.message || 'Failed to upload material');
+    } finally {
+      setIsPublishing(false);
     }
   };
 
@@ -561,9 +566,17 @@ export const Materials = () => {
 
  <button
  type="submit"
- className="w-full py-2.5 bg-[#a855f7] hover:bg-purple-400 text-slate-950 font-semibold rounded-xl transition mt-4"
+ disabled={isPublishing || uploadingFile}
+ className="w-full py-2.5 bg-[#a855f7] hover:bg-purple-400 text-slate-950 font-semibold rounded-xl transition mt-4 flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
  >
- Publish Document
+ {isPublishing ? (
+   <>
+     <Loader2 className="w-4 h-4 animate-spin" />
+     <span>Publishing...</span>
+   </>
+ ) : (
+   'Publish Document'
+ )}
  </button>
  </form>
  </div>
