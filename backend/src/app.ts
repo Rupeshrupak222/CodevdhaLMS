@@ -22,28 +22,54 @@ export const createApp = () => {
   app.use(helmet({
     contentSecurityPolicy: {
       directives: {
-        defaultSrc: ["'self'"],
-        scriptSrc: ["'self'"],
-        styleSrc: ["'self'", "'unsafe-inline'"],
-        imgSrc: ["'self'", "data:", "https:"],
-        connectSrc: ["'self'", env.FRONTEND_URL],
-        frameSrc: ["'none'"],
-        frameAncestors: ["'self'"],
+        defaultSrc:      ["'self'"],
+        scriptSrc:       ["'self'"],
+        styleSrc:        ["'self'", "'unsafe-inline'"],
+        imgSrc:          ["'self'", "data:", "https:"],
+        fontSrc:         ["'self'", "data:"],
+        connectSrc:      ["'self'", env.FRONTEND_URL],
+        frameSrc:        ["'none'"],
+        // frameAncestors controls who can embed THIS page in an iframe.
+        // Must be "'none'" to prevent clickjacking — matches X-Frame-Options:DENY.
+        // Previously "'self'" contradicted DENY and allowed same-origin framing in
+        // modern browsers (CSP frameAncestors takes precedence over X-Frame-Options).
+        frameAncestors:  ["'none'"],
+        // base-uri: blocks <base href> injection that would redirect all relative
+        // links to an attacker-controlled origin.
+        baseUri:         ["'self'"],
+        // form-action: restricts where <form> submissions can go.
+        formAction:      ["'self'"],
+        objectSrc:       ["'none'"],
+        upgradeInsecureRequests: [],
       },
     },
-    crossOriginEmbedderPolicy: false, // Allow loading external images
+    crossOriginEmbedderPolicy: false, // Allow loading external images/assets
   }));
 
   // Explicit hardening headers (belt-and-suspenders alongside helmet)
   app.use((req, res, next) => {
     res.setHeader('X-Content-Type-Options', 'nosniff');
-    res.setHeader('X-Frame-Options', 'DENY'); // clickjacking protection
-    res.setHeader('X-XSS-Protection', '1; mode=block');
-    // HSTS only makes sense over HTTPS (production behind TLS)
+    res.setHeader('X-Frame-Options', 'DENY'); // clickjacking — legacy browser fallback
+
+    // X-XSS-Protection intentionally NOT set.
+    // Helmet v8 omits it on purpose: the header is ignored by all modern browsers
+    // and can actually introduce XSS vulnerabilities in older IE. CSP script-src
+    // 'self' is the correct, modern XSS mitigation.
+
+    // Permissions-Policy: explicitly restrict browser APIs.
+    // Camera is permitted for face-authentication; everything else locked down.
+    res.setHeader(
+      'Permissions-Policy',
+      "camera=(self), microphone=(), geolocation=(), payment=(), usb=(), screen-wake-lock=()"
+    );
+
+    // HSTS: only meaningful over HTTPS (production).
+    // preload allows submission to the browser HSTS preload list so plain-HTTP
+    // first-visits are blocked at the browser level, not just after the first TLS hit.
     if (env.isProd) {
       res.setHeader(
         'Strict-Transport-Security',
-        'max-age=31536000; includeSubDomains'
+        'max-age=31536000; includeSubDomains; preload'
       );
     }
     next();
