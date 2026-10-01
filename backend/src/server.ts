@@ -14,17 +14,24 @@ const start = async () => {
         if (attempt === 1) console.log('✅ Database connected successfully');
         else console.log(`✅ Database connected successfully on attempt ${attempt}`);
 
-        // Auto-add recordingUrl column if not exists (safe migration)
-        try {
-          await prisma.$executeRawUnsafe(`
-            ALTER TABLE live_classes ADD COLUMN IF NOT EXISTS "recordingUrl" TEXT;
-          `);
-        } catch (e: any) {
-          // Ignore if column already exists or syntax not supported
-          if (!e.message?.includes('already exists')) {
-            console.warn('⚠️ Could not auto-add recordingUrl column:', e.message);
-          }
+        // ── In-memory security state warning ─────────────────────────────────
+        // Brute-force lockout, token blacklist cache, force-logout registry, and
+        // session activity tracking are all in-process maps. On a multi-instance
+        // or serverless deployment they are NOT shared across instances, and they
+        // reset on every restart. For a production multi-instance deployment,
+        // back these with Redis (see utils/loginLockout.ts, tokenBlacklist.ts,
+        // forceLogout.ts, activityTracker.ts). Single-instance deployments are unaffected.
+        if (env.isProd && !process.env.REDIS_URL) {
+          console.warn(
+            '[SECURITY] Running without Redis. In-memory security state (brute-force lockout, ' +
+            'token blacklist cache, force-logout, session activity) is not shared across instances ' +
+            'and will reset on restart. Set REDIS_URL to enable distributed security state.'
+          );
         }
+
+        // NOTE: recordingUrl column is defined in the Prisma schema (schema.prisma → LiveClass.recordingUrl).
+        // The previous $executeRawUnsafe DDL migration shim has been removed.
+        // Run `prisma migrate deploy` or `prisma db push` to apply schema changes safely.
 
         // Auto-seed default categories if they do not exist
         const categoriesToSeed = [

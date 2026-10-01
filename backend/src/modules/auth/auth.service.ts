@@ -18,6 +18,7 @@ import { AppError } from '../../utils/apiError';
 import { env } from '../../config/env';
 import { uploadToS3, resolveS3Url } from '../../utils/s3';
 import { euclideanDistance } from '../../utils/math';
+import { sendPasswordResetEmail } from '../../utils/email';
 import {
   LoginInput,
   RegisterInput,
@@ -206,12 +207,18 @@ export const authService = {
       });
     }
 
-    // Enforce email verification for self-registered students
-    // Admin-created users (teachers/admins) bypass this since admin verified them
+    // Enforce email verification for self-registered students.
+    // Admin-created users (teachers/admins) bypass this — they are verified by the admin.
+    // In production: block login entirely so unverified accounts cannot access the platform.
+    // In development: allow login with a warning so local testing isn't blocked.
     if (!user.isEmailVerified && user.role === 'STUDENT') {
-      // Allow login but flag it — in future, block completely when email service is active
-      // For now, we log a warning (email verification is not yet sending emails)
-      console.warn(`[AUTH] Unverified email login: ${user.email}`);
+      if (env.isProd) {
+        throw AppError.forbidden(
+          'Please verify your email address before logging in. Check your inbox for a verification link.'
+        );
+      } else {
+        console.warn(`[AUTH] Unverified email login allowed in development: ${user.email}`);
+      }
     }
 
     if (input.role && user.role !== input.role) {
@@ -665,8 +672,12 @@ export const authService = {
 
     await authRepository.createPasswordReset({ userId: user.id, tokenHash, expiresAt });
 
-    // TODO: Send email with reset link
-    // await emailService.sendPasswordReset(user.email, rawToken);
+    // Send password reset email — fire-and-forget (do not await so the 200
+    // response is returned immediately regardless of SMTP latency/failure).
+    // The always-200 response already prevents email enumeration.
+    sendPasswordResetEmail(user.email, user.name, rawToken).catch((err) => {
+      console.error('[Auth] Failed to send password reset email:', err);
+    });
   },
 
   // ── Reset Password ────────────────────────────────────────────────────────────
