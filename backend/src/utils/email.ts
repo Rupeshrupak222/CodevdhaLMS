@@ -107,6 +107,69 @@ export const sendLiveClassScheduledEmail = async (
 };
 
 /**
+ * Sends a password reset email with a secure reset link
+ */
+export const sendPasswordResetEmail = async (
+  email: string,
+  name: string,
+  rawToken: string
+) => {
+  if (!env.SMTP_HOST || !env.SMTP_USER || !env.SMTP_PASS) {
+    console.warn(`[Email Service] SMTP not configured. Password reset email to ${email} was skipped.`);
+    return;
+  }
+
+  // Build the reset link — token goes in the URL, never in a visible field
+  const resetUrl = `${env.FRONTEND_URL}/reset-password?token=${encodeURIComponent(rawToken)}`;
+
+  const htmlTemplate = `
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; color: #333;">
+      <div style="background-color: #ffb900; padding: 20px; text-align: center; border-radius: 8px 8px 0 0;">
+        <h2 style="color: #1e293b; margin: 0;">🔒 Password Reset Request</h2>
+      </div>
+      <div style="padding: 20px; border: 1px solid #eee; border-top: none; border-radius: 0 0 8px 8px;">
+        <p>Hello <strong>${name}</strong>,</p>
+        <p>We received a request to reset the password for your CodVedha LMS account.</p>
+        <p>Click the button below to set a new password. This link is valid for <strong>15 minutes</strong>.</p>
+
+        <div style="text-align: center; margin: 30px 0;">
+          <a href="${resetUrl}"
+             style="background-color: #ffb900; color: #1e293b; padding: 14px 28px; border-radius: 6px;
+                    text-decoration: none; font-weight: bold; display: inline-block; font-size: 16px;">
+            Reset Password
+          </a>
+        </div>
+
+        <p style="color: #64748b; font-size: 14px;">
+          If you did not request a password reset, you can safely ignore this email.
+          Your password will not change until you click the link above.
+        </p>
+        <p style="color: #64748b; font-size: 14px;">
+          This link expires in 15 minutes for your security.
+        </p>
+
+        <br/>
+        <p style="margin-bottom: 0;">Regards,</p>
+        <p style="margin-top: 5px; font-weight: bold;">CodVedha Team</p>
+      </div>
+    </div>
+  `;
+
+  try {
+    const info = await transporter.sendMail({
+      from: `"CodVedha LMS" <${env.EMAIL_FROM}>`,
+      to: email,
+      subject: 'Password Reset — CodVedha LMS',
+      html: htmlTemplate,
+    });
+    console.log(`[Email Service] Password reset email sent to ${email} (Message ID: ${info.messageId})`);
+  } catch (error) {
+    console.error(`[Email Service] Failed to send password reset email to ${email}:`, error);
+    // Do not re-throw — caller already returned 200 to prevent email enumeration
+  }
+};
+
+/**
  * Sends a welcome email with credentials to newly created users
  */
 export const sendWelcomeEmail = async (

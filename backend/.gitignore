@@ -107,3 +107,7 @@ Thumbs.db
 # Database backups (may contain sensitive data)
 database_backup_*.json
 *.backup.json
+
+# Temporary upload files (large video/file uploads buffered to disk before S3)
+# These can be up to 2 GB each — must never be committed.
+uploads_temp/

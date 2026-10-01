@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+
+# Block internal/API paths from indexing
+Disallow: /api/
+Disallow: /admin/
+
+Sitemap: https://lms.codvedha.com/sitemap.xml
