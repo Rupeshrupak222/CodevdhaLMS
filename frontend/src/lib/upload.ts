@@ -15,11 +15,20 @@ export const uploadFileToS3 = async (
   folder: string,
   onProgress?: (progress: { percent: number; loaded: number; total: number }) => void
 ): Promise<{ url: string; key: string }> => {
+  let contentType = file.type;
+  if (!contentType || contentType === 'application/octet-stream') {
+    const ext = file.name.split('.').pop()?.toLowerCase();
+    if (ext === 'mkv') {
+      contentType = 'video/x-matroska';
+    }
+  }
+  contentType = contentType || 'application/octet-stream';
+
   try {
     // 1. Get presigned upload URL from backend (fast 10ms call, 0 MB server RAM)
     const presignedRes = await api.post('/upload/presigned-url', {
       fileName: file.name,
-      contentType: file.type || 'application/octet-stream',
+      contentType,
       folder,
     });
 
@@ -32,7 +41,7 @@ export const uploadFileToS3 = async (
     // 2. Upload directly from browser to Storage (0 EC2 RAM used!)
     await axios.put(uploadUrl, file, {
       headers: {
-        'Content-Type': file.type || 'application/octet-stream',
+        'Content-Type': contentType,
       },
       onUploadProgress: (progressEvent) => {
         if (onProgress && progressEvent.total) {

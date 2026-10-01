@@ -102,7 +102,8 @@ export const Tasks = () => {
            cleanUrl.endsWith('.webm') || 
            cleanUrl.endsWith('.ogg') || 
            cleanUrl.endsWith('.m4v') || 
-           cleanUrl.endsWith('.mov');
+           cleanUrl.endsWith('.mov') ||
+           cleanUrl.endsWith('.mkv');
   };
 
   const isPdfUrl = (url: string | null | undefined): boolean => {

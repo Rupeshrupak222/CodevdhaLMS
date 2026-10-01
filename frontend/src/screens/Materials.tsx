@@ -154,7 +154,8 @@ export const Materials = () => {
            cleanUrl.endsWith('.webm') || 
            cleanUrl.endsWith('.ogg') || 
            cleanUrl.endsWith('.m4v') || 
-           cleanUrl.endsWith('.mov');
+           cleanUrl.endsWith('.mov') ||
+           cleanUrl.endsWith('.mkv');
   };
 
   const isPdfUrl = (url: string | null | undefined): boolean => {
@@ -203,7 +204,8 @@ export const Materials = () => {
       cleanUrl.endsWith('.webm') ||
       cleanUrl.endsWith('.ogg') ||
       cleanUrl.endsWith('.mov') ||
-      cleanUrl.endsWith('.m4v')
+      cleanUrl.endsWith('.m4v') ||
+      cleanUrl.endsWith('.mkv')
     ) {
       displayType = 'Video';
     }
