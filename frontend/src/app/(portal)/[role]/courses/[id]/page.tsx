@@ -40,6 +40,9 @@ export default function CourseDetailsPage() {
   const [resolvedS3Key, setResolvedS3Key] = useState<string | null>(null);
   const [s3UrlVerified, setS3UrlVerified] = useState(false);
   const [verifyingUrl, setVerifyingUrl] = useState(false);
+  // Saving state for the lesson form submit — prevents double-submit when user
+  // clicks "Save & Upload" multiple times while the backend PUT is in flight.
+  const [isSavingLesson, setIsSavingLesson] = useState(false);
 
   // Student study progress flow state
   const [completedLessons, setCompletedLessons] = useState<string[]>([]);
@@ -420,6 +423,9 @@ export default function CourseDetailsPage() {
       toast.error(contentInputMode === 'url' ? 'Please enter a valid S3 URL' : 'Please upload a course content file first');
       return;
     }
+    // Guard against double-submit (user clicking Save & Upload multiple times)
+    if (isSavingLesson) return;
+    setIsSavingLesson(true);
     try {
       const durationLessons = rawLessons.filter((l: any) => l.durationDays === currentDuration);
       const order = durationLessons.length + 1;
@@ -460,6 +466,8 @@ export default function CourseDetailsPage() {
       const errMsg = err.response?.data?.message || 'Something went wrong. Please try again.';
       toast.error(errMsg);
       console.error('Failed to add lesson:', err.response?.data || err.message);
+    } finally {
+      setIsSavingLesson(false);
     }
   };
 
@@ -1339,13 +1347,18 @@ export default function CourseDetailsPage() {
               </div>
               <button
                 type="submit"
-                disabled={uploadingContent}
+                disabled={uploadingContent || isSavingLesson}
                 className="w-full py-2.5 bg-[#a855f7] hover:bg-purple-400 text-slate-950 font-semibold rounded-xl transition cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
               >
                 {uploadingContent ? (
                   <>
                     <Loader2 className="w-4 h-4 animate-spin" />
                     Uploading file, please wait...
+                  </>
+                ) : isSavingLesson ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    Saving...
                   </>
                 ) : (
                   'Save & Upload'

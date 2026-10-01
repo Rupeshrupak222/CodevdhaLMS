@@ -109,12 +109,18 @@ router.post(
         ? file.originalname.substring(0, file.originalname.lastIndexOf('.'))
         : file.originalname;
 
-      const sanitizedName = baseName
-        .replace(/[^a-zA-Z0-9_\-\s]/g, '')
-        .replace(/\s+/g, '_')
-        .substring(0, 100);
+      // Same sanitization logic as /presigned-url — non-Latin filenames (Tamil,
+      // Hindi, etc.) must not collapse to an empty base name.
+      const sanitizedName = (
+        baseName
+          .replace(/[^a-zA-Z0-9_\-\s]/g, '')
+          .replace(/\s+/g, '_')
+          .replace(/^_+|_+$/g, '')
+          .substring(0, 80)
+        ) || 'file';
 
-      const uniqueName = `${sanitizedName}_${uuidv4().substring(0, 8)}${ext}`;
+      const uniqueSuffix = `${Date.now().toString(36)}_${uuidv4().substring(0, 8)}`;
+      const uniqueName = `${sanitizedName}_${uniqueSuffix}${ext}`;
       const key = `${sanitizedFolder}/${uniqueName}`;
 
       const stream = fs.createReadStream(file.path, { highWaterMark: 64 * 1024 });
@@ -169,14 +175,22 @@ router.post(
       .replace(/\/+/g, '/')
       .replace(/^\/|\/$/g, '');
 
-    // Sanitize filename: keep original name but make it URL-safe
-    const sanitizedName = fileName
-      .substring(0, fileName.lastIndexOf('.'))
-      .replace(/[^a-zA-Z0-9_\-\s]/g, '')
-      .replace(/\s+/g, '_')
-      .substring(0, 100); // limit length
+    // Sanitize filename: keep original name but make it URL-safe.
+    // If the original name has no Latin-alphanumeric characters (e.g. Tamil/Hindi
+    // filenames), the sanitizer would produce an empty string causing all such
+    // uploads to share the same base name. Use 'file' as a safe fallback.
+    const rawBase = fileName.substring(0, fileName.lastIndexOf('.')) || fileName;
+    const sanitizedName = (
+      rawBase
+        .replace(/[^a-zA-Z0-9_\-\s]/g, '')  // remove non-alphanumeric
+        .replace(/\s+/g, '_')                 // spaces → underscore
+        .replace(/^_+|_+$/g, '')              // trim leading/trailing underscores
+        .substring(0, 80)                     // limit length
+      ) || 'file';                            // fallback if entirely non-Latin
 
-    const uniqueName = `${sanitizedName}_${uuidv4().substring(0, 8)}${ext}`;
+    // Include timestamp + UUID for guaranteed uniqueness across concurrent uploads
+    const uniqueSuffix = `${Date.now().toString(36)}_${uuidv4().substring(0, 8)}`;
+    const uniqueName = `${sanitizedName}_${uniqueSuffix}${ext}`;
     const key = `${sanitizedFolder}/${uniqueName}`;
 
     const result = await getPresignedUploadUrl(key, contentType);
