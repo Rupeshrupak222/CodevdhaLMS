@@ -1269,7 +1269,7 @@ export default function CourseDetailsPage() {
                   <>
                     <input
                       type="file"
-                      accept="video/*,application/pdf,text/*"
+                      accept="video/*,application/pdf,text/*,.mkv"
                       onChange={handleContentFileChange}
                       className="w-full px-3 py-2 border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 rounded-lg text-slate-900 dark:text-white focus:outline-none file:mr-4 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-purple-50 file:text-purple-700 hover:file:bg-purple-100"
                     />

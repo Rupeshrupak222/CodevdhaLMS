@@ -50,6 +50,9 @@ const ALLOWED_MIME_TYPES = new Set([
   'video/quicktime',
   'video/x-msvideo',
   'video/x-matroska',
+  'video/mkv',
+  'video/matroska',
+  'application/x-matroska',
   // Archives
   'application/zip',
   'application/x-zip-compressed',
@@ -319,8 +322,18 @@ router.post(
     const presignedUrl = await resolveS3Url(trimmed);
     if (!presignedUrl) throw AppError.badRequest('Could not resolve video URL');
 
+    const ext = s3Key.split('.').pop()?.toLowerCase();
+    let contentType = 'video/mp4';
+    if (ext === 'mkv') {
+      contentType = 'video/x-matroska';
+    } else if (ext === 'webm') {
+      contentType = 'video/webm';
+    } else if (ext === 'mov') {
+      contentType = 'video/quicktime';
+    }
+
     res.set({
-      'Content-Type': 'video/mp4',
+      'Content-Type': contentType,
       'Content-Disposition': 'inline',
       'Cache-Control': 'no-store, no-cache, must-revalidate, private',
       'X-Content-Type-Options': 'nosniff',

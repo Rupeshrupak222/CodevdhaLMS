@@ -1212,7 +1212,7 @@ export const Classes = () => {
                   <label className="block text-slate-500 font-semibold mb-2 text-[13px]">Select Video File</label>
                   <input
                     type="file"
-                    accept="video/*"
+                    accept="video/*,.mkv"
                     disabled={uploadingRecording}
                     onChange={handleRecordingUpload}
                     className="w-full px-3 py-2 border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 rounded-lg text-slate-900 dark:text-white focus:outline-none file:mr-4 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 disabled:opacity-50"
